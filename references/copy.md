@@ -195,3 +195,55 @@ Whether there is a voice at all is a **destination** decision taken at G0, not a
 A feed placement that autoplays muted carries no meaning in its audio, so one film shipped
 two cuts of the same argument: a silent cut timed from **read-time**, and a voiced cut timed
 from **measured narration**. They are not the same edit at different lengths.
+
+## Name people the way people are named
+
+A synthetic dataset needs a cast, and the cast reaches the screen. Two rules, both
+learned by being told to change a name mid-build:
+
+**Ordinary, common surnames.** "Vega" and "Okafor" both got replaced — not because
+they are bad names, but because an unusual name makes a viewer stop and wonder who
+that is. A name in a film is a pointer, not a character. Pick names that are common
+in the market the film is for and get out of the way.
+
+**Say the cast out loud before you build.** Present the list at the copy gate: who
+they are, what each one is *for*, which two get named on screen and which stay
+anonymous marks. The director cannot approve a story about "Santos and Cruz" if
+nobody has told them Santos is the apparent star and Cruz is the actual one. Being
+asked *"who the fuck is Okafor?"* after the third render is a failure of the brief,
+not of the name.
+
+**Derive names from the data, never hardcode them in the composition.** Two
+headlines had the name typed in while everything else read it from the fit output,
+so a rename left the film disagreeing with its own dataset. Every on-screen name
+comes from the same source the numbers do.
+
+## Say numbers the way a person would say them
+
+`+125%` is a true figure and nobody speaks it. "She sells twice what a typical rep
+does" is the same fact in the register the viewer thinks in. The screen may carry
+the precise figure; the voice says the human one.
+
+| On screen | In the voice |
+|---|---|
+| `+125%` | "twice what a typical rep sells" |
+| `σ 0.126` vs `σ 0.573` | "only three percent of it comes from the rep" |
+| `[−0.04, +0.13]` | "could be nothing at all" — only if the interval really crosses zero |
+
+And **no jargon the audience does not already use**. "Patch" for a sales territory
+got cut with *"no one calls it a patch."* If you cannot hear a customer saying the
+word, it is not the word.
+
+## Plain sentences beat good lines
+
+The failure sounds like this: *"Her advantage could be nothing at all. His could
+not."* It is balanced, it is short, it scans — and it is a writer performing. It
+assumes the viewer is holding two people, two intervals and a comparison in their
+head, and it gives them nothing to hold onto if they are not.
+
+The replacement: *"Santos is about average, and the strongest rep was Cruz, sitting
+at number three where nobody looked."* Longer. Plainer. Actually says what happened.
+
+Symptoms that you are writing lines instead of sentences: parallel clauses,
+reversals, a colon or a dash doing dramatic work, any sentence you would be pleased
+to see quoted. **Write it as if explaining to a colleague who just walked in.**

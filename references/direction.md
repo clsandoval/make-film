@@ -7,6 +7,60 @@ reveals, measured loudness. Applied on its own it produces competent, interchang
 films. Direction is the half that makes a film *this* film, and it is the only half that
 cannot be recovered later: a wrong palette is a re-render, a wrong claim is a rebuild.
 
+## Three directions means three FORMS, not three decorations
+
+This is the single most expensive mistake in this skill's history, and it is easy
+to make while believing you followed the rule.
+
+A film about a data product got three directions: *a leaderboard that dissolves*,
+*a Tufte column with margin notes*, and *the confound drawn as dots pulled apart*.
+Three names, three metaphors — and **all three were the same film**: abstract marks
+on a dark ground, camera locked, type set in the middle. The director picked one,
+sat through several rounds, and then asked for the thing that had never been on the
+menu: *"why can't we do the thing where the entire video happens looking at a UI of
+a workspace chat, so it actually looks like we're using a workspace."*
+
+That rebuild threw away everything but the data and the voice. It should have been
+option A on day one.
+
+**The test for a direction set:** could a stranger tell these apart from a single
+frame with the type removed? If the difference is palette, metaphor or arrangement,
+you have written one direction three times. The difference has to be in the **form**
+— what world the film takes place in and how the camera behaves inside it.
+
+### A catalogue of forms
+
+Not a menu to pick from blindly. It is here so that when you write three directions,
+they come from three different rows.
+
+| Form | The world is | Camera | Reads as | Good when |
+|---|---|---|---|---|
+| **Live surface** | The real product UI, continuous, never cut away from | Pushes, pans, snaps to what a cursor does | A screen recording someone zoomed in on | The product IS the interface; the story is a sequence of actions |
+| **Focused type** | A ground with type and marks set on it | Locked or a slow drift | An essay, a title sequence | The argument is verbal and the evidence is numbers |
+| **Zoom-out reveal** | One continuous scale move — a detail becomes a system (solar-system style) | One unbroken pull back, or push in | A single idea widening | The point is *context* — this small thing sits inside a much bigger thing |
+| **Document / margin** | A page: main column plus annotated margin | Scrolls like reading | Something authored and sourced | Provenance matters; you must show where each claim came from |
+| **Data space** | An abstract field where marks move and regroup | Follows the marks | A visual proof | The insight IS a change of shape — a split, a collapse, a sort |
+| **Object** | A single physical or rendered thing on a stage | Orbits, rack focuses | A product film | There is a thing to look at |
+| **Terminal / log** | Text arriving in sequence | Follows the caret | Something happening live, right now | The audience is technical and the proof is the trace |
+| **Map / board** | A spatial layout with position meaning something | Flies between locations | An operations picture | Geography or a pipeline is the subject |
+
+Two of these can hybridise — a live surface that pushes *into* a chart until the
+chart becomes a data space is a real direction. Three variations inside one row are
+not.
+
+**Write the form down first.** If direction A and direction B name the same row of
+that table, kill one and go find another row before you write another word.
+
+## Show the form, do not describe it
+
+A direction written as prose is a document about a film. Present each one as
+something the director can *see the shape of* in a few seconds — an ASCII layout, a
+frame sketch, a one-line camera description — and put the forms side by side so the
+choice is obviously a choice. The failure above happened partly because three
+directions were described in paragraphs, and paragraphs make different metaphors
+sound like different films.
+
+
 ## Write three, kill two
 
 One direction written and immediately built is not a direction, it is the first idea. Write

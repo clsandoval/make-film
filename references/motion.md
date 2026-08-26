@@ -217,3 +217,48 @@ early and then sat there. Neither alone will tell you the film is paced.
 rather than the frames: the grain-period false positive above, and a film that "ended on a
 black frame" — the sample time was past the last frame's PTS, so ffmpeg returned a
 placeholder. Per-frame luma over the final second was a flat 217. Bright ground, correct.
+
+## Zoom is a property of the layout, not of the camera
+
+If the composition is exactly the size of the stage, there is nowhere to push from:
+scale 1.0 already shows everything, and any value above it crops. The camera cannot
+magnify what is already at full size — it can only cut pieces off.
+
+**So size the world smaller than the frame.** A 1280×720 interface inside a
+1920×1080 stage means the *floor* of the camera is 1.5×, the whole surface is in
+shot at that floor, and real magnification is available above it. This is the single
+change that turned "I can barely see the text" into legible frames.
+
+But there is a second trap, and it is the one that costs a rebuild:
+
+### What must never leave the frame decides your ceiling
+
+A director asking for a UI film wants the UI to read as a UI. That means its
+chrome — the sidebar, the header, the input box — is not decoration to be cropped
+when convenient. If the brief says *"you should actually see the text box"* and
+*"we can actually see the sidebar as well"*, then the widest the camera may ever go
+is the scale at which **all of that chrome fits**, and no shot may exceed it.
+
+Work it out before you choreograph anything:
+
+1. List the elements that must always be visible.
+2. Find the bounding box that contains all of them.
+3. `maxScale = min(stageW / boxW, stageH / boxH)`.
+4. If the type is too small at that scale, **the type is too small** — enlarge the
+   type inside the layout. Do not solve it by zooming past the box.
+
+Anchoring is not a fix either. Pinning the frame to the bottom-left to "keep the
+composer and sidebar in shot" showed the *bottom* of the sidebar, which is empty —
+the channel list lives at the top. A real sidebar has content at the top and nothing
+at the bottom; a real composer sits at the bottom. **You cannot have both by
+anchoring to a corner. You can only have both by fitting the box.**
+
+### Symptoms in the frames
+
+- A wide empty band down one side is a chrome element you are seeing the blank half
+  of, not a margin.
+- Content sliced by the *top* edge is a scroll anchored to the bottom without a
+  fixed header to stop against.
+- A card cut by the input bar means the layout has no minimum gap between the last
+  attachment and the fixed chrome. Enforce one; a card either clears it fully or is
+  not in shot.
