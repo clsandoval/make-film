@@ -160,6 +160,19 @@ only to show the shape:
 | `--hairline` | *hairline* | rules |
 | product-panel tokens | *panel bg / raised / sunken / text / dim* | the product's own chrome — the proof |
 
+**Fetch the CSS, not the page.** A markdown-converting fetch strips every declaration, and
+a page's inline hexes are not its palette. Get the theme's own stylesheet and rank hexes by
+occurrence count.
+
+**Then filter the CMS's defaults, or you will ship them as the brand.** A WordPress theme
+carries a dozen Gutenberg default block colours — `#0693e3`, `#00d084`, `#fcb900`,
+`#7bdcb5`, `#8ed1fc`, `#f78da7`, `#cf2e2e`, `#ff6900`, `#9b51e0`, `#abb8c3` — and in a
+page's inline styles they can outrank the brand's real hexes on count. One palette pass
+nearly adopted a Gutenberg blue and green as a Filipino condiment brand's identity. The
+brand's own colours were in `themes/<name>/css/style.css`, where the top four by count were
+the four actually on the packaging. Confirm at least one against real artwork: sample the
+label image's pixels and check the dominant fill matches a hex you found in the CSS.
+
 Type is the same rule: fetch the subject's real font files and serve them **locally** from
 the film directory, so a render never depends on a network round-trip and `document.fonts.ready`
 means something. A film in a font the product does not use is a film about a different product.

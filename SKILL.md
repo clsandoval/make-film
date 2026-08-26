@@ -31,16 +31,30 @@ Everything between them runs unattended. Stop, show, and wait at each.
 |---|---|---|---|
 | **G0** | Intake | 2–3 `AskUserQuestion`s: deliverable shape, length, **destination** | Destination is decided. It determines whether there is a voiceover at all — a feed placement that autoplays muted must carry its claim as type in the first two seconds, and narration there is decoration. |
 | **G1** | Direction | Three genuinely different directions, two killed with reasons, each with a named signature move → `BRIEF.md` | One is chosen, and the ONE claim survives *"would every competitor's film make this same claim?"* → `references/direction.md` |
-| **G2** | Stills first | Draft frames as stills, **before any voiceover exists**. "Tell me what's wrong with these frames." | Composition and register are right. Do this and you will render three times instead of seven. |
-| **G3** | Copy lock | A per-beat table: **on screen \| voice**, side by side — and the VO read straight through on its own, as one block. Then per-line alternatives for anything flagged. | The user says lock, on both. **Nothing generates voice before this.** → `references/copy.md` |
+| **G2** | Copy lock | A per-beat table: **on screen \| voice**, side by side, every figure a named slot — and the VO read straight through on its own, as one block. Then per-line alternatives for anything flagged. | The user says lock, on both. **Nothing generates voice before this.** → `references/copy.md` |
+| **G3** | Storyboard, then stills | The locked beats drawn — layout per beat, then rendered as real stills **before any voiceover exists**. "Tell me what's wrong with these frames." | Composition and register are right. Do this and you will render three times instead of seven. |
 | **G4** | Pre-render | Contact sheet, stills at 10/35/65/90% of every hold, after VO and the measured timeline — **plus an independent agent that LOOKS at them** | Approved, or noted. A still is 40 seconds; a render is a commitment. |
 | **G5** | Note round | The delivered MP4, plus a review encode if it is going over chat | **Two consecutive clean rounds.** Renders are versioned, never overwritten — v5 is how you prove v6 fixed it. |
 | **G6** | Deliverables | Aspect cuts, captions, poster, licences, `HANDOFF.md` | Shipped. |
 
-G2 before G3 before voice is the ordering the good films paid for. The first film
-shipped a v4 before anyone tabulated screen copy against narration, and four of ten
-beats turned out to be word-for-word duplicates — invisible until tabulated, because
-each beat is defensible on its own.
+Copy before frames before voice is the ordering the good films paid for.
+
+**The script sets the beat count and the beat boundaries**, so it is the only thing a
+storyboard can be a storyboard *of*. Draw first and you lay out beats the script then
+splits, merges or deletes. A fourth film wrote copy first; one note on the opening two
+lines turned them into three beats and collapsed a held beat elsewhere. Nothing had been
+drawn, so it cost a table edit. Storyboarded first, it is a redraw.
+
+The defect the copy gate exists to catch is the screen repeating the voice, and stills
+do not catch it — **tabulation does**. Author the copy AS the screen-vs-voice table and
+it is caught at writing time, for free. The first film shipped a v4 before anyone
+tabulated, and four of ten beats turned out to be word-for-word duplicates — invisible
+until tabulated, because each beat is defensible on its own.
+
+And **every figure in the script is a named slot**, never a number. The truth pass has
+not run yet; it is the step most likely to change the scenario. A script written around
+numbers the fit has not produced is a script you rewrite. Slots also mean the VO can be
+locked and generated while the figures are still moving, because no numeral is spoken.
 
 ## Setup
 
@@ -146,6 +160,8 @@ Each is a real defect that cost real hours.
 | The thought | What it means |
 |---|---|
 | "The copy is basically settled, I'll write the VO now" | Tabulate screen against voice first. Four of ten beats were duplicates and nobody saw it until v4 |
+| "I'll storyboard first, the copy can catch up" | The script decides how many beats there are. Draw first and you redraw when a line splits a beat in two |
+| "I know roughly what the numbers will be, I'll write them into the script" | Slots, not numerals. The truth pass has rewritten the scenario in every film that ran one |
 | "The visuals tell the story, the voice can be oblique" | Then nobody knows what they are watching. Read the VO alone, start to finish, with the picture off: if it does not introduce the situation and carry it, it is not a script |
 | "Every line is doing real work" | Check their *shapes*. Three consecutive `setup / turn` lines read as composed, and a director will call it "two-line rhyming" before you hear it yourself |
 | "That's just the correct term for it" | You learned it during the truth pass. *Catchment*, *trading*, *utilisation* — if a stranger would stop to ask, it is jargon. Check the screen copy too, the headline is where it survives |

@@ -1,9 +1,13 @@
 # Copy lock
 
-Gate G3, and the cheapest gate in the pipeline. It is one table, it takes twenty minutes,
+Gate G2, and the cheapest gate in the pipeline. It is one table, it takes twenty minutes,
 and it is the only thing that catches the defect below.
 
 **Law 2: the screen and the voice never say the same thing.**
+
+This gate comes before the storyboard, because the locked beats are what the storyboard
+draws. Write every figure as a named slot — `[LIFT]`, `[OWN_LO]`, `[N_STORES]` — so the
+truth pass can move every number without touching a line of the read.
 
 ## The voice writes for someone who arrived by accident
 
@@ -174,7 +178,7 @@ before proving it.
 **Nothing generates voice before this gate passes.** The ordering is load-bearing and it is
 the main lesson the two good films paid for:
 
-1. Copy lock (G3) — the table, then per-line alternatives for anything flagged.
+1. Copy lock (G2) — the table, then per-line alternatives for anything flagged.
 2. `scripts/gen_vo.py` — one generation, audio and word alignment together.
 3. `scripts/build_timeline.py` — frame holds derived from measured audio.
 4. Everything downstream is cued to the alignment.
