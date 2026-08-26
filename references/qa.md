@@ -84,3 +84,65 @@ resolution signature, so a shot can resolve while the screen still breathes.
 Starting the next beat's message early makes the current shot never resolve, and the
 gate reports it as the *current* beat failing. When resolution fails on a beat whose
 content clearly settled, look at what the following beat starts early.
+
+### Solve the framing against the FINAL layout, not the empty one
+
+A composition that types its text in starts with empty elements. If you measure
+scroll targets or camera framing at build time, you measure a page that has not
+grown yet — then the copy arrives, the page gets ~115px taller, and every shot is
+short by that much. In a chat-shaped film that puts each attachment *under* the
+input bar: the viewer sees the message and never sees the evidence.
+
+Fill every body with its final copy, measure, then blank them again — and pin the
+measured height so typing can never reflow the page:
+
+```js
+BODIES.forEach(([id, txt]) => { el(id).textContent = txt; });
+BODIES.forEach(([id]) => { el(id).style.minHeight = el(id).offsetHeight + "px"; });
+// ... solve every shot here ...
+BODIES.forEach(([id]) => { el(id).textContent = ""; });
+```
+
+### A card shorter than its own contents silently eats the payoff
+
+`overflow: hidden` on a panel with a declared height and absolutely-positioned rows
+does not warn you. One card was 172px tall with rows laid out to 236px, so the
+widest bar — the one the whole film was arguing toward — was clipped away and never
+appeared in any render. Another put its headline number at `x=900` inside an 828px
+card; the number was simply not in the film.
+
+**Assert it, per beat, for the card that is on screen:**
+
+```js
+for (const k of card.querySelectorAll("*")) {
+  const kb = k.getBoundingClientRect();
+  if (kb.right  > cardBox.right  - 2) fail(`${k.id} overflows right`);
+  if (kb.bottom > cardBox.bottom - 2) fail(`${k.id} overflows bottom`);
+}
+```
+
+Check only the *active* card at each beat — the others are legitimately below the
+fold, and flagging them buries the real hit.
+
+### A failed assertion aborts the whole patch, not just the line
+
+Patching a composition with a batch of `replace` calls that each `assert` first is
+correct — but the file write happens at the end, so **one stale match discards every
+edit in the batch**, including the ones that matched. Twice in one session a type
+increase appeared to apply and had not.
+
+Report per edit instead of trusting the batch:
+
+```python
+applied, missed = [], []
+def sub(old, new, tag):
+    global s
+    if old in s: s = s.replace(old, new); applied.append(tag)
+    else: missed.append(tag)
+# ... all edits ...
+p.write_text(s)
+print("APPLIED:", applied); print("MISSED:", missed)
+```
+
+Then read the MISSED list. It is the difference between "I fixed it" and "I believe
+I fixed it".
