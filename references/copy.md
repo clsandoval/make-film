@@ -40,12 +40,59 @@ first-time viewer with nothing to hold. **Plain, ordinary sentences, in the orde
 things happen.** If a line would sound strange said out loud to a colleague, it
 is wrong.
 
+### One sentence per thing that happened
+
+Aphorisms are the obvious version of the writer performing. The subtle version is
+**shape repetition**: every line built as *statement, then turn*.
+
+> Cedar Mill is prettier. The problem with it is the street behind it.
+> The third is a warehouse. Less than half as many people live within reach.
+> The catchment was never the constraint. Somebody else was already serving it.
+> They could see all three. What they couldn't see was which one was taken.
+
+No single line there is bad. Read consecutively they are unmistakably composed,
+and the viewer starts listening to the pattern instead of the argument. A director
+will hear it before you do, and what they say is *"stop with the two-line rhyming."*
+
+The test is mechanical: **write each line's shape in the margin.** If three in a
+row read `setup / turn`, rewrite two of them as one plain sentence that just says
+what happened.
+
+> Cedar Mill is prettier, and it backs straight onto housing.
+> Bay 14 is a warehouse bay. Far fewer people live within reach of it.
+
+### Jargon you learned during the truth pass
+
+You will spend hours building the data before you write a word, and you will come
+out fluent in that domain's vocabulary. **That fluency is a liability.** Words that
+felt neutral while you were fitting the model land as jargon on a first-time
+viewer:
+
+| Leaked | What it actually means | Say |
+|---|---|---|
+| *catchment* | the people who can get there | *the people within reach of it* |
+| *a year of trading* | twelve months of sales records | *a year of bookings* |
+| *residual demand* | what nobody is serving yet | *what nobody is serving yet* |
+| *utilisation* | how busy it is | *how busy it is* |
+
+The tell is that you cannot remember whether you knew the word last week. The test
+is to read the line to someone who has not seen the data — if they stop you to ask
+what a word means, it is jargon, and every second the viewer spends decoding is a
+second they are not following.
+
+**Check the screen copy too.** A term cut from the voice usually survives in a
+headline, because the headline was written first and nobody re-reads it.
+
 ### Silence at the open is a privilege, not a default
 
 Opening cold with no narration is strong *only when the screen alone establishes
 the situation*. If the voice is carrying the context — and for any film about an
 unfamiliar product it is — then it starts at zero. A silent first beat followed
 by a voice that assumes you understood it is the worst of both.
+
+**Default to speaking from the first frame.** The instinct to open silent is
+almost always about atmosphere, and atmosphere is not what the first two seconds
+are for — orienting the viewer is. Earn the silence, or start talking.
 
 
 ## The failure it catches

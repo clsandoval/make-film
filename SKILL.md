@@ -147,6 +147,8 @@ Each is a real defect that cost real hours.
 |---|---|
 | "The copy is basically settled, I'll write the VO now" | Tabulate screen against voice first. Four of ten beats were duplicates and nobody saw it until v4 |
 | "The visuals tell the story, the voice can be oblique" | Then nobody knows what they are watching. Read the VO alone, start to finish, with the picture off: if it does not introduce the situation and carry it, it is not a script |
+| "Every line is doing real work" | Check their *shapes*. Three consecutive `setup / turn` lines read as composed, and a director will call it "two-line rhyming" before you hear it yourself |
+| "That's just the correct term for it" | You learned it during the truth pass. *Catchment*, *trading*, *utilisation* — if a stranger would stop to ask, it is jargon. Check the screen copy too, the headline is where it survives |
 | "This line is a great line" | Aphorisms, reversals and "X could be nothing; Y could not" read as a writer performing. Say the plain sentence |
 | "Opening on silence is stronger" | Only if the screen alone establishes the situation. If the voice is carrying context, it starts at zero |
 | "Re-rolling fixed the click" | Two different TTS failures. Re-roll fixes boundary clicks; a trailing artifact needs a guarded trim, or it eats word-final consonants |
