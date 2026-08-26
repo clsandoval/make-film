@@ -32,7 +32,7 @@ Everything between them runs unattended. Stop, show, and wait at each.
 | **G0** | Intake | 2–3 `AskUserQuestion`s: deliverable shape, length, **destination** | Destination is decided. It determines whether there is a voiceover at all — a feed placement that autoplays muted must carry its claim as type in the first two seconds, and narration there is decoration. |
 | **G1** | Direction | Three genuinely different directions, two killed with reasons, each with a named signature move → `BRIEF.md` | One is chosen, and the ONE claim survives *"would every competitor's film make this same claim?"* → `references/direction.md` |
 | **G2** | Stills first | Draft frames as stills, **before any voiceover exists**. "Tell me what's wrong with these frames." | Composition and register are right. Do this and you will render three times instead of seven. |
-| **G3** | Copy lock | A per-beat table: **on screen \| voice**, side by side. Then per-line alternatives for anything flagged. | The user says lock. **Nothing generates voice before this.** → `references/copy.md` |
+| **G3** | Copy lock | A per-beat table: **on screen \| voice**, side by side — and the VO read straight through on its own, as one block. Then per-line alternatives for anything flagged. | The user says lock, on both. **Nothing generates voice before this.** → `references/copy.md` |
 | **G4** | Pre-render | Contact sheet, stills at 10/35/65/90% of every hold, after VO and the measured timeline | Approved, or noted. A still is 40 seconds; a render is a commitment. |
 | **G5** | Note round | The delivered MP4, plus a review encode if it is going over chat | **Two consecutive clean rounds.** Renders are versioned, never overwritten — v5 is how you prove v6 fixed it. |
 | **G6** | Deliverables | Aspect cuts, captions, poster, licences, `HANDOFF.md` | Shipped. |
@@ -113,8 +113,13 @@ it. It ships the rig, not the set: the palette, type and frames are yours to der
    frame is drawn. An empty list is legitimate. The rule governs figures and claims,
    not execution — the film is *drawn*, so nothing real has to be built to make it
    honest. → `references/truth.md`
-2. **The screen and the voice never say the same thing.** Where the voice repeats the
-   screen, the voice is wasted. → `references/copy.md`
+2. **The voice carries the context; the screen carries the evidence.** The viewer
+   arrives knowing nothing. The voice's first job is to say who this is and why
+   they should care — and every line after it must still make sense to someone
+   who has never seen the product. The screen shows *what is true*; the voice
+   says *what is going on*. Where the voice merely repeats the screen it is
+   wasted; where it assumes context the screen has not established, it is worse
+   than wasted, because the viewer stops following. → `references/copy.md`
 3. **Word-locked.** Every reveal sits on a measured word start, never a typed second.
    Audio and alignment come from one generation, so they cannot disagree.
 4. **Determinism.** No `Math.random`, `Date.now`, `new Date`, CSS transitions,
@@ -141,6 +146,9 @@ Each is a real defect that cost real hours.
 | The thought | What it means |
 |---|---|
 | "The copy is basically settled, I'll write the VO now" | Tabulate screen against voice first. Four of ten beats were duplicates and nobody saw it until v4 |
+| "The visuals tell the story, the voice can be oblique" | Then nobody knows what they are watching. Read the VO alone, start to finish, with the picture off: if it does not introduce the situation and carry it, it is not a script |
+| "This line is a great line" | Aphorisms, reversals and "X could be nothing; Y could not" read as a writer performing. Say the plain sentence |
+| "Opening on silence is stronger" | Only if the screen alone establishes the situation. If the voice is carrying context, it starts at zero |
 | "Re-rolling fixed the click" | Two different TTS failures. Re-roll fixes boundary clicks; a trailing artifact needs a guarded trim, or it eats word-final consonants |
 | "I'll run it autonomously to a first cut" | That is exactly how the unusable one was made |
 | "I'll build the real thing so the film is honest" | The film is drawn. Truth governs figures and claims, not execution |

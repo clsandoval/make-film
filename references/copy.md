@@ -5,6 +5,49 @@ and it is the only thing that catches the defect below.
 
 **Law 2: the screen and the voice never say the same thing.**
 
+## The voice writes for someone who arrived by accident
+
+The viewer has no context. They did not read the landing page, they do not know
+the product, and they have not been told whose problem this is. **Establishing
+that is the voice's job**, and it is the job the picture cannot do — a frame can
+show a number is 3%, it cannot say who should care.
+
+So the first line names the situation in plain words:
+
+> *Imagine you run sales at a car parts distributor, and one of your reps wants
+> a raise.*
+
+and every line after it still makes sense to that same person. A line that only
+lands if you already understood the previous frame is a line that loses them.
+
+**The test: read the VO alone, top to bottom, with the picture off.** If it does
+not tell a stranger what is happening, it is not a script — it is a set of
+captions. Do this before generating a single second of audio; it costs nothing
+and it is the failure that survived three rewrites on the film this skill was
+extracted from.
+
+### The two ways a line fails
+
+| Failure | What it sounds like | Fix |
+|---|---|---|
+| **Repeats the screen** | Screen: `3% of the spread is the rep`. Voice: *"Only three percent of it is the rep."* | Say the thing the frame cannot: who it matters to, what it costs, what happens next |
+| **Assumes context** | *"Her advantage could be nothing at all. His could not."* | Name them. Say what the advantage was and why anyone was counting it |
+
+The second failure is the dangerous one, because it reads well on the page. Lines
+built as aphorisms — reversals, parallel clauses, "X could be nothing; Y could
+not" — are the writer performing. They scan beautifully in a table and leave a
+first-time viewer with nothing to hold. **Plain, ordinary sentences, in the order
+things happen.** If a line would sound strange said out loud to a colleague, it
+is wrong.
+
+### Silence at the open is a privilege, not a default
+
+Opening cold with no narration is strong *only when the screen alone establishes
+the situation*. If the voice is carrying the context — and for any film about an
+unfamiliar product it is — then it starts at zero. A silent first beat followed
+by a voice that assumes you understood it is the worst of both.
+
+
 ## The failure it catches
 
 The launch film shipped four versions before anyone put its on-screen copy and its voiceover
