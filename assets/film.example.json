@@ -1,0 +1,33 @@
+{
+  "name": "example-film",
+  "fps": 30,
+  "stage": { "w": 1920, "h": 1080 },
+  "ground": "0xffffff",
+  "safe_margin": 210,
+  "poster_at": 4.0,
+
+  "voice": {
+    "id": "REPLACE-WITH-YOUR-ELEVENLABS-VOICE-ID",
+    "model": "eleven_v3",
+    "stability": 0.5,
+    "similarity_boost": 0.75,
+    "style": 0.0
+  },
+
+  "caption": { "font": "Inter", "size": 44, "colour": "&H00111111", "fontsdir": "assets/fonts" },
+
+  "frames": [
+    { "id": "01-open", "pad": 3.2 },
+    { "id": "02-claim", "pad": 1.15, "vo": "It answers in the thread, where your team already is." },
+    { "id": "03-close", "pad": 2.4, "vo": "That was the whole setup." }
+  ],
+
+  "sfx": [
+    { "sound": "click", "at": 1.22, "gain": 0.3 },
+    { "sound": "sub", "at": ["03-close", "whole"], "gain": 0.42 }
+  ],
+
+  "probes": {
+    "hits": [{ "cursor": "cursor", "target": "authorize", "at": 1.3 }]
+  }
+}

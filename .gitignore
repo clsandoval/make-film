@@ -1,0 +1,12 @@
+node_modules/
+renders/
+stills/
+deliverables/
+assets/voice/
+assets/sfx/
+assets/mix*.wav
+timeline.js
+timeline.json
+audio_meta.json
+.env
+.probe-frame.png
