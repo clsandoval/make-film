@@ -191,9 +191,9 @@ of every descendant (`x, y, w, h, opacity, color, filter, className, textContent
 records the last time the signature changed, and prints the margin against the deadline.
 
 **The mis-application:** reading "nothing ends unresolved" as "nothing may be *moving*", and
-then as "there must be zero change-points in the tail". Enforced that way it froze **24% of a finished
-film** into dead stills — long tails where nothing at all happened, which reads
-as a hung player, not as composure.
+then as "there must be zero change-points in the tail". Enforced that way it froze **24% of a
+finished film** into dead stills — long tails where nothing at all happened, which reads as a
+hung player, not as composure.
 
 The distinction, stated as a table:
 

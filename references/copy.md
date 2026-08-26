@@ -55,9 +55,8 @@ The header the locked script actually ships with says it in one sentence:
 
 ## "The voice is wasted"
 
-A voiceover has a fixed budget: roughly two to three words a second, for the length of the
-film, and no more. Every second spent re-reading the screen is a second not spent on the
-thing only a voice can do — naming the *absence* of work, the tone, the consequence, the
+A voiceover has a fixed budget — the length of the film, and not a word more. Every second
+spent re-reading the screen is a second not spent on the thing only a voice can do — naming the *absence* of work, the tone, the consequence, the
 thing the viewer is not having to do.
 
 The cost is measurable. One film cut every line that duplicated on-screen copy and its

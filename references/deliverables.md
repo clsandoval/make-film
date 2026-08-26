@@ -66,8 +66,9 @@ This continues the gradient seamlessly. It works only because every frame in tha
 its first and last ~20 rows clear of content — there is nothing in those strips to smear.
 Reserve that margin at storyboard time or this technique is unavailable to you.
 
-A raw edge strip carries film grain, and stretching it 30x turns the grain into vertical
-streaks; blur the bands horizontally, or generate them from a de-grained pass.
+A raw edge strip carries film grain, and stretching a 16-row strip into a 571 px band turns
+that grain into vertical streaks; blur the bands horizontally, or build them from a de-grained
+pass.
 
 ## Trap 2 — libass sizes a bare `.srt` against 384x288
 
