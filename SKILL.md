@@ -33,7 +33,7 @@ Everything between them runs unattended. Stop, show, and wait at each.
 | **G1** | Direction | Three genuinely different directions, two killed with reasons, each with a named signature move → `BRIEF.md` | One is chosen, and the ONE claim survives *"would every competitor's film make this same claim?"* → `references/direction.md` |
 | **G2** | Stills first | Draft frames as stills, **before any voiceover exists**. "Tell me what's wrong with these frames." | Composition and register are right. Do this and you will render three times instead of seven. |
 | **G3** | Copy lock | A per-beat table: **on screen \| voice**, side by side — and the VO read straight through on its own, as one block. Then per-line alternatives for anything flagged. | The user says lock, on both. **Nothing generates voice before this.** → `references/copy.md` |
-| **G4** | Pre-render | Contact sheet, stills at 10/35/65/90% of every hold, after VO and the measured timeline | Approved, or noted. A still is 40 seconds; a render is a commitment. |
+| **G4** | Pre-render | Contact sheet, stills at 10/35/65/90% of every hold, after VO and the measured timeline — **plus an independent agent that LOOKS at them** | Approved, or noted. A still is 40 seconds; a render is a commitment. |
 | **G5** | Note round | The delivered MP4, plus a review encode if it is going over chat | **Two consecutive clean rounds.** Renders are versioned, never overwritten — v5 is how you prove v6 fixed it. |
 | **G6** | Deliverables | Aspect cuts, captions, poster, licences, `HANDOFF.md` | Shipped. |
 
@@ -153,6 +153,9 @@ Each is a real defect that cost real hours.
 | "I'll run it autonomously to a first cut" | That is exactly how the unusable one was made |
 | "I'll build the real thing so the film is honest" | The film is drawn. Truth governs figures and claims, not execution |
 | "The DOM checks pass, the frame is fine" | Look at the picture. One pass found a cursor that had never rendered in any frame |
+| "I looked at the contact sheet myself, it's fine" | You know what you intended, so you see it. Spawn an agent that has only the frames and the director's words. It finds the crop you stopped noticing three renders ago |
+| "The probe is green, so the shot works" | Every probe measures whether something *changed*, never whether it is *readable, framed, or uncropped*. Those are eyes-only |
+| "I'll patch the composition with a quick replace" | A `str.replace` that matches nothing is a silent no-op that reports success. Assert before you replace |
 | "Sample each beat in the middle" | Sample **10**/35/65/90%. The 10% sample is the only one that sees content painted at frame entry that should have been cued |
 | "It's a series, so I'll reuse the frames" | Shared grammar is not shared frames |
 | "Parallel agents can each edit a frame" | One `film.html`. Serialise |
@@ -161,6 +164,27 @@ Each is a real defect that cost real hours.
 | "It's rendering, I'll check back" | Confirm it actually started. A declined permission prompt looks exactly like a long render |
 | "It sounds fine to me" | Measure it, on the delivered file |
 | "Small tweak, no need to re-verify" | Small tweaks are how a −14 LUFS master became a clipped one |
+
+## Have someone else look at the frames
+
+**You are the worst possible reviewer of your own frames.** You know what each one
+is meant to show, so your eye supplies what the picture is missing. Every layout
+defect in this skill's history — a cursor that never rendered, `undefined` printed
+on screen, a card sliced by the composer bar, a headline clipped off the right edge
+— survived because the author looked and saw the intent.
+
+At G4, before any render, dispatch an agent whose only inputs are:
+
+- the image files, which it must actually open, not read the code
+- what the film is supposed to be
+- **the director's requirements quoted verbatim, in their own words**
+
+Then ask it, per frame: what is cut off, what is too small to read, what is empty,
+what looks broken. Tell it to be blunt and rank worst-first. A reviewer holding the
+director's exact words checks them literally — which is the point, because "the text
+box is cut off" is a pass/fail question about pixels, not a matter of taste.
+
+Do this **every time the framing changes**, not once at the start.
 
 ## Reference map
 
