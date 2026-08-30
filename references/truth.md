@@ -268,9 +268,23 @@ DOM, and diff that set against the approved list. A real sweep produced:
 > counters animating through.
 
 Note the distinction the sweep forces you to make: an **animating counter passes through
-numbers that are not on the list**. Those are fine — a count-up is a motion, not a claim.
-What must be on the list is every numeral that is *at rest* when the shot settles. Decide
-which rule you are applying and write it beside the sweep result.
+numbers that are not on the list**. A count-up is a motion, not a claim, so those are fine —
+**unless the evidence for the final value is already resolved on screen beside it.** Then the
+in-flight number is not a motion, it is a second claim contradicting the first, and the frame
+says the product got its own answer wrong.
+
+One film's answer beat printed `0.72 - 1.64` as its headline while the interval bracket
+directly beneath it was already drawn at its final `1.09 - 2.49`. Its sweep passed: 51 resting
+numerals, all approved, the counters filtered out exactly as this passage licenses. A blind
+reviewer landed on that frame and called it the worst in the set, on a film whose whole claim
+was that every answer comes with its working.
+
+So sweep the in-flight values too, and for each one ask what else is on screen at that
+instant. A counter running alone is a motion. A counter running above its own resolved
+evidence is a contradiction — hold the number until the evidence lands, or resolve them
+together. What must be on the list is every numeral at rest when the shot settles, plus every
+in-flight value that shares a frame with the resolved form of what it is counting toward.
+Write which rule you applied beside the sweep result.
 
 **An interval rounded outward is a different number from the one the fit produced.** A film
 printed `35–41%` for a credible interval whose endpoints were tighter; both endpoints were on
