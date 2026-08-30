@@ -29,6 +29,13 @@ export async function openFilm(browser) {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto(FILM);
+  // #stage is a fixed-size element and every renderer screenshots THAT element,
+  // not the viewport — so setting FILM_W/FILM_H alone silently produced a file
+  // at the master's size carrying the new aspect's filename. Resize the stage.
+  await page.evaluate(({ w, h }) => {
+    const st = document.getElementById("stage");
+    if (st) { st.style.width = w + "px"; st.style.height = h + "px"; }
+  }, { w: STAGE.w, h: STAGE.h });
   try {
     await page.waitForFunction(() => window.__ready === true, null, { timeout: 15000 });
   } catch (e) {

@@ -92,9 +92,17 @@ def cue(tl: dict[str, object], frame_id: str, needle: str, occurrence: int = 1) 
 
 
 def resolve_time(tl: dict[str, object], spec: object) -> float:
-    """A cue time is either a number, or ["frame-id", "word"] / [.., .., occurrence]."""
+    """A cue time is a number, ["frame-id", "word"] / [.., .., occurrence], or
+    {"frame": .., "word": .., "offset": 0.15} when it must land just off a word.
+
+    Prefer a word form. A number does not survive a VO regeneration: three ticks
+    written as 14.2/15.6/17.0 migrated into the wrong beat when one line was
+    re-recorded, and nothing failed."""
     if isinstance(spec, (int, float)):
         return float(spec)
     if isinstance(spec, list) and len(spec) in (2, 3):
         return cue(tl, str(spec[0]), str(spec[1]), int(spec[2]) if len(spec) == 3 else 1)
-    raise SystemExit(f"bad cue time {spec!r}: want a number or [frame, word]")
+    if isinstance(spec, dict):
+        return cue(tl, str(spec["frame"]), str(spec["word"]),
+                   int(spec.get("occurrence", 1))) + float(spec.get("offset", 0.0))
+    raise SystemExit(f"bad cue time {spec!r}: want a number, [frame, word], or {{frame, word, offset}}")

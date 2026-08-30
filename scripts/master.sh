@@ -9,10 +9,13 @@
 # case that produced this loop. So we measure the OUTPUT and correct, up to four
 # times, and fail loudly rather than ship silently off spec.
 set -euo pipefail
+cd "$(dirname "$0")/.."   # every path below is project-root relative
 
 SILENT="${1:?usage: master.sh <silent.mp4> <out.mp4> [mix.wav]}"
 OUT="${2:?usage: master.sh <silent.mp4> <out.mp4> [mix.wav]}"
 MIX="${3:-assets/mix.wav}"
+[ -f "$SILENT" ] || { echo "no video at $SILENT" >&2; exit 1; }
+[ -f "$MIX" ]    || { echo "no mix at $MIX — run build_sfx.py first" >&2; exit 1; }
 I_TARGET=-14; TP_TARGET=-1; LRA_TARGET=11; TOLERANCE=0.2
 
 json_field() { echo "$1" | grep "\"$2\"" | head -1 | sed -E 's/.*: *"?([-0-9.a-z]+)"?,?/\1/'; }
@@ -33,7 +36,7 @@ mkdir -p "$(dirname "$OUT")"
 ADJUST=0
 for attempt in 1 2 3 4; do
   ffmpeg -y -hide_banner -loglevel error -i "$SILENT" -i "$MIX" -filter_complex \
-    "[1:a]loudnorm=I=$I_TARGET:TP=$TP_TARGET:LRA=$LRA_TARGET:measured_I=$I:measured_TP=$TP:measured_LRA=$LRA:measured_thresh=$THRESH:offset=$OFFSET:linear=true,volume=${ADJUST}dB,alimiter=limit=0.891:level=disabled,aresample=48000[a]" \
+    "[1:a]loudnorm=I=$I_TARGET:TP=$TP_TARGET:LRA=$LRA_TARGET:measured_I=$I:measured_TP=$TP:measured_LRA=$LRA:measured_thresh=$THRESH:offset=$OFFSET:linear=true,volume=${ADJUST}dB,alimiter=limit=0.85:level=disabled,aresample=48000[a]" \
     -map 0:v -map "[a]" \
     -c:v libx264 -pix_fmt yuv420p -crf 19 -tune film -movflags +faststart \
     -c:a aac -b:a 256k -ar 48000 -ac 2 -shortest "$OUT"
@@ -44,6 +47,15 @@ for attempt in 1 2 3 4; do
   GOT_TP=$(echo "$READOUT" | grep -oP 'Peak:\s*\K-?[0-9.]+' | tail -1)
   RESIDUAL=$(python3 -c "print(round($I_TARGET - $GOT_I, 3))")
   echo "attempt $attempt: I=$GOT_I LUFS  TP=$GOT_TP dBTP  (residual ${RESIDUAL} LU)"
+
+  # True peak was measured and printed here for four films and gated in none of
+  # them. alimiter's limit is a SAMPLE-peak ceiling; ebur128 measures true peak
+  # and the AAC encode adds inter-sample overshoot on top. Gate the number you
+  # actually shipped.
+  if python3 -c "import sys; sys.exit(0 if $GOT_TP <= $TP_TARGET else 1)"; then :; else
+    echo "true peak $GOT_TP dBTP exceeds $TP_TARGET — lower the alimiter limit. Do not ship." >&2
+    exit 1
+  fi
 
   if python3 -c "import sys; sys.exit(0 if abs($RESIDUAL) <= $TOLERANCE else 1)"; then
     echo "master ok: $OUT"

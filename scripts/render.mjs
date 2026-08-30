@@ -42,7 +42,11 @@ for (let i = 0; i < total; i++) {
   if (i % 30 === 0) process.stdout.write(`\r  ${i}/${total}   `);
 }
 ff.stdin.end();
-await new Promise((r) => ff.on("close", r));
+// A non-zero ffmpeg exit here used to resolve as success: "-> out.mp4", exit 0,
+// truncated file. render-parallel.mjs always checked; the serial path did not.
+await new Promise((resolve, reject) =>
+  ff.on("close", (c) => (c === 0 ? resolve() : reject(new Error("ffmpeg exit " + c))))
+);
 await browser.close();
 
 if (errors.length) {

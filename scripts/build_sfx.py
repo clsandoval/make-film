@@ -95,7 +95,10 @@ def cue_list(tl: dict[str, object]) -> list[tuple[Path, float, float]]:
         sound = spec["sound"]
         if sound not in SYNTHS:
             raise SystemExit(f"unknown sound {sound!r}: have {sorted(SYNTHS)}")
-        path = write_wav(f"{sound}.wav", SYNTHS[sound](int(spec.get("seed", 20260815))))
+        # Key the asset on its seed. Two cues of the same sound with different
+        # seeds both wrote one filename, so every cue got the last seed's audio.
+        seed = int(spec.get("seed", 20260815))
+        path = write_wav(f"{sound}-{seed}.wav", SYNTHS[sound](seed))
         out.append((path, resolve_time(tl, spec["at"]), float(spec.get("gain", 0.3))))
     return out
 

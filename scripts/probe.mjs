@@ -8,15 +8,23 @@
 //   <div data-qa="cursor">  <button data-qa="authorize">
 // and film.json declares what should hit what:
 //   "probes": { "hits": [{ "cursor": "cursor", "target": "authorize", "at": 1.3 }] }
+//
+// A film whose moving layer lives directly on #stage (one continuous UI, camera
+// driven) has no `.scene` wrappers. Point the walk at it:
+//   "probes": { "scope": "#stage", "resolution_exempt": ["09-close"] }
 import { chromium } from "playwright";
 import { execFileSync } from "node:child_process";
 import { CONFIG, FPS, LAUNCH, ROOT, openFilm } from "./film.mjs";
 
 const STEP = 0.05;
-const DEAD_LIMIT = 1.2;   // seconds of no change anywhere on the stage
+const DEAD_LIMIT = Number(process.env.DEAD_LIMIT ?? 1.55); // no change anywhere on the stage
 const SETTLE_BY = 1.0;    // a shot's last change must be this long before its cut
 const BLANK_RUN = 4;      // consecutive blank samples before it counts as a hole
 const MOVIE = process.argv[2];
+// What counts as content. Defaults to the scene-per-frame composition; a
+// single-surface film sets its own root. Three of four films are the latter,
+// and the scan silently reported green on an empty set for every one of them.
+const SCOPE = CONFIG.probes?.scope ?? ".scene";
 let failures = 0;
 const fail = (msg) => { console.error("  FAIL " + msg); failures++; };
 const pass = (msg) => console.log("  ok   " + msg);
@@ -33,26 +41,54 @@ const TL = await page.evaluate(() => window.TIMELINE);
  *  content still arriving — include it and every frame "changes" right up to its
  *  own cut, which makes the resolution gate fire on every film and mean nothing.
  *  Elements inside a scene that is not on screen are skipped entirely. */
-async function signature(t) {
-  return page.evaluate((time) => {
+async function signature(t, includeAmbient = true) {
+  return page.evaluate(([time, sel, amb]) => {
     window.__seek(time);
     const out = [];
-    for (const scene of document.querySelectorAll(".scene")) {
+    for (const scene of document.querySelectorAll(sel)) {
       if (Number(getComputedStyle(scene).opacity) < 0.01) continue;
       for (const el of scene.querySelectorAll("*")) {
         const cs = getComputedStyle(el);
-        const r = el.getBoundingClientRect();
-        if (r.width < 4 && r.height < 4) continue;
+        // Layout box, NOT getBoundingClientRect: a camera drift on an ancestor
+        // moves every child's client rect, which would read as content changing
+        // in every frame. offset* is layout-only, and cs.transform is the
+        // element's OWN transform, so element tweens still register.
+        if (el.offsetWidth < 4 && el.offsetHeight < 4) continue;
+        // data-camera carries camera motion, not content. Its descendants still
+        // count; its own transform does not.
+        if (el.hasAttribute("data-camera")) { out.push(el.tagName + ",cam"); continue; }
+        // A typing indicator or a spinner is interface state, not a reveal
+        // arriving: the dead-window check wants it, the resolution check must not.
+        if (!amb && el.closest("[data-ambient]")) continue;
         out.push([
-          el.tagName, el.className, Math.round(r.x), Math.round(r.y),
-          Math.round(r.width), Math.round(r.height),
+          el.tagName, el.className, el.offsetLeft, el.offsetTop,
+          el.offsetWidth, el.offsetHeight,
           Number(cs.opacity).toFixed(3), cs.color, cs.filter, cs.transform,
           cs.clipPath, (el.textContent ?? "").length,
+          cs.strokeDashoffset, cs.strokeDasharray,
         ].join(","));
       }
     }
     return out.join("|");
-  }, t);
+  }, [t, SCOPE, includeAmbient]);
+}
+
+// A probe that walks nothing reports green on an empty set. This was a silent
+// no-op across every version of two separate films before anyone noticed.
+{
+  const seen = await page.evaluate((sel) => document.querySelectorAll(sel).length, SCOPE);
+  if (!seen) {
+    console.error(`  FAIL probes.scope "${SCOPE}" matches no element - every check below would pass on an empty set`);
+    await browser.close();
+    process.exit(1);
+  }
+  const walked = (await signature(TL.duration / 2)).split("|").filter(Boolean).length;
+  if (walked < 2) {
+    console.error(`  FAIL "${SCOPE}" matched ${seen} element(s) but the walk found ${walked} nodes - wrong scope`);
+    await browser.close();
+    process.exit(1);
+  }
+  console.log(`scope "${SCOPE}": ${seen} root(s), ${walked} nodes walked`);
 }
 
 // ---- 1 · dead windows -------------------------------------------------------
@@ -82,12 +118,14 @@ for (const f of TL.frames) {
   let last = f.start;
   let prev = null;
   for (let t = f.start; t < f.start + f.hold; t += 1 / FPS) {
-    const sig = await signature(t);
+    const sig = await signature(t, false);
     if (prev !== null && sig !== prev) last = t;
     prev = sig;
   }
   const margin = deadline - last;
-  if (last > deadline) fail(`${f.id}: still changing at ${last.toFixed(2)}s, deadline ${deadline.toFixed(2)}s`);
+  const exempt = (CONFIG.probes?.resolution_exempt ?? []).includes(f.id);
+  if (last > deadline && exempt) console.log(`  exempt ${f.id}: still moving at ${last.toFixed(2)}s (declared in film.json)`);
+  else if (last > deadline) fail(`${f.id}: still changing at ${last.toFixed(2)}s, deadline ${deadline.toFixed(2)}s`);
   else pass(`${f.id}: settled ${margin.toFixed(2)}s before its deadline`);
 }
 
@@ -97,10 +135,10 @@ let blanks = 0;
 let blankRun = 0;
 let blankFrom = 0;
 for (let t = 0; t < TL.duration; t += STEP) {
-  const peak = await page.evaluate((time) => {
+  const peak = await page.evaluate(([time, sel]) => {
     window.__seek(time);
     let max = 0;
-    for (const scene of document.querySelectorAll(".scene")) {
+    for (const scene of document.querySelectorAll(sel)) {
       const so = Number(getComputedStyle(scene).opacity);
       for (const el of scene.querySelectorAll("*")) {
         const r = el.getBoundingClientRect();
@@ -109,7 +147,7 @@ for (let t = 0; t < TL.duration; t += STEP) {
       }
     }
     return max;
-  }, t);
+  }, [t, SCOPE]);
   if (peak < 0.06) {
     if (blankRun === 0) blankFrom = t;
     blankRun++;

@@ -32,11 +32,23 @@ MASTER="${1:-$(ls -t renders/${NAME}-v*.mp4 2>/dev/null | head -1)}"
 OUT=deliverables; mkdir -p "$OUT"
 echo "master: $MASTER"
 
+# A master already taller than it is wide was composed vertical. Cropping a
+# square out of it cuts content off both ends, and stacking it into 9:16 is
+# meaningless. A different aspect is a different COMPOSITION — render it with
+# FILM_PAGE/FILM_W/FILM_H — never a crop of this one.
+MW=$(ffprobe -v error -select_streams v:0 -show_entries stream=width  -of csv=p=0 "$MASTER" | head -1)
+MH=$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 "$MASTER" | head -1)
+PORTRAIT=0; [ "$MH" -gt "$MW" ] && PORTRAIT=1
+
 # ---- 1:1 -------------------------------------------------------------------
+if [ "$PORTRAIT" = 1 ]; then
+  echo "1:1 skipped: master is ${MW}x${MH}, composed vertical"
+else
 ffmpeg -y -loglevel error -i "$MASTER" \
   -vf "scale=1080:-2,pad=1080:1080:0:(oh-ih)/2:$GROUND" \
   -c:v libx264 -pix_fmt yuv420p -crf 19 -tune film -movflags +faststart \
   -c:a copy "$OUT/$NAME-1x1.mp4"
+fi
 
 # ---- 9:16 ------------------------------------------------------------------
 # Centre-crop to the safe margin so the picture fills more of a vertical frame,

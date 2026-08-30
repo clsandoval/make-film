@@ -90,7 +90,19 @@ def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     key = api_key()
     meta: dict[str, object] = {"voice_id": voice_id(), "model": VOICE["model"], "frames": {}}
+    # Re-roll only what changed. A take is a performance the director approved;
+    # regenerating an unchanged line gives you a different one nobody chose.
+    # Delete assets/voice/<id>.wav to force a re-roll of that line.
+    prior = {}
+    meta_path = ROOT / "audio_meta.json"
+    if meta_path.exists():
+        prior = json.loads(meta_path.read_text()).get("frames", {})
     for name, text in lines().items():
+        keep = prior.get(name)
+        if keep and keep.get("text") == text and (OUT / f"{name}.wav").exists():
+            print(f"  {name:16} unchanged, keeping the approved take")
+            meta["frames"][name] = keep
+            continue
         meta["frames"][name] = synth(key, name, text)
     total = sum(float(f["duration"]) for f in meta["frames"].values())
     meta["spoken_total"] = round(total, 2)
