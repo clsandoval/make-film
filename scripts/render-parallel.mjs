@@ -12,10 +12,11 @@ import { chromium } from "playwright";
 import path from "node:path";
 import fs from "node:fs";
 import os from "node:os";
-import { FPS, LAUNCH, ROOT, openFilm } from "./film.mjs";
+import { FPS, LAUNCH, ROOT, SHARDS as DEFAULT_SHARDS, openFilm } from "./film.mjs";
 
 const OUT = process.argv[2] ?? path.join(ROOT, "renders/silent.mp4");
-const SHARDS = Number(process.argv[3] ?? Math.max(2, Math.min(8, os.cpus().length - 2)));
+// Shared with probe.mjs, which derives its seam frames from the same number.
+const SHARDS = Number(process.argv[3] ?? DEFAULT_SHARDS);
 fs.mkdirSync(path.dirname(OUT), { recursive: true });
 
 const probe = await chromium.launch(LAUNCH);

@@ -87,6 +87,18 @@ second they are not following.
 **Check the screen copy too.** A term cut from the voice usually survives in a
 headline, because the headline was written first and nobody re-reads it.
 
+### An eyebrow is a caption, not a line of the film
+
+The one form that survives labels the data on screen: `2015-2022 · ELECTRICITY, BY COUNTRY`.
+`WHAT YOU SAY, ONCE` narrates what the beat is doing, and got cut on sight. If it does not
+label what you are looking at, delete it.
+
+### Type a headline one line at a time
+
+A headline typed word by word breaks wherever the type-on happens to have reached, and one
+film left *"Your"* orphaned on a line of its own for 1.7s. Cue each line as a single unit
+instead of typing across the break.
+
 ### Silence at the open is a privilege, not a default
 
 Opening cold with no narration is strong *only when the screen alone establishes
@@ -120,7 +132,11 @@ audio four times, and four renders had been paid for on copy that was going to c
 
 ## The gate
 
-A per-beat table. Three columns. Nothing else.
+A per-beat table, persisted with four columns — and no `start → end`: frame starts come from
+`build_timeline.py`, which runs after this gate, so filling that column means guessing
+durations. **Show the director two of them: on screen, and VO.** `#` and `Frame` are join
+keys, not reading matter; asked three times, the note landed as "just show me voice script
+and on screen text thats it".
 
 | # | Frame | On screen | VO |
 |---|---|---|---|
@@ -141,6 +157,12 @@ form; the frame shows a command being typed and deleted, the voice names what th
 means. Row 10 passes because the headline states the claim and the voice draws the
 conclusion; an earlier draft had them say the same words, at the highest-value second in the
 film. Row 04 passes because "if you like forms" is a tone the wizard cannot carry.
+
+**The close is the one place the director overrules you.** The close above prints *Setup is
+a conversation.* while the voice says *That was the whole setup.* — close enough that an
+adversarial reviewer called it the film's worst moment and asked for the split to go
+further. The director's answer was *"its ok of kts the same as the voice."* Offer the
+split; if the note comes back, take it.
 
 The header the locked script actually ships with says it in one sentence:
 
@@ -187,35 +209,46 @@ Because holds are `vo.duration + pad`, a single changed line changes that frame'
 which moves every later frame's start, which moves every reveal, SFX cue and caption in the
 film. A copy change after voice is not an edit; it is a rebuild.
 
-The corollary: **regenerate only the lines whose copy changed.** Re-rolling a line the
-director already approved gives you a different performance nobody chose.
+The corollary — **regenerate only the lines whose copy changed** — is enforced for you.
+Re-rolling a line the director already approved gives you a different performance nobody
+chose, so `gen_vo.py` reads the existing `audio_meta.json` and skips any frame whose `vo`
+text is unchanged and whose wav is still on disk, printing `unchanged, keeping the approved
+take`. Three consequences: `audio_meta.json` is an **input** as well as an output, so deleting
+it re-rolls every approved take; the way to force one line to re-roll is to delete
+`assets/voice/<id>.wav`; and because the skip key is the text and the wav alone, **changing the
+voice re-rolls nothing** — swap `voice.id`, `model` or any `voice_settings` value and every
+line is kept while `audio_meta.json` is rewritten with the new `voice_id` over the old voice's
+audio. Delete `audio_meta.json` after any change to the `voice` block, or the provenance file
+states something false about the mix.
 
-## Running the gate mechanically
+### Punctuation is the duration control
 
-The table can be built by hand, and for a ten-frame film that is fine. It can also be dumped
-from the composition, which is better, because it reports what the frame *actually renders*
-rather than what the storyboard says it renders.
+A full stop makes the model pause hard. One rewritten line carrying four of them came
+back at **12.56s**; the same sense repunctuated onto commas came back at **9.12s** — 27%
+shorter, not a word changed. A line that reads right but runs long gets repunctuated
+before it gets reworded, and never gets fixed by trimming the pad — the pad is the breath
+after the last word, not slack.
 
-`dump_copy.mjs` in the reference implementation does this in about thirty lines: launch the
-page, wait for `window.__ready` and `document.fonts.ready`, then for each frame in
-`timeline.json`
+## Re-run the gate when the picture changes, not only when the copy changes
 
-- seek to `start + hold - 0.6` — near the end of the hold, when everything the frame ever
-  shows is up;
-- walk the frame's DOM subtree collecting text nodes, **skipping any element whose computed
-  opacity is below 0.08** (so content that has not been revealed yet is not counted), and
-  emitting images as `[filename]`;
-- print one JSON line per frame: `{id, start, hold, vo, screen}` where `vo` is the frame's
-  words joined from the alignment.
+The table is a contract between this voice and this picture, and after the lock it is the
+picture that moves. One film shipped a spoken *"four different POS systems"* over a screen
+showing Stripe, HubSpot, Mailchimp and Notion.
 
-Two things that makes possible which a hand-written table cannot:
+**At G2 the table is hand-written.** It has to be: the mechanical version reads
+`timeline.json`, which does not exist until the voice has been generated, and nothing
+generates voice before this gate passes.
+
+After the lock, dump it from the composition instead — `node scripts/dump_copy.mjs` prints one
+JSON line per frame, `{id, start, hold, vo, screen}`. It seeks to `start + hold - 0.6`, near
+the end of the hold when everything the frame ever shows is up, and walks the frame's subtree
+skipping any element whose computed opacity is under 0.08, so content that has not been
+revealed yet is not counted. Two things it can do that a hand-written table cannot:
 
 - **It catches copy that exists in the HTML but never becomes visible**, and copy that is
   visible but was never in the script.
 - **The `vo` column comes from the alignment**, so the table is generated from the audio that
-  will actually ship, not from the script file that may have drifted from it.
-
-Run it, paste the two columns into the table, and take the table to the director.
+  will actually ship, not from a script file that may have drifted from it.
 
 ## Notes worth keeping in the locked script
 
@@ -298,3 +331,11 @@ at number three where nobody looked."* Longer. Plainer. Actually says what happe
 Symptoms that you are writing lines instead of sentences: parallel clauses,
 reversals, a colon or a dash doing dramatic work, any sentence you would be pleased
 to see quoted. **Write it as if explaining to a colleague who just walked in.**
+
+The same note arrives about the scenario, not only the sentence. A beat built on someone
+sending a photo came back as *"no one sends a photo, just say different POS system or
+something"*; a framing came back as *"say vega wants a raise not bills the framing is
+employee"* — which is why the first line on this page is *one of your reps wants a raise*
+and not a number. When several of those land in a row it stops being a line note and
+becomes *"i dondont l this isn't very straightforward it needs to be more straightforward
+... keep it stupid simple"*.

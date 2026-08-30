@@ -112,7 +112,7 @@ palettes for the same storyboard would have told the director nothing.
 ## The signature move
 
 Every film worth remembering does one thing no other film does, and it must be nameable in
-one sentence. Three constraints:
+one sentence. Four constraints:
 
 - **It expresses the claim.** If it would work unchanged on an unrelated product, it is a
   flourish.
@@ -120,6 +120,19 @@ one sentence. Three constraints:
   off in the middle, resolved at the end.
 - **It is cheap enough to execute perfectly.** An ambitious move at 70% is worse than a
   simple one at 100%.
+- **It fills the frame.** One film's move made a single bottle carry both the product and
+  the chart, which forced every other element flat; three independent review rounds measured
+  **57–86% of every frame as bare ground** and the film was killed on it. Photoreal fixed its
+  look and broke its argument — a photographed bottle cannot be 39% of anything. Another film
+  logged the same class: *"Beat 01 is ~55% empty panel"*. Before locking the move, draw one
+  frame at final scale and ask what else is in it. "Cheap enough to execute perfectly" includes
+  cheap enough to fill.
+
+**Budget density across the film while you storyboard, not after.** For a 45s film: roughly
+three dense shots, four still or near-still, type frames at the ends. Nine equally busy frames
+have no dynamics, and nine equally empty ones read as a placeholder. The probes cannot help
+here — a dead-window check finds a frame where nothing *changes*, never one where nothing
+*is*.
 
 Three real ones, from three different films:
 
@@ -140,11 +153,34 @@ Three real ones, from three different films:
 Note what all three have in common: each is a *rule about the whole film*, not an effect on
 one shot, and each one, stated aloud, is also a statement of the claim.
 
+## One register per shot
+
+A drawn overlay on a photographed plate reads as a mistake, not a composite. Two rounds of
+notes on one film reduce to a single rule — *"we can't … have the drawn image at the same
+time as the real render … if we're drawing it can be drawing the bottles like we can only use
+the html"*, then *"i don't want it to be split screen anymore if we're showing the chat we
+only show the chat if we're not showing the chat then we show the solar system thing"*.
+
+If a film uses two registers, the cut between them is the only place they meet: hard cuts,
+never simultaneity. Write it into `BRIEF.md` as a sentence a still can be audited against —
+*Showing the thread means showing only the thread.*
+
 ## Deriving the look from the subject
 
-**Pull the palette from the subject's live CSS custom properties, not from a storyboard's
-stated hexes and not from the last film you made.** A storyboard's colours drift from the
-product within a week; the site's tokens are the product.
+**Name the palette authority at G0 and echo the hexes back before a frame is drawn.** Two
+authorities compete on almost every film — the product's own live CSS and the parent company's
+brand kit. The director had to say it twice, in opposite directions: once *"you didnt follow me
+at all, i said use the light … palette"* pointing at the product's own site, once in capitals
+demanding the parent kit, *"USE THE FUCKIGN … BRAND PALETTE WHITE BLUE GODDAMNIT"*. The first
+cost a wasted round; the second cost a whole-film colour flip, a near-black cabinet and its
+peach rebuilt to `#F7F7F7` / `#0C1F40` after the film was already cut. One line in `BRIEF.md`
+settles it. The brief rewritten after the first of those reversals opens by naming the loser — *"rust …
+is in both prior films but not in the … kit; the kit is the named authority here"* — and its
+palette never moved again.
+
+**Pull the palette from the named authority's live CSS custom properties, not from a
+storyboard's stated hexes and not from the last film you made.** A storyboard's colours
+drift from the product within a week; the site's tokens are the product.
 
 Do this literally: open the subject's stylesheet, read the custom properties, and build the
 brief's palette table out of them with the token name intact, so anyone can re-derive it.
@@ -159,6 +195,10 @@ only to show the shape:
 | `--accent` | *peach* | the one accent, on the dark surface |
 | `--hairline` | *hairline* | rules |
 | product-panel tokens | *panel bg / raised / sunken / text / dim* | the product's own chrome — the proof |
+
+A small label above a headline naming the section is a slide convention, not a film one — the
+frame already shows which section this is. One was cut on sight: *"remove the eyebrow text
+above the copy at the top"*.
 
 **Fetch the CSS, not the page.** A markdown-converting fetch strips every declaration, and
 a page's inline hexes are not its palette. Get the theme's own stylesheet and rank hexes by
@@ -182,16 +222,47 @@ means something. A film in a font the product does not use is a film about a dif
 Write it as a sentence in `BRIEF.md`, and make it a *number*, not a vibe.
 
 The launch film's budget: **one accent, two surfaces.** Rust on the paper ground (typing
-caret, eyebrow, the frame numerals, the close link); peach on the dark panel (hero stat,
-filename, slider, chart, CTA pill). The reason is measured, not aesthetic: rust fails
-contrast on the panel's background, and peach is what the site itself already uses on dark.
-Syntax highlighting is restricted to hues that already exist in the palette. No foreign hue
-anywhere.
+caret, the frame numerals, the close link); peach on the dark panel (hero stat, filename,
+slider, chart, CTA pill). The reason is measured, not aesthetic: rust fails contrast on the
+panel's background, and peach is what the site itself already uses on dark. Syntax
+highlighting is restricted to hues that already exist in the palette. No foreign hue anywhere.
 
 A second film derived its budget from measured contrast ratios against its ground and
 concluded that **all three of its accents sit between 1.27:1 and 2.10:1, so they are fills,
 rules and spines only — never type.** One accent appeared in exactly one place in the whole
 film and never returned. That is a budget you can audit a still against.
+
+### The ratio assigns the job
+
+A palette is a list of `(token, ground, measured ratio, permitted job)`. Measure every token
+against the ground it actually sits on, and let the number assign the job:
+
+| Measured ratio on its ground | The only job it may hold |
+|---|---|
+| **≥ 4.5:1** | body type, and anything small |
+| **3:1 – 4.5:1** | large type only, ≥ 24px |
+| **2:1 – 3:1** | fills, rules, bars, spines — never type |
+| **below 2:1** | nothing. At this ratio the token is optically absent, not subtle |
+
+One shipped film carries a 1.27:1 rule and gets away with it. That is a survival, not a
+permission: read the bottom row as "you are relying on something the viewer cannot see", and
+say so in `BRIEF.md` if you keep it.
+
+Two films paid for the two ends of that table. One inverted a dark cut to paper and set
+`--accent: #0C1F40` — byte-identical to `--text`. *"That leaves a film with no accent at all:
+the goo, the burst rings and the floor-after were all drawn in the same navy as every
+headline, so the one moment the film exists to show looked like nothing happening."* The
+repair was five declarations — split `--accent` (type, 15.25:1) from `--fill` (fill), because
+`#44a171` measures 2.98:1 on `#F7F7F7`, *"a good fill and a bad typeface"*. The budget it
+landed on is one line: **green never sets type; navy never fills.**
+
+The other shipped a theme's `#cecece` as a partition inside a glass bottle. It *"sat at
+1.58:1 against both the empty glass above it and the white label over it — a third of the
+partition was optically absent and read as the unfilled top of the bottle."* Darkened once,
+to `#8f8f8f`, and recorded with the measurement.
+
+Most brand primaries fail 4.5:1 on a light ground, so derive the darkened variant once, at G1,
+and record its ratio in the table. Prove each row with a number, never by eye.
 
 ## Counter-example — the claim nobody could distinguish
 
@@ -218,9 +289,29 @@ Two more things this cost, both traceable to the same missing gate:
   hand so it would read on the invented dark ground. The style guidance forbids exactly that.
   The asset was deleted, with a note telling the next person not to regenerate it.
 
-Run question 2 at G1 and none of this happens.
+Question 2 catches neither of those: it tests the claim, not the style guide. The missing
+step is earlier and duller — **read the subject's published brand or style guidance before
+you write the three directions**, and record in `BRIEF.md` which of its rules constrain the
+film. Both reversals were breaches of rules already written down, in a document nobody had
+opened.
 
-## Counter-example — a series is not a reason to skip having a look
+## Watch the last films, not their briefs
+
+A `BRIEF.md` records what a film was meant to argue; the grammar you are inheriting or
+breaking exists only in the frames. One series was designed off three briefs without a single
+MP4 being opened, and the note was *"LOOK AT L THE FUCKING OTHER VIDEOS WE MADE MAN"*. The
+concession, once the files were played, was *"Fair — I read the briefs but never actually
+looked at the films."* An hour gone.
+
+Then test the new film against the last one, not only the three directions against each other.
+Surface sameness is the cheap kind and *Three directions means three FORMS* kills it; the
+expensive kind is structural: *"the two films look nothing alike and are structured almost
+exactly alike"* — *"sameness survives in structure after it has been eliminated from surface."*
+Four films now share one chassis — paper ground, a dark thread panel, a chart — so diff the
+arc, the rhetorical device, the climax mechanic, where the turn lands, and the ending. If four
+of those five match the last film, you have rewritten it in a new palette.
+
+### What that costs — a series is not a reason to skip having a look
 
 A three-short series proposed, as its first direction, a persistent labelled progress bar in
 a fixed position across all three shorts, inheriting the previous film's grammar wholesale.
@@ -240,9 +331,14 @@ never has to name its own acts.
 - The **ONE claim**, in one sentence, in the subject's own words if it has them.
 - The angle: how the film argues the claim, and what it deliberately refuses to show.
 - The three directions with two struck through and reasons attached.
-- The signature move, one sentence.
-- The palette table, sourced from live CSS, with the token names.
-- The accent budget, as a rule you could audit a frame against.
+- The signature move, one sentence, and what else is in the frame while it happens.
+- The register rule, as a sentence a still can be audited against.
+- The named palette authority — the subject's own CSS or the parent kit — and which of the
+  subject's published style rules constrain the film.
+- The palette table, sourced from that authority's live CSS, with the token names and each
+  token's measured ratio against the ground it sits on.
+- The accent budget, as a rule you could audit a frame against, with the job each token is
+  permitted to hold.
 - Type: families, roles, and the fact that they are served locally.
 - Approved figures and the refused list — see `references/truth.md`.
 - Destination (feed-muted / landing hero / sales attachment), because it decides whether

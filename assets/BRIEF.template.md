@@ -26,12 +26,30 @@ out five hours in.
 Derive it. Do not inherit it from the last film, and do not trust a storyboard's
 stated hexes — pull the live values.
 
-| Token | Value | Use |
-|---|---|---|
+| Token | Value | Ground | Measured ratio | Permitted job |
+|---|---|---|---|---|
 
-**Accent budget** · One accent. Write down where it may appear — typically one
-emphasis word per headline, stat numerals, the active step, state flips, the CTA. A
-third hue is almost always a mistake.
+Measure every token against the ground it actually sits on and let the number
+assign the job: ≥ 4.5:1 body type and anything small · 3:1–4.5:1 large type only
+(≥ 24px) · 2:1–3:1 fills, rules, bars, spines and never type · below 2:1 the
+token is optically absent. Prove each row with a number, never by eye.
+
+**Accent budget** · <N> accents, each with its measured ratio and the one job
+that ratio permits. Write where each may appear. The number is a measurement,
+not a preference — one film's three accents all measured between 1.27:1 and
+2.10:1, so all three were fills and rules and none of them ever set type. If your
+accent hex is also your type hex, the film has no visible accent: split the
+declaration.
+
+**Register rule** · <one sentence a still can be audited against — e.g. "showing
+the thread means showing only the thread". Two registers meet at a hard cut and
+nowhere else.>
+
+**Published style guidance** · <which of the subject's own published brand or
+style rules constrain this film. Read it before writing the three directions. A
+film built in a register its guide forbids cost four simultaneous reversals —
+ground, layout, numbering and logo treatment — plus a hand-recoloured wordmark
+the guide explicitly forbids.>
 
 **Type** · <display / body / mono. Served locally, never from a CDN — a render must
 not depend on a network.>

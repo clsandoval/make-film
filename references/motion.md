@@ -28,7 +28,7 @@ and three at the bottom are the entire renderer API:
 
 ```js
 master.pause(0);
-window.__seek = (t) => { master.seek(t, false); };   // false = suppress callbacks-on-seek side effects
+window.__seek = (t) => { master.seek(t, false); };   // false = do NOT suppress events; .call() fires on the crossing
 window.__duration = TL.duration;
 window.__ready = true;
 ```
@@ -69,8 +69,9 @@ as a dropped frame — offset within the remaining range instead of rejecting.
 
 ### Grain from an offset table
 
-Film grain is one tiled PNG generated once, positioned by a fixed offset table stepped as a
-series of `master.set()` calls — eight offsets at 12 steps per second:
+The texture is one tiled PNG generated once, or an inline `feTurbulence` data URI — which is
+what the skeleton ships, so there is no asset to build. It is positioned by a fixed offset
+table stepped as a series of `master.set()` calls, eight offsets at 12 steps per second:
 
 ```js
 const GRAIN = [[0, 0], [-91, 47], [63, -112], [-140, -33], [111, 88], [-27, 131], [148, 19], [-72, -95]];
@@ -80,8 +81,17 @@ for (let i = 0; i * (1 / 12) < TL.duration; i++) {
 }
 ```
 
-The layer is inset well beyond the stage (`inset: -256px`) so the offsets never expose an
-edge, at low opacity with `mix-blend-mode: multiply`.
+The layer is inset beyond the stage — every shipped film uses `inset: -20%` — so the offsets
+never expose an edge, at low opacity with `mix-blend-mode: multiply`.
+
+**Mask the grain off near-black areas while you are writing it.** Grain over near-black
+defeats the encoder: 65 s came out an 85 MB master where the same cut without grain encodes at
+21 MB. This is a compositional decision made here, not a delivery check — though check the
+master's size against the CRF budget before you ship it too.
+
+**And mark the node `data-camera`.** Grain is camera, not content: unmarked, its 12-per-second
+step makes every frame read as never settling and makes a dead window unreachable. See
+`references/qa.md`, "The two gates need different signatures".
 
 **The grain will break your stillness checks.** A real QA run reported all seven shots "still
 moving" at the cut. It sampled 0.25s apart; grain steps every 1/12s over an eight-entry
@@ -104,6 +114,29 @@ master.call(() => { light(drawAt(LAST)); el.classList.remove("resolved"); }, [],
 This is also why parallel render shards must be **contiguous** ranges, each seeking
 monotonically forward through its own span. Interleaved shards corrupt exactly the frames
 that depend on a `.call()`.
+
+### `fromTo`, `to`, and writing from the playhead
+
+"`fromTo`, never `to`" is half a rule.
+
+- **One state change on a property:** `fromTo`. Add `immediateRender: false` when the
+  from-state must not be visible before its cue — otherwise the ripple or the badge is up on
+  frame 0.
+- **Two or more state changes on one property:** neither `to` nor `fromTo` is safe. "Converting
+  these to `fromTo` is **not** a fix — a `fromTo` that has not started still applies its
+  from-state, so stacking those re-creates the bug." Compute the value from the playhead in one
+  `onUpdate` and write it once.
+
+A determinism pass on one film found ten stacked `fromTo` tweens on a single headline.
+Converting them to playhead-derived writers fixed the backward seeks.
+
+### Thread after sorting, not before
+
+A chain of scroll segments threaded at declaration time and then sorted by time gives every
+segment the *file-order* predecessor instead of the temporal one. One film shipped that way:
+"Beat 08 played back with the thread parked off-screen at scale 0.455 from ~47.8s: the
+ranking, the whole payoff, never appeared." The probe was green throughout. Sort first,
+thread second.
 
 ## Fonts before layout
 
@@ -131,6 +164,10 @@ after `fonts.ready`. A real composition sets it on every element that types or c
 42px on a body line, 84px on a two-line block, 200px on a five-line message, 63px on a panel
 header, 27px on an inline span.
 
+**Reserve a text body's height, never a panel's.** A panel sized to its final height while its
+rows are still empty is a large hollow slab — about a second of dead area, on three separate
+frames across two films. The rows inside reserve; the panel grows to fit them.
+
 ## Entrances, easings and staggers
 
 A consistent motion vocabulary is what makes ten frames read as one film. One shipped
@@ -141,10 +178,10 @@ are the transferable part:
 |---|---|---|---|
 | Frame crossfade in | `fromTo` opacity 0 -> 1 | 0.42 | `power2.out` |
 | Frame crossfade out | `to` opacity 0, starting at `start + hold - 0.42 * 0.5` | 0.42 | `power2.in` |
-| Panel / card entrance | `fromTo` `{y: 26-34, opacity: 0}` -> `{y: 0, opacity: 1}` | 0.60-0.75 | `power3.out` |
+| Panel / card entrance | **Two tweens**: `fromTo` `{y: 26-34}` -> `{y: 0}` over the full duration, `fromTo` opacity 0 -> 1 over 0.22. Ramping both together is the grey-slab bug — see below | 0.60-0.75 | `power3.out` |
 | Line or row reveal | `fromTo` `{opacity: 0, x: -14}` or `{opacity: 0, y: 10-14}` | 0.28-0.42 | `power2.out` |
 | Button press | scale 1 -> 0.96 then back to 1 | 0.10 down, 0.16-0.18 up | `power2.in` / `power2.out` |
-| Pointer travel | `to` `{x, y}` | 0.52-0.55 | `power2.inOut` |
+| Pointer travel | `to` `{x}` and `to` `{y}` as separate tweens, different eases | 0.52-0.55 | `power2.inOut` / `power2.out` |
 | Colour sweep across a set | `to` `{color}` with `stagger` | 0.55 | `power2.out` |
 | End-card arrival | `fromTo` `{y: 40, opacity: 0}` | 0.80 | `back.out(1.5)` |
 
@@ -164,6 +201,21 @@ function typeInto(el, text, tl, start, dur) {
 }
 ```
 
+### `tabular-nums` on anything that counts
+
+Proportional numerals have different widths, so a count-up reflows its own box on nearly every
+frame and visibly jitters. The skeleton ships `.num` for exactly this; `countTo()` writes into
+an element that needs it. Two films discovered the rule by hand instead. Grow a numeral with
+`transform: scale`, never `font-size`.
+
+### Nothing pops
+
+Every visibility change is a tween of **0.20s or longer**. One film had everything from 30s on
+built as `opacity: 1/0` toggles plus two blinking badges; the note back was "30 seconds onwards
+is ugly shits clipping in and out etc". The probe cannot find this for you: every check it runs
+fires on the absence of change, and a pop is a change. Nothing in it measures how long a
+visibility change took.
+
 ### Reveals sit on words, not on seconds
 
 Law 3. Every reveal's position argument is `cue(frameId, "word")` — the film-time start of a
@@ -177,6 +229,95 @@ three-quarters of a second. And **do not cue a reveal to the final word of a sen
 sentence needs time to be read, so one frame cues its three rows to mid-line words and
 nothing arrives on the full stop.
 
+## A dark panel fading in over a light ground is a grey slab
+
+It does not composite to a dark panel at 71% opacity. It composites to a **third ground**: a
+`#313338` panel at opacity 0.71 over `#f7f7f7` paper is a flat `#6a6c6f`, and measured
+`#5c5e62` at its worst over 11.2% of the frame. If the film's law is "the only dark
+object is the product surface", the entrance breaks that law for the length of the ramp.
+**Every DOM check passes — 0.71 is a legal opacity. Only a rendered frame shows it.** It came
+back four times in one film, twice after it had been "fixed".
+
+| Case | What to do instead |
+|---|---|
+| Panel entering mid-beat | Split the tweens. Transform carries the entrance over 0.6-0.75s; opacity gets out of the way in 0.22s. A panel arriving at a scene *start* is covered by the crossfade; one arriving mid-beat is not. The skeleton's `growIn()` is written this way; a single-tween version is the bug. |
+| Panel leaving | Do not ramp opacity at all — wipe with `clip-path`. A fading dark card is the same grey slab in reverse. |
+| Two panels handing off | The outgoing reaches 0 before the incoming starts. One shipped film: out at 1.67, in at 1.68, zero overlap frames. |
+| Crossfading between beats | The two panels share width and top edge, or the dissolve reads as a grey double-exposure box. Change the height, never the frame. |
+
+## The skeleton's crossfade is a placeholder, not a grammar
+
+`film.skeleton.html` opacity-crossfades every scene into the next because the rig has to do
+*something* between frames. Three of four shipped films use no inter-frame transition at all:
+one is a single continuous scroll dolly, one is per-beat camera moves, one is a continuous
+morph. The fourth uses the crossfade and deliberately exempts its main node set from it: "They
+are not rebuilt per scene and they do not crossfade with the scenes... That is what makes this
+read as one system observed continuously rather than as ten slides."
+
+**Anything that persists across a cut has to match-cut.** The same sentence jumped 122px across
+an 01→02 cut; because it was the same text, it read as a jolt rather than as a new frame.
+
+## The cursor is a stage prop
+
+Four films, two cursors on record, neither like the other, neither written down — and two of
+the four needed one and had none.
+
+| | one film's `#cur` | another's `#s4-cursor` |
+|---|---|---|
+| Size / stage | 21×31 in a 1280 world (~31×46 at 1920) | 22×30 on a **1080** stage |
+| Fill / stroke | `#fff` / `#0a0a0a` at 2.2 | `#0C1F40` / `#F7F7F7` at 1.4 — inverted |
+| Shadow | `drop-shadow(0 3px 7px rgba(0,0,0,.85))` | **none** |
+| Press | scale 0.88 → 1 plus a state flip | none — translate only |
+
+Neither reaches 2.3% of stage width — they measure 1.64% and 2.04% — and the second has no
+shadow at all, which is the "reads as a smudge" failure. The first wrote the
+rule into its own file as a comment: **"the cursor is a stage prop: oversized, heavy stroke,
+deep shadow."**
+
+- **Size it as a prop, not as a pointer:** ~44×54 at 1920, about 2.3% of stage width. If it
+  lives inside a world the camera scales, divide by the camera floor.
+- White fill, dark stroke, a real drop shadow. One cursor across a whole series.
+- **Position it by the tip**, and write the tip's offset from the node origin down beside the
+  node.
+- Put it **inside** the node the camera moves, in rig-local coordinates. Outside the rig it
+  drifts off its target on every camera move.
+- Fade it out once its work is done.
+
+A drawn hand is not an upgrade. One film substituted one and then indicted it: "at silhouette
+scale it still reads closer to a mitten than a hand... a plain wedge is honest in a way a
+not-quite hand is not."
+
+### Anticipation is the difference between a cursor that slides and one that decides
+
+8px of anticipation at 0.05s against the direction of travel, then x and y as **separate**
+tweens on different eases so the path bows. Committed moves only, never on text. Start the
+travel early enough that the *click* lands on its word, not the departure.
+
+The click is four layers, and the last one is the one people forget:
+
+1. A bloom **leading** the press by 0.1s.
+2. Cursor scale 0.86 and back, `back.out(2.4)`.
+3. An expanding ring.
+4. The control itself moving. A cursor pressing a button that does not move is uncanny.
+
+Size the feedback to the control: a 200px bloom over a 154px button is a halo, not a click.
+
+### The hit test does not measure occlusion
+
+`probe.mjs` asserts the cursor tip is *inside* the target it clicks. A pointer occluding 14.6%
+of the "Authorize" wordmark it was pressing passed that test. Inside the target and clear of
+its lettering are different questions, and the second one is eyes-only.
+
+### A state change needs its cause on screen
+
+Frame 01 cut from a marketing page straight to Discord's authorize card with nothing having
+been clicked. Director: "it should show a cursor clicking the add to discord button and then
+show the ... discord authorized screen cause it's confusing if you don't show the click".
+
+Any frame that arrives in a different state from the one before it owes the viewer the action
+that changed it, in shot, before the cut. Audit it at G3: for every state flip in the
+storyboard, name the frame where its cause is visible.
+
 ## Nothing ends unresolved
 
 Law 6, and the one most often mis-applied.
@@ -186,9 +327,13 @@ that lands in the last second of a hold arrives as the cut does, and the viewer 
 leaving rather than arriving.
 
 The mechanical form, checked by `probe.mjs`: **a frame's last change-point must be no later
-than `start + hold - 1.0s`.** The probe steps at 1/30s through each frame, hashes a signature
-of every descendant (`x, y, w, h, opacity, color, filter, className, textContent.length`),
-records the last time the signature changed, and prints the margin against the deadline.
+than `start + hold - 1.0s`.** The probe steps at `1/fps` through each frame, builds a signature string
+of every descendant, records the last time it changed, and prints the margin against the
+deadline. The signature is layout-only geometry (`offsetLeft/Top/Width/Height`) plus the
+element's own transform — never `getBoundingClientRect()`, which folds in every ancestor
+transform and turns one camera move into "everything changed". The two gates use *different*
+signatures, and `data-camera`, `data-ambient` and `probes.resolution_exempt` are how you tell
+them apart: `references/qa.md`, "The two gates need different signatures".
 
 **The mis-application:** reading "nothing ends unresolved" as "nothing may be *moving*", and
 then as "there must be zero change-points in the tail". Enforced that way it froze **24% of a
@@ -208,7 +353,7 @@ One shipped frame runs a `rotate: -1.3 -> 1.0` tween across its entire hold minu
 is *moving* at the cut, deliberately, and it passes, because the thing the frame says landed
 seconds earlier.
 
-The complementary probe is the **dead-window** check: any window longer than **1.2s** in
+The complementary probe is the **dead-window** check: any window longer than **1.55s** in
 which the full-DOM signature does not change at all. Both checks are needed. The resolution
 check catches shots that end too late; the dead-window check catches shots that ended too
 early and then sat there. Neither alone will tell you the film is paced.
@@ -247,11 +392,32 @@ Work it out before you choreograph anything:
 4. If the type is too small at that scale, **the type is too small** — enlarge the
    type inside the layout. Do not solve it by zooming past the box.
 
+Then do the keep-out arithmetic on all four edges *before* choosing a scale. Under a
+scale `s` about an origin `O`, a point `P` maps to `O + (P - O) * s`, so:
+
+```
+edge_after = edge + (edge - origin) * (s - 1)
+```
+
+A card whose bottom sits at y=872 with the push origin at y=395 tops out at scale 1.05
+against an 897px keep-out line — 1.06 puts it at 900.6 and over. Put the push origin exactly
+on the control being clicked and that control becomes a fixed point of the transform — no
+compensating arithmetic at all, and it is the most natural-looking push anyway.
+
 Anchoring is not a fix either. Pinning the frame to the bottom-left to "keep the
 composer and sidebar in shot" showed the *bottom* of the sidebar, which is empty —
 the channel list lives at the top. A real sidebar has content at the top and nothing
 at the bottom; a real composer sits at the bottom. **You cannot have both by
 anchoring to a corner. You can only have both by fitting the box.**
+
+### One camera, two nodes
+
+Never put a whole-shot rotation and a mid-shot scale on the same element. Two tweens
+writing one transform matrix over an overlapping window means second-to-update wins each
+frame, and the move judders. The outer node owns the dolly — scale, x, y — the inner node
+owns the turn. The skeleton's `.dolly` / `.turn` pair is this split.
+
+The other half of the rule is the cursor's — see "The cursor is a stage prop".
 
 ### Symptoms in the frames
 

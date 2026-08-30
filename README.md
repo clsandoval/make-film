@@ -45,7 +45,11 @@ A silent film needs no API key at all. There is no image generation, no video
 generation and no licensed audio anywhere in the pipeline: every frame is drawn and
 every sound is synthesised, deterministically.
 
-Set the key in the environment, `./.env`, or `~/.config/film/.env`.
+Set the key in the environment, `./.env`, or `~/.config/film/.env`. If it is in
+none of the three, search your other repos' `.env` files for it: exactly one hit,
+copy it to `~/.config/film/.env`; zero or several, ask which key. Never stall on
+it — one session lost hours to a missing key and spent them timing stills against
+durations that were already stale.
 
 ## How it works
 
@@ -69,7 +73,7 @@ after its last word.
 
 ## What makes it not a slideshow
 
-The skill is a discipline, not a template. `SKILL.md` carries seven human gates, nine
+The skill is a discipline, not a template. `SKILL.md` carries eight human gates, nine
 laws and a table of red flags, each one a defect that cost real hours: TTS that clicks
 at a boundary, a trim that eats word-final consonants, `-t` truncating without padding
 so `-shortest` clips the end card, libass sizing captions against a 384×288 PlayRes,

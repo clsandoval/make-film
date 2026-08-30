@@ -5,14 +5,18 @@ Nothing is downloaded, sampled or licensed — every sample is computed here, so
 there is no third-party audio in the film and a re-run is byte-identical.
 Math.random has no place in a render; the noise source is a seeded LCG.
 
-Cues come from film.json. A cue time is either a number (for a silent frame,
-which has no word to sit on) or ["frame-id", "word"], resolved against the same
-alignment the picture is cued to.
+Cues come from film.json and resolve through film.resolve_time, so every form
+the picture accepts a cue in, a sound accepts too. A number is only legitimate
+in a silent frame, which has no word to sit on.
 
     "sfx": [
-      {"sound": "click", "at": 1.22, "gain": 0.30},
-      {"sound": "sub",   "at": ["09-potential", "yours"], "gain": 0.42}
+      {"sound": "click", "at": 1.22, "gain": 0.30, "seed": 8814},
+      {"sound": "sub",   "at": ["09-potential", "yours"], "gain": 0.42},
+      {"sound": "tick",  "at": {"frame": "04-form", "word": "next", "offset": -0.12}}
     ]
+
+`seed` keys both the generated filename and the generator's argument, so it only
+changes the audio of a generator that draws from lcg(seed) — click alone, today.
 """
 import math
 import struct
@@ -63,7 +67,11 @@ def build_click(seed: int = 20260815) -> list[float]:
 
 
 def build_sub(seed: int = 0) -> list[float]:
-    """One low note. Use it once, at the film's one resolution."""
+    """One low note. Use it once, at the film's one resolution.
+
+    seed is unused: this generator draws no noise. Every SYNTHS entry takes one
+    so cue_list can dispatch on a uniform signature.
+    """
     n = int(RATE * 1.35)
     out: list[float] = []
     for i in range(n):
@@ -76,7 +84,7 @@ def build_sub(seed: int = 0) -> list[float]:
 
 
 def build_tick(seed: int = 0) -> list[float]:
-    """A dry UI tick — two short partials, no body."""
+    """A dry UI tick - two short partials, no body. seed unused; see build_sub."""
     n = int(RATE * 0.045)
     out: list[float] = []
     for i in range(n):
@@ -141,9 +149,13 @@ def demo(tl: dict[str, object], cues: list[tuple[Path, float, float]]) -> None:
     for path, when, _ in cues:
         assert 0 <= when < float(tl["duration"]), f"{path.stem} @ {when}s is outside the film"
     for spec in CONFIG.get("sfx", []):
-        if isinstance(spec["at"], list):
-            f = frame(tl, str(spec["at"][0]))
-            when = resolve_time(tl, spec["at"])
+        # Every word form, not just the list one: an {frame, word, offset} cue
+        # with a large negative offset lands outside its own frame and was
+        # falling through to the loose whole-film assertion above.
+        at = spec["at"]
+        if not isinstance(at, (int, float)):
+            f = frame(tl, str(at[0] if isinstance(at, list) else at["frame"]))
+            when = resolve_time(tl, at)
             assert float(f["start"]) <= when < float(f["start"]) + float(f["hold"]), \
                 f"{spec['sound']} is cued to {f['id']} but lands outside it"
     print(f"self-check ok: {len(cues)} cues, all inside the film and their own frame")

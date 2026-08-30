@@ -6,8 +6,8 @@ every claim about the mix is a measurement on the **delivered file** — never o
 Two rules define the approach. **Nothing licensed, nothing downloaded, nothing purchased** —
 every sound is synthesised from `math` + `struct` + `wave`; across four films the SFX library
 was four generated wavs in one and two in another. And **every cue time comes from
-`timeline.json`**, the same word alignment the picture's reveals are cued to; no cue is ever a
-typed second.
+`timeline.json`**, the same word alignment the picture's reveals are cued to; no cue in a
+voiced film is ever a typed second.
 
 Synthesis buys three things a library cannot. It is **deterministic**, so a re-run is
 byte-identical and a re-master is not a new mix. There is **nothing to licence**, which
@@ -36,11 +36,16 @@ replaces was established earlier.
 
 Every generator is a pure function of the sample index. Two from a shipped film, complete:
 
+Every `SYNTHS` entry has the same signature — **it takes only a seed and returns samples**.
+`cue_list` owns the filename, writing `<sound>-<seed>.wav`, because two cues of the same sound
+with different seeds once wrote one filename and every cue got the last seed's audio. A
+generator that calls `write_wav` itself, or returns a `Path`, crashes the caller.
+
 ```py
-def build_click() -> Path:
+def build_click(seed: int = 20260815) -> list[float]:
     """A short mechanical press: a filtered noise burst with a woody resonance."""
     n = int(RATE * 0.085)
-    rng = lcg(20260815)
+    rng = lcg(seed)
     out, lp = [], 0.0
     for i in range(n):
         t = i / RATE
@@ -48,9 +53,9 @@ def build_click() -> Path:
         lp += (next(rng) - lp) * 0.42                              # one-pole low-pass: takes the fizz off
         body = math.sin(2 * math.pi * 1750 * t) * math.exp(-t * 170) * 0.5
         out.append((lp * 0.55 + body) * env)
-    return write_wav("click.wav", out)
+    return out
 
-def build_sub() -> Path:
+def build_sub(seed: int = 0) -> list[float]:
     """One low note. The only sub-bass in the film, at the only resolution."""
     n = int(RATE * 1.35)
     out = []
@@ -59,8 +64,12 @@ def build_sub() -> Path:
         f = 68.0 - 16.0 * (1 - math.exp(-t * 5.5))                 # a short pitch drop reads as settling, not as a hit
         env = min(1.0, t / 0.035) * math.exp(-t * 2.35)
         out.append(math.sin(2 * math.pi * f * t) * env)
-    return write_wav("sub.wav", out)
+    return out
 ```
+
+A cue's `seed` keys both the filename and the generator argument, so it only changes the
+*audio* of a generator that draws from `lcg(seed)` — `click` alone, today. On `sub` and `tick`
+it changes nothing but the filename; they take the parameter so the dispatch stays uniform.
 
 Four more from a different film, as shapes to steal: a **key press** (35 ms — deterministic
 pseudo-noise from the sample index, one-pole low-pass at 0.35, `exp(-i / (RATE * 0.006))`
@@ -73,19 +82,28 @@ envelope; wooden, not hissy); a **panel arriving** (300 ms — a sine sweeping
 **asset**, not the cue: a cue's gain cannot rescue a quiet source, because summing a quiet
 signal into a loud one changes the total by hundredths of a decibel.
 
+And never peak-normalise a whole mix that has one big arrival in it. One film's arrival was
+**11x the bed**, so normalising to that transient left the beds ~22 dB down and the source at
+**-27.6 LUFS**. Bring the transient down; do not push makeup gain through a limiter that will
+then eat it.
+
 `lcg(seed)` is the same seeded generator the picture uses for noise — see
 `references/motion.md`.
 
 ## One source of timing
 
-`build_sfx.py` reads `timeline.json` and resolves each cue by **word**, with the same
-whole-word match the picture uses — and asserts that exactly one word matched:
+`build_sfx.py` reads `timeline.json` and resolves every cue through `film.resolve_time`,
+which matches whole words after `norm()` strips surrounding punctuation and keeps internal
+apostrophes — the same match the picture uses:
 
 ```py
-hits = [w for w in frame(frame_id)["words"] if str(w["word"]).strip(".,!?").lower() == needle.lower()]
-assert len(hits) == 1, f"{frame_id}: {needle!r} matched {len(hits)} words"
-return float(hits[0]["start"])
+def norm(w):
+    return re.sub(r"^[^a-z0-9]+|[^a-z0-9']+$", "", str(w).lower())
 ```
+
+A needle matching more than one word in the frame is a hard failure — `SystemExit`, not an
+assert — unless you pass an occurrence index: `["09-potential", "yours", 2]`. So a copy edit
+that duplicates or removes a cue word stops the build instead of sliding the sound.
 
 The assertion is the point: when the copy changes and the cue word disappears, the build
 fails instead of quietly sliding the sound.
@@ -99,9 +117,20 @@ into its sound script, and its own handoff had to warn:
 That is the bug, not the workaround. Both `build_sfx.py` and `build_captions.py` read
 `timeline.json`; neither holds a copy of anything.
 
-**Authored times are legitimate where there is no word.** A silent cold open has no
-alignment, so its cues are authored numbers — and then asserted against the frame table, so a
-retime that moves the frame breaks the build rather than the film:
+**A numeric cue time is only legitimate in a film with no voiceover.** Three tick SFX
+hardcoded at `14.2 / 15.6 / 17.0` migrated into the wrong beat the moment one line was
+re-recorded, and nothing failed — the numbers were still valid, they were just in a different
+scene. Every cue in a voiced film is `["frame-id", "word"]`, `["frame-id", "word", occurrence]`, or
+`{"frame": .., "word": .., "offset": 0.15, "occurrence": 1}` when it must land just off a
+word. All of them resolve through `resolve_time` in `scripts/film.py` — and `resolveTime` in
+`scripts/film.mjs`, which is why a `probes.hits` entry takes the same forms — against the
+alignment the picture is cued to. `build_sfx.py`'s self-check asserts every word-form cue
+lands inside its own frame, so a negative `offset` large enough to push a cue before its
+frame's start fails the build.
+
+A silent cold open has no alignment, so its cues are authored numbers — and then asserted
+against the frame table, so a retime that moves the frame breaks the build rather than the
+film:
 `assert all(0 < c < f1_end for c in clicks_at)`, `assert f9.start < sub_at < f9.start + f9.hold`,
 `assert sub_at < TL["duration"]`.
 
@@ -156,14 +185,29 @@ Read `input_i`, `input_tp`, `input_lra`, `input_thresh`, `target_offset` — **a
 **Pass 2 — normalise and limit.**
 
 ```bash
--af "loudnorm=I=-14:TP=-1:LRA=11:measured_I=$I:measured_TP=$TP:measured_LRA=$LRA:measured_thresh=$THRESH:offset=$OFFSET:linear=true,alimiter=limit=0.891:level=disabled,aresample=48000"
+-af "loudnorm=I=-14:TP=-1:LRA=11:measured_I=$I:measured_TP=$TP:measured_LRA=$LRA:measured_thresh=$THRESH:offset=$OFFSET:linear=true,alimiter=limit=0.85:level=disabled,aresample=48000"
 ```
 
-`alimiter=limit=0.891` is -1.0 dBFS. `linear=true` computes **one** gain for the whole file
-from the pass-1 numbers and does not back off for a transient, so a limiter after it is not
-belt-and-braces — it is the thing that catches a peak going over. **`level=disabled` is
-mandatory**: `alimiter` scales its output by `level_out / limit`, so `limit=0.891` alone
-applies about +1 dB of makeup gain, and the limiter added to protect the target overshoots it.
+`alimiter`'s limit is a **sample-peak** ceiling; the gate reads **true peak**, which can sit
+higher. Sample peak is the largest number in the file; true peak is the largest value of the
+*continuous waveform a converter reconstructs between* those samples, so a signal whose samples
+all sit at -1.0 dBFS can reconstruct above it — and a lossy encode, which does not preserve
+sample values, moves the reconstruction again. That is why the ceiling has to be measured on
+the delivered AAC and not assumed from the limiter setting.
+
+`limit=0.891` is -1.0 dBFS — the target exactly, with nothing in hand. Measured across the
+delivered masters, every film limited there read exactly **-1.0 dBTP**, clamped to spec by
+the limiter rather than passing it with room, and both films that moved to `limit=0.85`
+(-1.4 dBFS) read **-1.4 dBTP**, 0.4 dB in hand. A mix that never reaches the ceiling lands well under it
+either way — one earlier film at 0.891 delivered **-3.4 dBTP** — which is why the -1.0 readings
+read as the limiter clamping the mix rather than as headroom that happened to be there. Zero
+margin is the finding: any platform re-encode pushes a -1.0 master over.
+
+`linear=true` computes **one** gain for the whole file from the pass-1 numbers and does not
+back off for a transient, so a limiter after it is not belt-and-braces — it is the thing that
+catches a peak going over. **`level=disabled` is mandatory**: `alimiter` scales its output by
+`level_out / limit`, so `limit=0.85` alone applies about +1.4 dB of makeup gain, and the
+limiter added to protect the target overshoots it.
 
 **Pass 3 — the residual loop.** `linear=true` is only *possible* when the mix's crest factor
 is at most `target_TP - target_I`, which at -14/-1 is **13 dB**. Above that, `loudnorm`
@@ -181,10 +225,13 @@ for i in 1 2 3 4; do
   echo "    iter $i: $GOT LUFS (residual ${ADJ} dB)"
   [ "$OK" = "1" ] && break
   ffmpeg -y -loglevel error -i "$TMP/cur.wav" \
-    -af "volume=${ADJ}dB,alimiter=limit=0.891:level=disabled" -ar 48000 -ac 1 "$TMP/next.wav"
+    -af "volume=${ADJ}dB,alimiter=limit=0.85:level=disabled" -ar 48000 -ac 1 "$TMP/next.wav"
   mv "$TMP/next.wav" "$TMP/cur.wav"
 done
 ```
+
+Shape only — `master.sh` runs this loop on the muxed mp4 with an accumulating `volume=` inside
+the pass-2 chain, and gates true peak inside it.
 
 **One residual pass is not enough**, because the limiter eats part of any correction: a
 +2.10 dB pass was observed landing at -14.6. Hence up to four iterations, converging to
@@ -205,8 +252,13 @@ ffprobe -v error -show_entries format=duration:stream=codec_type,codec_name,widt
   -of default=noprint_wrappers=1 "$OUT"
 ```
 
-Pass: **-14 LUFS +/- 0.5, true peak <= -1 dBTP.** Real shipped results: -13.7 / -1.0 / LRA
-7.9; -14.2 / -1.0 / LRA 9.8; -14.0 to -14.2 with true peak <= -3.4.
+Pass: **-14 LUFS +/- 0.2** — the tolerance `master.sh` actually gates on, after four
+convergence passes — **and true peak <= -1 dBTP.** Real shipped results: -13.7 / -1.0 / LRA
+7.9; -14.2 / -1.0 / LRA 9.8; -14.0 to -14.2 with true peak <= -3.4; and the two `limit=0.85`
+masters at -14.1 / -1.4.
+
+True peak was printed here for four films and **gated in none of them**. `master.sh` now exits
+non-zero on a delivered true peak above target.
 
 **And prove every cue is present in the delivered file.** "It sounds fine to me" is not
 evidence at 11pm on the machine that rendered it. A real readout:
@@ -219,6 +271,29 @@ The band-split is what turns "I think the sub is masking the voice" into a numbe
 the two bands separately over the cue window and compare against the same window with the cue
 removed.
 
+**Verify a cue with an envelope, not a window peak.** A window peak proves a cue is loud
+*somewhere*; it cannot see a cue that starts late. One film shipped a typing cue whose window
+peak was a healthy -1.4 dB while **56% of the animation played in silence**, because the sound
+landed 0.435 s in:
+
+```
+t=10.72  -4.6 dB   <- narration only; the animation has already started
+t=11.12  -1.6 dB   <- the first keystroke finally lands
+```
+
+So print peak per 100 ms slice across the cue window:
+
+```bash
+ffmpeg -hide_banner -i "$OUT" -af \
+  "atrim=10.5:12.5,asetnsamples=n=4800,astats=metadata=1:reset=1,ametadata=print:key=lavfi.astats.Overall.Peak_level" \
+  -f null -
+```
+
+`asetnsamples=n=4800` is what makes a slice exactly 100 ms at 48 kHz; without it `astats`
+resets every 1024 samples, which is 23 ms. Read **peak** for percussive cues, never
+mean: mean tells you a bed is present, peak tells you a transient was heard. A cue is audible
+when its transients land within ~12 dB of the narration in the same window.
+
 One measurement trap: **`-v error` on a measurement pass suppresses the readout.**
 `volumedetect` and `ebur128` print to stderr at info level. Drop `-v error` when you want the
 numbers.
@@ -227,8 +302,40 @@ numbers.
 
 A film destined for a muted autoplay feed carries no meaning in its audio, and one shipped
 that way deliberately: a room-tone bed under the wait, accelerating ticks that stop when the
-thing they count stops, and then **the bed stops 0.55 s before the cut, so silence lands
-first and the arrival lands into it.** Nothing after the answer.
+thing they count stops, and the bed cut 0.55 s before the turn, so silence lands first and the
+arrival lands into it.
+
+**What that film did next broke its master.** Nothing followed the answer, so 28 of 37.4 s were
+pure digital silence, integrated loudness measured **-15.0 LUFS**, and no makeup gain recovered
+it without the limiter eating the arrival. The film's own diagnosis: *"the cause is a creative
+bug, not a mastering one."*
+
+Silence itself is free — R128's absolute gate drops blocks below -70 LUFS, so digital silence
+never enters the integration at all. Measured, not assumed: a 10 s tone and the same tone with
+30 s of silence appended both read **-41.1 LUFS** — the same number, to 0.0 LU.
+
+```bash
+ffmpeg -f lavfi -i "sine=f=1000:d=10,volume=-20dB" -af ebur128 -f null -
+ffmpeg -f lavfi -i "sine=f=1000:d=10,volume=-20dB,apad=pad_dur=30" -af ebur128 -f null -
+```
+
+The damage is the other side of the same gate. It measures only the loud
+blocks, so a film whose sustained content is a handful of cues in its first third is measured on
+those cues alone, and reaching -14 takes gain the limiter then eats. Sparse loud material, not
+silence, is what puts the target out of reach — which is why the fix is a bed, not a gain.
+
+That film's fix was a brighter pad fading up on the arrival over 1.6 s and sustaining to the
+end — the first thing scoring its second half at all.
+
+**A film that opens on true digital silence reads as broken audio**: the viewer turns it up,
+just in time for the first line to arrive loud. **No bed generator ships and there is no
+`film.json` bed key** — do not go looking for one. A bed is a `SYNTHS` entry like any other,
+cued from the `sfx` array like any other, but two things differ. The generator takes only a seed, so it must read
+its own length from `timeline()["duration"]` (or its stop time) and bake the 1.2 s fade-in and
+0.25 s fade-out into the samples — long enough not to click, short enough to register as an
+absence. And `write_wav` peak-normalises it like a click, so unlike every other cue a bed's
+level **is** its cue gain. Expect it to cost crest factor — a bed under long holds is the
+~20 dB case in Pass 3.
 
 Even then the track is generated, mastered and measured like any other — a silent-feed film
 still gets played with sound on by someone, and a track that has never been measured is a

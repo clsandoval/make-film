@@ -19,10 +19,19 @@ when they are tabulated.
 
 Copy locks here. Nothing generates voice before this table is approved.
 
-| # | Frame | start → end | On screen | VO |
-|---|---|---|---|---|
-| 01 | | | | *(silent)* |
-| 02 | | | | |
+| # | Frame | On screen | VO |
+|---|---|---|---|
+| 01 | | | |
+| 02 | | | |
+
+Four columns, nothing else. There is no `start → end` column here: frame starts
+come from `build_timeline.py`, which runs after this table is approved. Filling
+it at the gate means guessing durations, which is the estimate the pipeline
+exists to remove.
+
+Default to speaking from the first frame. A silent row is legitimate only when
+the screen alone establishes the situation — write *(silent)* and the reason
+next to it, never as a placeholder.
 
 ## Notes
 

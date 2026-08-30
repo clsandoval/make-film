@@ -32,11 +32,19 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: #000; }
 
-  /* The renderer screenshots THIS element, not the viewport. Resize it for a
-     different aspect — setting the viewport alone silently produces a file at
-     the wrong shape with the right label. */
+  /* The renderer screenshots THIS element, not the viewport — setting the
+     viewport alone silently produces a file at the wrong shape with the right
+     label, so film.mjs resizes the stage to FILM_W/FILM_H. It does that AFTER
+     the page load event — by which point this timeline has already been built
+     and growIn() has already measured scrollHeight — so these CSS numbers are
+     the size the composition lays out and measures against, not a preview
+     convenience. Keep them equal to film.json's `stage`. FILM_W/FILM_H alone
+     give a correctly-sized file with the wrong internal layout, which is why a
+     re-laid-out second aspect is a second composition with its own CSS
+     (FILM_PAGE=film-mobile.html), never a flag on this one; a letterboxed cut
+     comes off the master in deliverables.sh. */
   #stage {
-    position: relative; width: 1920px; height: 1080px; overflow: hidden;
+    position: relative; width: 1080px; height: 1920px; overflow: hidden;
     background: var(--stage); color: var(--text); font-family: var(--body);
     -webkit-font-smoothing: antialiased;
   }
@@ -51,7 +59,18 @@
      zero-height box, so everything below it jumps when the first character lands. */
   .line { display: block; min-height: 1.2em; }
 
+  /* Put this on anything countTo() writes into. Proportional numerals have
+     different widths, so a count-up reflows its own box nearly every frame and
+     visibly jitters. Grow a numeral with transform: scale, never font-size. */
+  .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+
+  /* A real texture, self-contained — no PNG to generate or ship. Keep the
+     opacity low and mask it off near-black areas: grain over near-black defeats
+     the encoder (65s came out an 85MB master where the same cut without grain
+     encodes at 21MB). */
   #grain, #vignette { position: absolute; inset: -20%; pointer-events: none; }
+  #grain { opacity: .035; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='120' height='120' filter='url(%23n)' opacity='.5'/></svg>"); }
   #vignette { inset: 0; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.16) 100%); }
 </style>
 </head>
@@ -64,13 +83,29 @@
        audio_meta.json, timeline.json and this file. -->
 
   <section class="scene" data-frame="01-open">
-    <h1 id="headline" class="line" style="position:absolute;left:160px;top:460px;
-        font-family:var(--display);font-size:96px;letter-spacing:-.02em"></h1>
+    <h1 id="headline" class="line" style="position:absolute;left:96px;top:760px;width:888px;
+        font-family:var(--display);font-size:88px;letter-spacing:-.02em"></h1>
+  </section>
+
+  <!-- One section per frame, or the composition throws before __ready and no
+       renderer opens it. film.example.json declares three; these are the other two. -->
+
+  <section class="scene" data-frame="02-claim">
+    <h1 class="line" style="position:absolute;left:96px;top:760px;width:888px;
+        font-family:var(--display);font-size:88px;letter-spacing:-.02em"></h1>
+  </section>
+
+  <section class="scene" data-frame="03-close">
+    <h1 class="line" style="position:absolute;left:96px;top:760px;width:888px;
+        font-family:var(--display);font-size:88px;letter-spacing:-.02em"></h1>
   </section>
 
   <!-- =================================================================== -->
 
-  <div id="grain"></div>
+  <!-- data-camera so the probe counts #grain as present without its transform.
+       An unmarked grain node stepping at 1/12 makes every frame read as never
+       settling, and makes every dead window unreachable. -->
+  <div id="grain" data-camera></div>
   <div id="vignette"></div>
 </div>
 
@@ -121,16 +156,27 @@
       onUpdate: () => { el.textContent = text.slice(0, Math.round(state.n)); } }, start);
   }
 
-  /** Grow a panel to exactly its content height. Measured after fonts.ready. */
-  function growIn(el, tl, start, dur = 0.45) {
+  /** Grow a panel to exactly its content height. Measured after fonts.ready.
+      Two tweens on one start, deliberately: a dark panel ramping its opacity
+      over the full entrance does not composite to a dark panel at 71%, it
+      composites to a third ground — a grey slab. Transform carries the
+      entrance; opacity gets out of the way in 0.22s. Every DOM check passes on
+      the one-tween version; only a rendered frame shows it. */
+  function growIn(el, tl, start, dur = 0.6) {
     const h = el.scrollHeight;
-    tl.fromTo(el, { height: 0, opacity: 0 },
-                  { height: h, opacity: 1, duration: dur, ease: "power3.out" }, start);
+    tl.fromTo(el, { height: 0 }, { height: h, duration: dur, ease: "power3.out" }, start);
+    tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.22, ease: "power2.out" }, start);
   }
 
   /** A counter that is a pure function of the playhead, so a backward seek is
-      correct too. Never accumulate state across frames. */
-  function countTo(el, from, to, tl, start, dur, fmt = (n) => Math.round(n).toLocaleString()) {
+      correct too. Never accumulate state across frames. The target element
+      needs class="num" — proportional numerals reflow the box every frame. */
+  function countTo(el, from, to, tl, start, dur,
+                   // "en-US" pinned: a bare toLocaleString() reads the host
+                   // locale, so the same commit prints 1,234,567 here and
+                   // 1.234.567 elsewhere — a different pixel and a different
+                   // string for the approved-figures sweep to read back.
+                   fmt = (n) => Math.round(n).toLocaleString("en-US")) {
     const state = { n: from };
     tl.to(state, { n: to, duration: dur, ease: "power2.out",
       onUpdate: () => { el.textContent = fmt(state.n); } }, start);

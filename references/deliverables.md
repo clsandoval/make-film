@@ -6,22 +6,60 @@ for, with a thumbnail nobody chose.
 
 Decide the set at intake (G0), because some of it changes how the frames are composed:
 a 9:16 cut only works if every shot keeps its payload in a central band and its top and
-bottom edge rows clear of content.
+bottom edge rows clear of content. Decide the aspect there too, not at G6 — three of the
+four most recent films were composed 1080x1920 from the first still, and a portrait master
+has no square to give.
 
 ## The set
 
 | File | Notes |
 |---|---|
 | **Master**, the aspect the film was composed in | -14 LUFS, <= -1 dBTP, `-crf 19 -tune film -movflags +faststart` |
-| **1:1 cut** | Common feed placement |
-| **9:16 cut**, captions burned in | Muted feeds. See the four traps below |
+| **1:1 cut** | Common feed placement. Landscape master only — `deliverables.sh` skips it on a portrait one |
+| **9:16 cut**, captions burned in | Muted feeds. Landscape master only: a portrait master already *is* the vertical cut. See the four traps below |
+| **Silent cut**, master size | The pre-mux render, `renders/silent-v*.mp4`, remuxed with `-c copy -movflags +faststart`. It has no audio track at all — if the ask meant "no voiceover, keep the bed", that is a second mix, not this file |
+| **Subtitled cut**, master size, captions burned in | Asked for as *"one silent, one voice, and one voice with subtitles"* — three files at the same size. A subtitled cut is a variant of the master, not an aspect cut, and the 9:16 row is not it |
 | **`.srt`** | Sidecar for the master, so a landing-page hero stays clean |
 | **Poster frame** | Chosen, not frame 0 |
 | **Review encode** | A small copy for sending through a chat transport during the note rounds |
 | **`HANDOFF.md`** | Direction, rebuild commands, licences, open items |
 
-`scripts/deliverables.sh` derives every one of them **from the newest master**, so a cut can
-never go stale against the film it came from.
+`scripts/deliverables.sh` derives most of this set **from the newest master**, so a cut can
+never go stale against the film it came from. Two exceptions. The aspect cuts come off a
+landscape master only — see below. And it does not make the subtitled cut at all: the only
+subtitle burn in the script is inside the 9:16 filter chain, and the `.ass` it writes is
+patched to `PlayResX/Y 1080x1920` for that vertical frame. Re-patch PlayRes to the master's
+own dimensions before burning at master size, or every caption number is scaled by the wrong
+PlayRes — Trap 2, by the back door:
+
+```bash
+ffmpeg -y -i "$MASTER" -vf "ass=deliverables/<name>.ass:fontsdir=assets/fonts" \
+  -c:v libx264 -crf 19 -tune film -movflags +faststart -c:a copy \
+  deliverables/<name>-subbed.mp4
+```
+
+## A portrait master has no square cut
+
+A square cropped out of 1080x1920 cuts content off both ends, and letterboxing a portrait
+master into 9:16 pads it into itself. Everything below — the crop, the stretched bars, the
+four traps — assumes a landscape master.
+
+`deliverables.sh` measures the master with `ffprobe` and skips the square, printing
+`1:1 skipped: master is 1080x1920, composed vertical`. The 9:16 pass is not guarded and does
+one of two useless things on a vertical master: with `safe_margin: 0` it re-encodes the
+master under a `-9x16` name (1080x1920 in, 1080x1920 out), and with a margin set the bar
+height goes negative — `safe_margin: 60` gives `BAR_H=-120` and ffmpeg stops with
+`Padded dimensions cannot be smaller than input dimensions`. The script is one `set -e`
+pipeline and the poster, the review encode and the verification table are the last three
+blocks, so the margin case takes all three down with it. On a portrait master, comment the
+9:16 block out — or guard it with the same `$PORTRAIT` test as the square — and run the rest.
+
+Render the second composition at its own size:
+
+```bash
+FILM_PAGE=film-mobile.html FILM_W=1080 FILM_H=1920 \
+  node scripts/render-parallel.mjs renders/silent-mobile-v1.mp4
+```
 
 ## Aspect cuts: resize `#stage`, not the viewport
 
@@ -30,6 +68,8 @@ element, not the page. So setting the Playwright viewport to 1080x1080 for a squ
 silently produces a **4:5 file labelled 1:1** — the stage kept its own dimensions and the
 screenshot was of the stage. This shipped once, as "the 1:1 cut is done", and it was a
 mislabelled copy of the master. **Resize `#stage`; the viewport is not the frame.**
+`openFilm()` in `scripts/film.mjs` now sets `#stage` to `FILM_W`x`FILM_H` after the page
+loads, so the env vars above move the frame and not just the window.
 
 And know which of the two things you are doing:
 
@@ -47,6 +87,18 @@ The letterbox is worth improving even so. One shipped 9:16 crops the empty side 
 before scaling, because the panels all live between two known x-values: a **1500 px centre
 crop loses nothing and lifts the picture from 32% to 40% of a 9:16 frame** — the difference
 between readable and not, on a phone.
+
+## The pad colour is `film.json`'s, not the composition's
+
+Both cuts pad with `film.json`'s `ground` hex, and nothing compares it to the stage the
+frames were actually drawn on. Two films were moved to a new palette and left the old value
+sitting there: one kept `0xffdfa1` and would have padded a white film with cream bars; the
+other kept `0x05070A`, near-black. Read the real one off the page at the end of
+a stills run and compare it to the hex before you cut:
+
+```js
+getComputedStyle(document.getElementById("stage")).backgroundColor
+```
 
 ## Trap 1 — flat-colour bars leave seams
 
@@ -145,6 +197,16 @@ light ground, navy type on the picture with **no outline and no shadow** is legi
 designed; on a ground that changes value mid-film, an opaque box is the honest answer,
 because white-on-transparent will vanish over the light half.
 
+Run `build_captions.py` before `deliverables.sh`. The 9:16 pass wraps its ASS conversion in
+`if [ -f deliverables/<name>.srt ]` and leaves `SUBS=""` when the file is absent, so a
+forgotten caption build ships an uncaptioned 9:16 and says nothing — the one file whose whole
+reason to exist is a muted autoplay feed. The script does not stop for it. Either run
+`build_captions.py` first, every time, or add the assertion at the top of the 9:16 block:
+
+```bash
+[ -f "$SRT" ] || { echo "no $SRT — run build_captions.py" >&2; exit 1; }
+```
+
 If you burn captions in, keep an un-captioned master. A site hero usually should not have
 them, and someone will ask.
 
@@ -174,6 +236,10 @@ smaller encode alongside it purely for the note rounds. Real numbers from two sh
 Same resolution, same duration, lower bitrate. The director notes on the review encode; the
 master is what ships. Never let the review encode become the deliverable.
 
+The message carrying it has a second cap: **1024 characters on the caption**, which one round
+of notes went over and had to be resent. Send the file with a one-line caption and put the
+note in the message after it.
+
 ## Verify every variant
 
 A cut is a re-encode, and a re-encode can be wrong. Run the same probe on every file:
@@ -183,8 +249,15 @@ ffprobe -v error -show_entries format=duration -show_entries stream=width,height
 ```
 
 Check the **dimensions** (catches a mislabelled aspect), the **duration** (catches
-`-shortest` clipping a tail), and, on anything that touched audio, the loudness.
-`deliverables.sh` prints that table at the end of every run for exactly this reason.
+`-shortest` clipping a tail), and the **loudness** on anything that touched audio.
+`deliverables.sh` prints all three at the end of every run for exactly this reason, running
+`ebur128=peak=true` per file and printing `no audio track` where there is none.
+
+The loudness column exists because it caught the review encode. Every cut in the script is
+`-c:a copy` — including the review encode, which used to re-encode to aac 128k and delivered
+**-0.8 to -0.9 dBTP** on three shipped films against masters that measured **-1.0 to -1.4**.
+That is over the ceiling `master.sh` exits non-zero on, in the one file the director actually
+watches during the note rounds, and it saved under a megabyte on a video-dominated file.
 
 ## Licences and `HANDOFF.md`
 

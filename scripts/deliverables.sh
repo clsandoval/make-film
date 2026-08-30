@@ -91,11 +91,25 @@ ffmpeg -y -loglevel error -i "$MASTER" -filter_complex \
 ffmpeg -y -loglevel error -ss "$POSTER_AT" -i "$MASTER" -frames:v 1 "$OUT/$NAME-poster.png"
 
 # ---- review encode: Telegram and most chat apps cap uploads at 50 MB --------
+# -c:a copy, like every other cut. Re-encoding to aac 128k saved under a megabyte
+# on a video-dominated file and pushed true peak from -1.0 to -0.8 dBTP on three
+# shipped films — over the ceiling master.sh exits non-zero on, in the one file
+# the director actually watches during the note rounds.
 ffmpeg -y -loglevel error -i "$MASTER" -c:v libx264 -crf 28 -preset slow \
-  -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 128k "$OUT/$NAME-review.mp4"
+  -pix_fmt yuv420p -movflags +faststart -c:a copy "$OUT/$NAME-review.mp4"
 
+# ---- verify every variant --------------------------------------------------
+# Dimensions catch a mislabelled aspect, duration catches -shortest clipping a
+# tail, and loudness catches a cut that re-encoded audio you already mastered.
+printf '%-52s %-16s %-8s %s\n' FILE WxH/DURATION SIZE "I / TRUE PEAK"
 for f in "$MASTER" "$OUT/$NAME"-*.mp4; do
   printf '%-52s ' "$f"
-  ffprobe -v error -show_entries format=duration:stream=width,height -of csv=p=0:s=x "$f" | tr '\n' ' '
-  echo "$(du -h "$f" | cut -f1)"
+  printf '%-16s ' "$(ffprobe -v error -show_entries format=duration:stream=width,height -of csv=p=0:s=x "$f" | tr '\n' ' ')"
+  printf '%-8s ' "$(du -h "$f" | cut -f1)"
+  if [ -z "$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_type -of csv=p=0 "$f")" ]; then
+    echo "no audio track"
+  else
+    READOUT=$(ffmpeg -hide_banner -i "$f" -af ebur128=peak=true -f null - 2>&1 | tail -14)
+    echo "$(echo "$READOUT" | grep -oE 'I:\s*-?[0-9.]+' | tail -1 | grep -oE '\-?[0-9.]+') LUFS  $(echo "$READOUT" | grep -oE 'Peak:\s*-?[0-9.]+' | tail -1 | grep -oE '\-?[0-9.]+') dBTP"
+  fi
 done
