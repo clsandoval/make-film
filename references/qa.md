@@ -222,6 +222,36 @@ Judge weight from full-resolution stills, never a contact sheet. One pass briefe
 rebuild for "the card is too small", then measured and found it already filled 60–77%
 of the frame.
 
+### Measure contrast on the marks as drawn, not on the tokens
+
+A palette table with a ratio beside every token proves nothing about the frame. Between the
+token and the pixel sit group opacity, a parent fade, a tween's from-state and the encoder,
+and every one of them multiplies.
+
+Two films did this identically. Both wrote a correct contrast table at G1 — the second even
+refused the product's own `--accent` at 1.75:1, in writing, with the number. Both then wrapped
+the audited marks in a group opacity and shipped them invisible:
+
+| film | token | as drawn | what it was |
+|---|---|---|---|
+| A | 4.56:1 | **1.70:1** | rail numerals, `opacity:.34` on the group |
+| A | 1.26:1 | **1.08:1** | rail dividers — the structure carrying the signature move |
+| B | 7.49:1 | **1.66:1** | a line stating one of the three product claims, alpha 0.31 |
+
+Film A's blind reviewer put it exactly: a sound structural spine, drawn at 1.08:1, so nobody
+will see it work.
+
+**So run the check on rendered frames, once, after the first real render.** Sample every
+text and hairline against the pixels behind it in the delivered PNG — not the CSS, the PNG —
+and print the ratio beside the token's own. Any mark whose drawn ratio is below its token's
+is being dimmed by something upstream; find it. Text under 4.5:1 and meaning-bearing
+hairlines under 3:1 fail, and a mark that fails only during a fade fails for the length of
+that fade.
+
+You are looking for the difference between the two numbers. A mark that never had contrast is
+a palette mistake and G1 catches it. A mark that had it and lost it is a composition bug, and
+nothing before this check can see it.
+
 ### Solve the framing against the FINAL layout, not the empty one
 
 A composition that types its text in starts with empty elements. If you measure
