@@ -12,7 +12,7 @@ at 720p square, about $4.70, plus ffmpeg for the text and the GIF. Under an hour
 1. **Three beats, ten seconds.** Set-up, turn, payoff. Anything that is not one of those
    is padding. Example: someone dictates into a phone (3 s), the mistyped word descends
    on a tribe who take it as scripture (3 s), the tribe erupts into literal-minded
-   chaos (4 s). Cut fast in the last beat; end on the widest frame so the loop lands.
+   chaos (4 s). One gag in the last beat, growing for its whole four seconds.
 2. **One generation, text only, square.** Seedance 2.5 text-to-video, `duration: 10`,
    `aspect_ratio: 1:1` (square or 4:5 plays larger in the feed than 9:16), 720p, audio
    off. No reference images and no clips under 10 seconds; see the prompt shape below.
@@ -32,7 +32,7 @@ at 720p square, about $4.70, plus ffmpeg for the text and the GIF. Under an hour
 <Medium in one line: "Hand-drawn 2D animation, flat screenprint look: nearly white
 paper, soft periwinkle fills, crisp navy contours, one gold accent for light from
 the sky."> Bright, light and airy, not moody, not grey. No lettering. Silent film,
-10 seconds, square, fast cuts, dynamic camera.
+10 seconds, square, dynamic camera.
 
 Characters: <one sentence per recurring character or group, with the adjectives
 that carry the design: round, cute, tiny smile, robe>.
@@ -45,8 +45,9 @@ Shot 2, 3 to 6 seconds: <the turn, one sentence>.
 
 Cut.
 
-Shot 3, 6 to 10 seconds: <the payoff, one sentence, ending "faster and faster" or
-similar so the model escalates instead of holding>.
+Shot 3, 6 to 10 seconds: <the payoff: ONE gag in one sentence, described as a
+single action that grows, e.g. "piling onto each other into a wobbling tower to grab
+a small cloud out of the sky">.
 ```
 
 Keep the palette mood line. The same film generated without "bright, light and airy,
