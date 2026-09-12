@@ -257,6 +257,25 @@ read as one system observed continuously rather than as ten slides."
 **Anything that persists across a cut has to match-cut.** The same sentence jumped 122px across
 an 01→02 cut; because it was the same text, it read as a jolt rather than as a new frame.
 
+## A crossfade on the whole frame is a scene cut, not a content update
+
+`.scene`-level crossfade is for moving between scenes. Applying that same full-frame blend
+because *one element inside an unchanging scene* is updating is a different bug wearing the
+same visual — the report card, the chart, the highlighted point all sit still while a tooltip
+box swaps from one dataset to another, and the whole frame still gets a double-exposure
+crossfade for it. Reviewed on the delivered file: everything outside the tooltip is pixel-identical
+before and after the cut, so nothing there earned a scene-level transition — the ghosting is the
+tell that the wrong layer got animated.
+
+**The rule:** transition scope must match the scope of what actually changed. If only one
+element updates, that element crossfades or cuts on its own — a `min(120–200ms)` opacity/blur
+swap scoped to its own box — while every sibling stays byte-identical, frame to frame, across
+the cut. Route the whole scene through the shared crossfade only when the scene itself is
+changing (a new shot, a new subject, a hard content change) — never as the default handler for
+"something on screen updated." Verify it the same way `signature()` does for `.scene`: pull a
+contact sheet across the update window and confirm every element *outside* the one that's
+supposed to move reads as the same pixels, not a blend.
+
 ## The cursor is a stage prop
 
 Four films, two cursors on record, neither like the other, neither written down — and two of

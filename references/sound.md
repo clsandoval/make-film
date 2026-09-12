@@ -298,6 +298,26 @@ One measurement trap: **`-v error` on a measurement pass suppresses the readout.
 `volumedetect` and `ebur128` print to stderr at info level. Drop `-v error` when you want the
 numbers.
 
+## A silence check proves absence of loudness, not absence of artifact
+
+`silencedetect` at a coarse threshold (e.g. -35dB) will happily call a gap "silent" while a
+breath, mouth-click or room-tone swell sits in it well above the noise floor but below the
+threshold. One film's opening line lost its first word to encoder priming (the take started
+0.192s in, sitting exactly on the sample the player eats), and the gap between it and the next
+line measured 953ms of "silence" at -35dB — a listener still heard a breath there, because a
+real take artifact clears -50dB without ever approaching -35dB. **Run the check tighter than
+you think you need** (-50dB, `d=0.02`) and where it disagrees with your ear, trust the ear:
+listen to the raw take, don't just read the detector's verdict.
+
+**Do not drop a cleanup pass because a later step damaged something upstream of it.** One
+session skipped its own boundary-fade script (the thing applying an 8ms fade to every clip
+edge) because an earlier re-roll pass had wrecked some takes, and shipped a film where every
+clip butts a non-zero sample straight into digital silence — audible clicks at every cut. The
+fade script was not the thing that broke the takes; skipping it was an unrelated regression
+introduced to route around a different bug. Fix the step that's actually broken. If a script
+must be skipped, that is a flagged gap to close before delivery, not a silent omission — say
+out loud what got skipped and why, so it doesn't ship as "verified."
+
 ## Silent cuts
 
 A film destined for a muted autoplay feed carries no meaning in its audio, and one shipped

@@ -1,15 +1,41 @@
 ---
 name: make-film
-description: "Use when making, directing or rescuing a product film built from code — a launch or demo video, onboarding film, feature announcement, teaser, explainer or sizzle — and when an existing one looks basic, reads as a slideshow, has reveals that miss the voiceover, dead screen time, a clipped or too-quiet mix, TTS that clicks or chops word endings, or a render that will not reproduce. Covers SaaS, apps, hardware, dev tools and services. Keywords: motion design, storyboard, voiceover sync, word-locked, kinetic typography, GSAP, Playwright, deterministic render, ElevenLabs, LUFS, ffmpeg, film grain, 9:16, captions."
+description: "Use when making, directing or rescuing a product film or narrated still-image animatic — a launch or demo video, onboarding film, feature announcement, teaser, explainer or sizzle — and when an existing one looks basic, reads as a slideshow, has reveals that miss the voiceover, dead screen time, a clipped or too-quiet mix, TTS that clicks or chops word endings, or a render that will not reproduce. Covers SaaS, apps, hardware, dev tools and services. Also covers voice-first generated video: a locked voiceover and a one-page scene brief sent straight to a video model (Seedance 2.5) in sentence-split parts. Keywords: motion design, storyboard, voiceover sync, word-locked, kinetic typography, GSAP, Playwright, deterministic render, ElevenLabs, LUFS, ffmpeg, film grain, 9:16, captions, Seedance, text-to-video, scene brief, animated explainer."
 ---
 
 # make-film
 
-One command, one directory, one film. HTML/CSS/GSAP drawn frame by frame, seeked
-deterministically by Playwright, mixed and mastered by ffmpeg. No GPU, no diffusion
-model, no stock footage, no After Effects. The same commit produces the same file.
+Choose the production mode from the director's intent. Three modes:
 
-**A film is a directory.** `film.json` + `film.html` + the scripts. There is no state
+- **Code-rendered.** HTML/CSS/GSAP, deterministic Playwright capture, ffmpeg. The
+  gates and renderer contract below are for this mode.
+- **Voice-first generated video.** Locked voiceover → one-page scene brief (style,
+  world, and per beat only the narrator's line plus what the picture must make
+  clear) → video model in sentence-split parts → review, mux the real voice, stitch
+  → reference pass only for drift. Read
+  [Voice-first generated video](references/voice-first-video.md). This is the
+  default for illustrated or animated explainers when a video model is available;
+  it produced the best AlphaGenome film in September 2026 with no stills at all.
+- **Ten-second GIF, straight to LinkedIn.** One joke in three beats, one text-only
+  square Seedance 2.5 generation of exactly 10 s, words burned in with ffmpeg, GIF
+  encoded under the 8 MB cap with `scripts/gif_encode.sh`. Read
+  [Ten-second GIF](references/linkedin-gif-10s.md). About $5 and under an hour.
+- **Stills-first.** Script → stills → stills with the recorded voiceover → animatic
+  QA → optional animation. Read [Stills-first filmmaking](references/stills-first.md).
+  Use it to choose between aesthetic directions cheaply before spending on video,
+  or when no video model is authorized. Do not build a dense stills animatic
+  before trying the voice-first path.
+
+The code-only setup below applies to the code-rendered mode; it does not prohibit
+image or video tools in the other two.
+
+Existing user authorization overrides default gate cadence. If the director explicitly
+asks for repeated rough edits and QA, continue within that scope until satisfied or
+interrupted; do not re-request approval for each still. A pause stops further generation.
+Paid video authorization does not persist past an explicit spending stop. Carlos
+requires **Seedance 2.5 only** for new Seedance work; never silently use 2.0.
+
+**In code-rendered mode, a film is a directory.** `film.json` + `film.html` + the scripts. There is no state
 file: the artifacts are the state. Invoked with no argument, resume at the first
 missing one.
 
@@ -23,7 +49,7 @@ thrown away. Four of the first film's seven renders died that way.
 
 **A note arriving mid-render kills the render.** Not after this one finishes.
 
-## The gates
+## Default gates for a new code-rendered film
 
 Everything between them runs unattended. Stop, show, and wait at each.
 
@@ -308,7 +334,7 @@ The order comes: "do not stop and i mean do not stop i'm going to sleep i want y
 ultra code finish it". The gates do not disappear then, they queue. Run to a first cut,
 and write every skipped gate at the top of `HANDOFF.md` as a numbered list of questions
 the director answers on waking — the questions, not a summary of what you decided in
-their place. **Never build a second version on top of an unanswered one.** That is the run
+their place. **Without explicit iterative authorization, do not build a second version on top of an unanswered direction.** That is the run
 the opening refers to: it returned v8, the one unusable film in the set, and it failed
 exactly here — the skipped gates were written up as decisions already taken, not as
 questions still open.
@@ -319,6 +345,7 @@ Load only what the current step needs.
 
 | File | What's in it |
 |---|---|
+| `references/stills-first.md` | Narrated image animatics, gradual frame insertion, artifact/meaning QA, cuts, Seedance experiments and spend boundaries |
 | `references/direction.md` | Three directions, killing two, the signature move, deriving a look instead of inheriting one, the accent budget |
 | `references/truth.md` | The truth stage: `generate.py` → `fit.py` → `facts.json`/`fit.json` → `fit.js`. Then the approved-figures list, the refused list, sourcing real assets, genericising private material |
 | `references/copy.md` | The screen-vs-voice table — the cheapest gate and the highest-value one |

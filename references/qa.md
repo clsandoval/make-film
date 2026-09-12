@@ -291,6 +291,30 @@ sheets were reviewed against a composition that had moved on. The QA agent's own
 note: "Re-generate the `qa/` sheets before the next round or they will send the next
 reviewer chasing ghosts." Rebuild every sheet after every stills run, or delete it.
 
+### A wholesale revert takes the fix out with the regression
+
+Reverting a bad pass "wholesale" because most of it was wrong throws away the parts that were
+right along with it. One film had already fixed a dropped opening word with a 0.5s lead-in —
+then a later trim pass got reverted in full, including that lead-in, because the revert target
+was "the trim pass," not "the trim pass minus the one line I already know is correct." The
+defect came back identical to the first report, and cost a second full round to re-diagnose
+something already fixed once. **Revert at the same granularity you'd commit at.** Before
+reverting a batch of changes, check whether anything already-verified is riding inside it, and
+carve that part out first — or re-apply it immediately after the revert, in the same turn, not
+as a follow-up you might forget.
+
+### "The check passed" is not "I verified it"
+
+A script exiting 0 is evidence about what the script measures, not about what the viewer will
+experience. Declaring a film done because `probe.mjs` is green, or because a silence check
+returned clean, reports the state of your instrument, not the state of the film — see the two
+entries above, where a coarse threshold and a wholesale revert both produced a clean-looking
+check on a broken delivery. Before calling a round finished: pull the actual frames or the
+actual waveform for the specific thing that was reported broken, and look at *that*, not at
+the pass/fail line of whatever automated check happens to cover the same general area. The gap
+between "my script says this region is fine" and "I looked at this region" is exactly where a
+regression survives two rounds of QA in a row.
+
 ### A note is a symptom report, not a specification
 
 The person giving a note is almost always right that something is wrong and almost
