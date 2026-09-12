@@ -83,6 +83,13 @@ repeated row. These are what a reference pass is for.
 On a 3D stop-motion look, text only held six shots and five cuts too, but drifted on
 prop inventory (six tiles for four, a mug for a tumbler, a reinterpreted model).
 
+## Submitting
+
+`scripts/seedance_gen.py part1 part2` reads `prompt.txt` and `spec.json` from each directory,
+submits sequentially, polls, downloads `raw.mp4`, writes a frame sheet and logs the estimated
+cost. `--dry-run` prints the plan without spending. Schema, prices, client calls and the error
+shape are in [fal-seedance-25-api.md](fal-seedance-25-api.md).
+
 ## Cost and filter facts, dated 2026-09-11
 
 fal.ai `bytedance/seedance-2.5/text-to-video`, displayed rates: 480p $0.2205/s,

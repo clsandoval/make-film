@@ -16,6 +16,9 @@ at 720p square, about $4.70, plus ffmpeg for the text and the GIF. Under an hour
 2. **One generation, text only, square.** Seedance 2.5 text-to-video, `duration: 10`,
    `aspect_ratio: 1:1` (square or 4:5 plays larger in the feed than 9:16), 720p, audio
    off. No reference images and no clips under 10 seconds; see the prompt shape below.
+   Submit with `scripts/seedance_gen.py <dir>` where `spec.json` is
+   `{"duration": "10", "resolution": "720p", "aspect": "1:1"}`; API details in
+   [fal-seedance-25-api.md](fal-seedance-25-api.md).
 3. **Words in post, never in the generation.** Ask the model for blank screens and no
    lettering. Burn the words in with ffmpeg `drawtext`, where you control spelling,
    timing and the joke. Typed text is a chain of `drawtext` filters each enabled for one

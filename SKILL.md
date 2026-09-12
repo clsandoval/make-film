@@ -26,8 +26,12 @@ Choose the production mode from the director's intent. Three modes:
   or when no video model is authorized. Do not build a dense stills animatic
   before trying the voice-first path.
 
+Both generated-video modes submit through `scripts/seedance_gen.py` with the fal.ai
+schema, prices, client calls and error shape in
+[fal-seedance-25-api.md](references/fal-seedance-25-api.md). Seedance 2.5 only.
+
 The code-only setup below applies to the code-rendered mode; it does not prohibit
-image or video tools in the other two.
+image or video tools in the other three.
 
 Existing user authorization overrides default gate cadence. If the director explicitly
 asks for repeated rough edits and QA, continue within that scope until satisfied or
