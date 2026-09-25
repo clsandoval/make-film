@@ -5,7 +5,7 @@ description: "Use when making, directing or rescuing a product film or narrated 
 
 # make-film
 
-Choose the production mode from the director's intent. Three modes:
+Choose the production mode from the director's intent. Five modes:
 
 - **Code-rendered.** HTML/CSS/GSAP, deterministic Playwright capture, ffmpeg. The
   gates and renderer contract below are for this mode.
@@ -25,6 +25,16 @@ Choose the production mode from the director's intent. Three modes:
   Use it to choose between aesthetic directions cheaply before spending on video,
   or when no video model is authorized. Do not build a dense stills animatic
   before trying the voice-first path.
+
+- **Style peg (choosing a look).** When the director wants to compare new visual
+  styles, each peg is: a 1-2 line pitch, 2-3 image-model stills (Codex) of the same
+  beat, and a silent 5-8 s 1920×1080 H.264 **motion test built from those static
+  assets with code-orchestrated motion** (HTML/JS scaffold, `lib.js` seek contract,
+  Playwright render, animate on twos where the style wants it), showing the style's
+  signature move. **No Seedance or any video model for pegs**, no VO, no music, ≤8
+  stills per peg, frame-check the key beats, and no full film until the director
+  picks. For a second batch, copy the first batch's brief and scaffold exactly:
+  Carlos rejected a Seedance peg batch on 2026-09-25 ("only same method as the last 10").
 
 Both generated-video modes submit through `scripts/seedance_gen.py` with the fal.ai
 schema, prices, client calls and error shape in
