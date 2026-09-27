@@ -1,14 +1,20 @@
 ---
 name: make-film
-description: "Use when making, directing or rescuing a product film or narrated still-image animatic — a launch or demo video, onboarding film, feature announcement, teaser, explainer or sizzle — and when an existing one looks basic, reads as a slideshow, has reveals that miss the voiceover, dead screen time, a clipped or too-quiet mix, TTS that clicks or chops word endings, or a render that will not reproduce. Covers SaaS, apps, hardware, dev tools and services. Also covers voice-first generated video: a locked voiceover and a one-page scene brief sent straight to a video model (Seedance 2.5) in sentence-split parts. Keywords: motion design, storyboard, voiceover sync, word-locked, kinetic typography, GSAP, Playwright, deterministic render, ElevenLabs, LUFS, ffmpeg, film grain, 9:16, captions, Seedance, text-to-video, scene brief, animated explainer, style peg, motion test, batch of variants, orchestrator and worker windows."
+description: "Use when making, directing or rescuing a product film or narrated still-image animatic — a launch or demo video, onboarding film, feature announcement, teaser, explainer or sizzle — and when an existing one looks basic, reads as a slideshow, has reveals that miss the voiceover, dead screen time, a clipped or too-quiet mix, TTS that clicks or chops word endings, or a render that will not reproduce. Covers SaaS, apps, hardware, dev tools and services. Also covers voice-first generated video: a locked voiceover and a one-page scene brief sent straight to a video model (Seedance 2.5) in sentence-split parts. Keywords: release film, catch-up, feature round-up, chapters, contents page, motion design, storyboard, voiceover sync, word-locked, kinetic typography, GSAP, Playwright, deterministic render, ElevenLabs, LUFS, ffmpeg, film grain, 9:16, captions, Seedance, text-to-video, scene brief, animated explainer, style peg, motion test, batch of variants, orchestrator and worker windows."
 ---
 
 # make-film
 
-Choose the production mode from the director's intent. Six modes:
+Choose the production mode from the director's intent. Seven modes:
 
 - **Code-rendered.** HTML/CSS/GSAP, deterministic Playwright capture, ffmpeg. The
   gates and renderer contract below are for this mode.
+- **Chapters (release, catch-up, feature round-up): the default for these.** A contents
+  page is the hub of one canvas. The camera dives along a drawn line into each chapter, punches between
+  morphing cards on the beat, pulls back to tick the row, and finishes with a New/Fixed panel, a map pullback
+  and the end card. No voiceover; a groove at 95-120 BPM with a drop on the first dive; about 1 camera move per
+  second. Read [Chapters style](references/style-chapters.md) and start from the runnable scaffold in
+  `assets/chapters/` (brand and content in `chapters.json`). Send a 20 s motion preview before the full render.
 - **Voice-first generated video.** Locked voiceover → one-page scene brief (style,
   world, and per beat only the narrator's line plus what the picture must make
   clear) → video model in sentence-split parts → review, mux the real voice, stitch
@@ -56,6 +62,12 @@ asks for repeated rough edits and QA, continue within that scope until satisfied
 interrupted; do not re-request approval for each still. A pause stops further generation.
 Paid video authorization does not persist past an explicit spending stop. Carlos
 requires **Seedance 2.5 only** for new Seedance work; never silently use 2.0.
+
+**Carlos's pace rule.** A longer film (a 1-2 min release or catch-up) stays fast: only **10-20% slower
+than the 34 s shorts** (about 103 vs 120 BPM, whips of 0.35-0.45 s, 0.6-1.0 camera moves per second). It is
+longer because there is more content, never because each moment is slower. "Slower" means longer holds of
+2.5-3.5 s *inside* continuous camera motion. It never means static slides, fade-to-next-card, 12-20 s stops per
+feature, or ambient music: that is the rejected Codex "Before we start" (2026-09-27).
 
 **In code-rendered mode, a film is a directory.** `film.json` + `film.html` + the scripts. There is no state
 file: the artifacts are the state. Invoked with no argument, resume at the first
@@ -367,6 +379,7 @@ Load only what the current step needs.
 
 | File | What's in it |
 |---|---|
+| `references/style-chapters.md` | The chapters style: contents-page hub, dive/pullback, three text moments, beat grid, framing at 55-65%, music and audio targets, QA checklist, anti-patterns (Codex "Before we start"). Scaffold: `assets/chapters/` |
 | `references/stills-first.md` | Narrated image animatics, gradual frame insertion, artifact/meaning QA, cuts, Seedance experiments and spend boundaries |
 | `references/batch-variants.md` | Orchestrator + worker windows, the done.log protocol, stills before renders, one shared VO, brand sheet, direction Q&A, script tells to strip, model bake-off |
 | `references/direction.md` | Three directions, killing two, the signature move, deriving a look instead of inheriting one, the accent budget |

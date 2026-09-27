@@ -33,6 +33,17 @@ npm init -y && npm i gsap@^3.15 playwright@^1.62 && npx playwright install chrom
 `scripts/` must live inside the film directory — Node resolves `playwright`
 relative to the script, not the film.
 
+## Chapters style (release and catch-up films)
+
+For a 1–2 minute release, catch-up or feature round-up, start from the runnable scaffold instead:
+
+```bash
+cp -r ~/.claude/skills/make-film/assets/chapters my-film && cd my-film && npm i
+node scripts/timing.mjs && node scripts/stills.mjs 1   # edit chapters.json, look at stills/sheet-*.png
+```
+
+See `references/style-chapters.md` and `assets/chapters/README.md`.
+
 ## Requirements
 
 | | |

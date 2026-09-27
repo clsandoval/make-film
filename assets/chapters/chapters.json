@@ -1,0 +1,81 @@
+{
+  "brand": {
+    "name": "Beacon",
+    "url": "beacon.example.com",
+    "org": "Example Co",
+    "font": "Inter, 'Helvetica Neue', Arial, sans-serif",
+    "mono": "'JetBrains Mono', Menlo, Consolas, monospace",
+    "mascot": null,
+    "palette": {
+      "ground": "#0C1F40", "deep": "#07142A", "ink": "#F7F7F7",
+      "accent": "#B4E7DD", "accent2": "#0C9E82",
+      "card": "#F7F7F7", "cardInk": "#0C1F40",
+      "trial": "#F6AE72", "exp": "#9FAAE2", "dot": "#AD5B27"
+    }
+  },
+  "music": {
+    "file": "music/track.mp3",
+    "bpm": 103,
+    "phase": 0.03,
+    "final_bar": null,
+    "phrase_bars": 4,
+    "breakdown_before": 3,
+    "credit": "Music: “Track title” Artist (source) · CC BY 4.0 · edited"
+  },
+  "hub": { "title": "What’s new in Beacon", "subtitle": "October release · five chapters" },
+  "chapters": [
+    {
+      "title": "Weekly digest", "sub": "one message on Monday", "flag": { "text": "IN TRIAL", "kind": "trial" },
+      "pain": "Catching up meant reading every channel yourself.",
+      "benefit": "One message, only what matters.",
+      "bars": 3.5,
+      "beats": [
+        { "at": 0.35, "count": { "to": 1240, "label": "messages read", "dur": 0.25 }, "card": { "x": 250, "y": 330, "w": 700, "h": 360 } },
+        { "at": 0.85, "count": { "to": 36, "label": "worth a look", "dur": 0.07 }, "morph": true, "card": { "x": 250, "y": 330, "w": 700, "h": 360 } },
+        { "at": 1.4, "morph": true, "card": { "x": 440, "y": 320, "w": 1100, "h": 330 },
+          "html": "<div class='k'>#team-digest · Monday 09:00</div><div class='big'>Three launches, one customer question and a failing nightly job.</div><div class='src'>each line links to its source</div>" }
+      ]
+    },
+    {
+      "title": "Reports", "sub": "from your own templates",
+      "pain": "A new report meant copying last month’s and fixing it.",
+      "benefit": "Built from your templates, checked before you see them.",
+      "bars": 4,
+      "beats": [
+        { "at": 0.25, "card": { "x": 260, "y": 250, "w": 1400, "h": 120 }, "html": "<div class='msg'><b>sam</b>&nbsp; a 5-page October report from the Monthly template</div>" },
+        { "at": 0.75, "card": { "x": 760, "y": 440, "w": 400, "h": 225 }, "dark": true, "html": "<div class='cover'>Monthly<br>template</div>" },
+        { "at": 1.25, "morph": true, "card": { "x": 160, "y": 460, "w": 1600, "h": 300 }, "html": "<div class='pages'><i></i><i></i><i></i><i></i><i></i></div>" },
+        { "at": 2.25, "card": { "x": 560, "y": 800, "w": 800, "h": 90 }, "chip": true, "html": "Rendered and checked · 5 of 5" }
+      ]
+    },
+    {
+      "title": "Shared pages", "sub": "answers you can click", "flag": { "text": "EXPERIMENTAL", "kind": "exp" },
+      "pain": "Some answers work better as a page than a message.",
+      "benefit": "Share a working page by link.",
+      "bars": 3,
+      "beats": [
+        { "at": 0.25, "card": { "x": 310, "y": 260, "w": 1300, "h": 170 }, "html": "<div class='msg'><b>Beacon</b>&nbsp; here is the forecast as a page you can explore</div>" },
+        { "at": 0.75, "morph": true, "card": { "x": 300, "y": 240, "w": 1320, "h": 580 }, "html": "<div class='bar'>🔗 forecast-explorer</div><div class='bars'><i style='width:86%'></i><i style='width:62%'></i><i style='width:44%'></i><i style='width:27%'></i></div>" }
+      ]
+    },
+    {
+      "title": "Voice", "sub": "talk it through", "flag": { "text": "EXPERIMENTAL", "kind": "exp" },
+      "pain": "Some things are quicker to say than to type.",
+      "benefit": "Talk it through, get the notes in the thread.",
+      "bars": 3.5,
+      "beats": [
+        { "at": 0.25, "card": { "x": 360, "y": 440, "w": 1200, "h": 110 }, "html": "<div class='mono'>/voice join</div>" },
+        { "at": 0.8, "morph": true, "dark": true, "card": { "x": 260, "y": 236, "w": 1400, "h": 560 }, "html": "<div class='call'><span>A</span><span>B</span><span class='me'>●</span></div><div class='cap'><b>alex</b>&nbsp; what did we promise the customer?</div>" },
+        { "at": 2.25, "morph": true, "card": { "x": 360, "y": 260, "w": 1200, "h": 400 }, "html": "<div class='k'># team · call notes</div><div class='big'>Promised: the export by Friday.</div><div class='src'>transcript posted to the thread</div>" }
+      ]
+    }
+  ],
+  "panel": {
+    "title": "Everything else", "sub": "new tools and fixes", "bars": 4,
+    "benefit": "Faster, and honest about what it can’t see.",
+    "groups": [
+      { "label": "New", "rows": [["Reminders", "“Tell me when this file changes.”"], ["Wiki", "Beacon can now write pages."], ["Keys", "Add an API key in a private form."], ["Status", "Ask what it can see, and how fresh it is."]] },
+      { "label": "Fixed", "rows": [["Search", "New messages show up in minutes."], ["No access", "Tells you when it can’t see something."], ["Privacy", "Only uses meetings shared with it."], ["Long tasks", "You still get the “done” after a restart."]] }
+    ]
+  }
+}
