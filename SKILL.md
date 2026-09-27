@@ -1,11 +1,11 @@
 ---
 name: make-film
-description: "Use when making, directing or rescuing a product film or narrated still-image animatic — a launch or demo video, onboarding film, feature announcement, teaser, explainer or sizzle — and when an existing one looks basic, reads as a slideshow, has reveals that miss the voiceover, dead screen time, a clipped or too-quiet mix, TTS that clicks or chops word endings, or a render that will not reproduce. Covers SaaS, apps, hardware, dev tools and services. Also covers voice-first generated video: a locked voiceover and a one-page scene brief sent straight to a video model (Seedance 2.5) in sentence-split parts. Keywords: motion design, storyboard, voiceover sync, word-locked, kinetic typography, GSAP, Playwright, deterministic render, ElevenLabs, LUFS, ffmpeg, film grain, 9:16, captions, Seedance, text-to-video, scene brief, animated explainer."
+description: "Use when making, directing or rescuing a product film or narrated still-image animatic — a launch or demo video, onboarding film, feature announcement, teaser, explainer or sizzle — and when an existing one looks basic, reads as a slideshow, has reveals that miss the voiceover, dead screen time, a clipped or too-quiet mix, TTS that clicks or chops word endings, or a render that will not reproduce. Covers SaaS, apps, hardware, dev tools and services. Also covers voice-first generated video: a locked voiceover and a one-page scene brief sent straight to a video model (Seedance 2.5) in sentence-split parts. Keywords: motion design, storyboard, voiceover sync, word-locked, kinetic typography, GSAP, Playwright, deterministic render, ElevenLabs, LUFS, ffmpeg, film grain, 9:16, captions, Seedance, text-to-video, scene brief, animated explainer, style peg, motion test, batch of variants, orchestrator and worker windows."
 ---
 
 # make-film
 
-Choose the production mode from the director's intent. Five modes:
+Choose the production mode from the director's intent. Six modes:
 
 - **Code-rendered.** HTML/CSS/GSAP, deterministic Playwright capture, ffmpeg. The
   gates and renderer contract below are for this mode.
@@ -36,12 +36,20 @@ Choose the production mode from the director's intent. Five modes:
   picks. For a second batch, copy the first batch's brief and scaffold exactly:
   Carlos rejected a Seedance peg batch on 2026-09-25 ("only same method as the last 10").
 
+- **Batch / variants (many films at once).** An orchestrator window plus one worker
+  window per variant, each in its own folder with a TASK-VARIANT.md cloned from one
+  COMMON-BRIEF.md, reporting through a `done.log` line (`STILLS`, `STILLS-V2`,
+  `<variant> <mp4>`, `BLOCKED`). Script or treatment first, key-beat stills for a
+  reaction before any full render, one shared VO take so variants compare fairly,
+  one brand sheet taken from the client's site CSS, orchestrator QA frame by frame, each
+  file delivered as it passes. Read [Batch and variant films](references/batch-variants.md).
+
 Both generated-video modes submit through `scripts/seedance_gen.py` with the fal.ai
 schema, prices, client calls and error shape in
 [fal-seedance-25-api.md](references/fal-seedance-25-api.md). Seedance 2.5 only.
 
 The code-only setup below applies to the code-rendered mode; it does not prohibit
-image or video tools in the other three.
+image or video tools in the other modes.
 
 Existing user authorization overrides default gate cadence. If the director explicitly
 asks for repeated rough edits and QA, continue within that scope until satisfied or
@@ -360,6 +368,7 @@ Load only what the current step needs.
 | File | What's in it |
 |---|---|
 | `references/stills-first.md` | Narrated image animatics, gradual frame insertion, artifact/meaning QA, cuts, Seedance experiments and spend boundaries |
+| `references/batch-variants.md` | Orchestrator + worker windows, the done.log protocol, stills before renders, one shared VO, brand sheet, direction Q&A, script tells to strip, model bake-off |
 | `references/direction.md` | Three directions, killing two, the signature move, deriving a look instead of inheriting one, the accent budget |
 | `references/truth.md` | The truth stage: `generate.py` → `fit.py` → `facts.json`/`fit.json` → `fit.js`. Then the approved-figures list, the refused list, sourcing real assets, genericising private material |
 | `references/copy.md` | The screen-vs-voice table — the cheapest gate and the highest-value one |
