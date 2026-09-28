@@ -36,7 +36,7 @@ It keeps the chapters grammar and slows it down for a first-time viewer:
 
 ## Pace
 
-Numbers from the approved reference (EAP v2, below), from its `SCRIPT-STORYBOARD.md`, `scripts/timeline.py` and the timeline built from the recorded voice:
+Numbers from the approved reference (EAP v2, below), from its `SCRIPT-STORYBOARD.md`, its `timeline.py` and the timeline built from the recorded voice:
 
 | | value |
 |---|---|
@@ -48,7 +48,7 @@ Numbers from the approved reference (EAP v2, below), from its `SCRIPT-STORYBOARD
 | Between chapters | pullback, tick, next row lights, dive: 3.4 to 3.9 s with no voice (6.5 s from the cold open into the contents page) |
 
 The starter uses the same shape: `grid.bpm` 100, `snap_beats` 0.5, `breath` 0.4 s, a per-line `breath` for new
-ideas, `min_beats` 3. On its placeholder script it measures about 0.25 camera moves per second, well below the
+ideas, `min_beats` 3. On its placeholder script it measures about 0.2 camera moves per second, well below the
 chapters style's 0.55 to 1.0. That is intended: here a move happens when a new idea is spoken, and the reveals
 inside a line (words, chips, bars, a count) keep the frame alive between moves. "Slower" still means holds inside
 motion (drift, landing words), never a static slide.
@@ -64,7 +64,7 @@ motion (drift, landing words), never a static slide.
   timing is derived from the recorded line lengths.
 - **Record one take per chapter, then cut it into lines** from the take's own character alignment, with 8 ms
   fades at each cut so nothing clicks. Per-line takes sound like separate reads; one take per chapter keeps the
-  delivery continuous. Check every word of each take with a local transcription (`scripts/stt.py`) before you
+  delivery continuous. Check every word of each take with a local transcription (`starter/scripts/stt.py`) before you
   split, names and respellings first.
 - **A one-line fix is a splice, never a regeneration.** Re-record only the changed line (`vo.py line <id>` with
   `"take": "line"` on it) and cut everything else from the approved take exactly as before. Regenerating the whole
@@ -96,7 +96,7 @@ Write for someone who arrived by accident ([copy](../../references/copy.md)).
   earlier. See [truth](../../references/truth.md).
 - Spell names phonetically for the voice in `tts_respell`, never on screen.
 
-`scripts/qa.mjs` warns on the mechanical tells (em dashes, signposting, "not just", "honest"). The rhythm tells
+`starter/scripts/qa.mjs` warns on the mechanical tells (em dashes, signposting, "not just", "honest"). The rhythm tells
 need a human read.
 
 ## Gates
@@ -135,8 +135,8 @@ Soft SFX are OK". The approved `SCRIPT-STORYBOARD.md` promises "one idea on scre
 detours, footnotes or side chips. A viewer who knows nothing can follow it with the sound off." It explains each
 term in words once (a skill is "notes the agent opens by topic") and keeps code names on screen only. Its proof
 chapter uses only an audited report and says a search tool "did not make the answers better" where that is what
-the numbers showed. The voice was recorded one take per chapter and split by `scripts/vo.py`, with
-`scripts/stt.py` checking the pronunciation of a product name. At the time this recipe was written its picture was
+the numbers showed. The voice was recorded one take per chapter and split by its `vo.py`, with
+its `stt.py` checking the pronunciation of a product name. At the time this recipe was written its picture was
 still being built, so the starter was built from its script, its VO pipeline and the chapters scaffold, not lifted
 from a finished film.
 
