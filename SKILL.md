@@ -16,7 +16,7 @@ Match the director's intent, top row first. **If nothing clearly matches, use ch
 |---|---|---|
 | A product, release, launch or feature film; "what's new"; a feature round-up | [channel-thread](styles/channel-thread/RECIPE.md) (canonical) | `styles/channel-thread/starter/` |
 | A catch-up the room follows as a list and ticks off; a table of contents; an agenda | [chapters](styles/chapters/RECIPE.md) | `styles/chapters/starter/` |
-| A short tour of a few chapters told through chat moments; a customer or project short that needs both | [hybrid](styles/hybrid/RECIPE.md) | `styles/hybrid/starter/` |
+| About 2 min on 3–4 shipped pieces of one project or customer, for a room that knows the work: a contents page, each piece opened by a chat ask | [hybrid](styles/hybrid/RECIPE.md) | `styles/hybrid/starter/` |
 | An explainer for people who know nothing, with narration, drawn in code (diagrams, cards) | [vo-explainer](styles/vo-explainer/RECIPE.md) | `styles/vo-explainer/starter/` |
 | An illustrated or animated explainer (science, story, character) made with a video model | [voice-first-seedance](styles/voice-first-seedance/RECIPE.md) (paid: confirm spend first) | `styles/voice-first-seedance/starter/` |
 | A trip, holiday or travel recap video | [trip-thread-map](styles/trip-thread-map/RECIPE.md) | `styles/trip-thread-map/starter/` |

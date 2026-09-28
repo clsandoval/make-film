@@ -85,6 +85,8 @@ def cut(src, a, b, dst):
 def split():
     meta = {'voice_id': F['voice']['id'], 'model': F['voice']['model'], 'lines': {}}
     for c in F['chapters']:
+        if not (RAW / f"{c['id']}.json").exists():
+            sys.exit(f"no raw take for chapter {c['id']} (assets/voice/raw/{c['id']}.json). Run `vo.py gen` first; until then the film uses estimated timing.")
         raw = json.loads((RAW / f"{c['id']}.json").read_text()); al = raw['alignment']
         chars, st, en = al['characters'], al['character_start_times_seconds'], al['character_end_times_seconds']
         text = ''.join(chars); assert text == raw['text'], f"{c['id']}: alignment text differs from the text sent"
