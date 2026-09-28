@@ -19,7 +19,7 @@ result. Replace them with one counted, sourced result and remove the flags befor
 ## Commands
 
 ```bash
-cp -r styles/short-result/starter my-film && cd my-film
+cp -r <skill>/styles/short-result/starter my-film && cd my-film
 npm i && npx playwright install chromium
 # edit channel.json: brand, channel, people, intro (title = the claim, 3-4 words), the four cards
 node scripts/timing.mjs            # -> timing.json; prints duration, camera moves/s and changes/s

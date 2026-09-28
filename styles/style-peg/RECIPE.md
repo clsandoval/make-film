@@ -37,7 +37,7 @@ style line. Do not write a fresh brief and do not swap in a different method.
 
 On 2026-09-25 a new batch of ten styles was briefed with a video model for the motion tests instead of the
 scaffold. The director rejected it: "only same method as the last 10". The account also ran dry on the way.
-Source: `/home/clsandoval/cs/make-film-restructure-20260928/memory-rules/style-peg-motion-no-seedance.md`.
+Source: the director's note of 2026-09-25, recorded in FILMS.md.
 
 ## Stills that animate
 
@@ -56,7 +56,7 @@ above for pieces.
 Reject glossy, ornate, airbrushed, over-detailed stills. In the second batch the director dropped three styles
 (ukiyo-e, stained glass, explorer map) as looking "very AI-generated" and asked for "flat, imperfect, handmade
 texture that reads as made by a person". Check each still against that before it is sent.
-Source: `/home/clsandoval/cs/daimon-peg2-cardboard-20260924/TASK.md`.
+Source: `~/cs/daimon-peg2-cardboard-20260924/TASK.md`.
 
 ## Motion that reads as intentional
 
@@ -72,10 +72,10 @@ Source: `/home/clsandoval/cs/daimon-peg2-cardboard-20260924/TASK.md`.
 ## Approved references
 
 - **Batch 1 (2026-09-24)**: eight pegs (pitch plus two stills each), one motion test (Gilliam cut-out, 7.2 s).
-  `/home/clsandoval/cs/daimon-style-pegs-20260924/HANDOFF.md`, scaffold in `motion/` (`gilliam.html`,
+  `~/cs/daimon-style-pegs-20260924/HANDOFF.md`, scaffold in `motion/` (`gilliam.html`,
   `lib.js`, `scripts/`), clip `clips/gilliam-raw.mp4`, prompt blocks in `art/gen.py`.
 - **Batch 2 (2026-09-24)**: thirteen single-style windows, each with the same TASK.md apart from the style line,
-  e.g. `/home/clsandoval/cs/daimon-peg2-cardboard-20260924/TASK.md`. Ten of them were greenlit into full films:
-  each of `/home/clsandoval/cs/daimon-peg2-{cardboard,ikea,jrpg,postit,receipt,safetycard,saulbass,shadowpuppet,transitmap,zine}-20260924/TASK-FILM.md`
+  e.g. `~/cs/daimon-peg2-cardboard-20260924/TASK.md`. Ten of them were greenlit into full films:
+  each of `~/cs/daimon-peg2-{cardboard,ikea,jrpg,postit,receipt,safetycard,saulbass,shadowpuppet,transitmap,zine}-20260924/TASK-FILM.md`
   opens with the style being greenlit and the script locked. The cardboard film's result is in its
   `FINALPASS-DONE.md` (17 s, built from the peg's stills and motion test plus at most 12 new stills).

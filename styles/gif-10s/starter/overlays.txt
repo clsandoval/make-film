@@ -1,8 +1,8 @@
 # One ffmpeg drawtext filter per line; blank lines and lines starting with # are ignored.
 # {F} is replaced with the font path. Times are seconds in the 10 s take; place y after looking at a grid frame.
 # Beat 1, typing: one drawtext per prefix, each enabled for ~0.1 s, the last one held.
-drawtext=fontfile={F}:text='claude a':fontcolor=0x0C1F40:fontsize=40:x=(w-text_w)/2:y=h*0.73:box=1:boxcolor=white@0.92:boxborderw=18:enable='between(t,1.0,2.0)'
+drawtext=fontfile={F}:text='claude a':fontcolor=0x111111:fontsize=40:x=(w-text_w)/2:y=h*0.73:box=1:boxcolor=white@0.92:boxborderw=18:enable='between(t,1.0,2.0)'
 # Beat 1, the correction: same box, new word, accent colour.
-drawtext=fontfile={F}:text='cloud agent':fontcolor=0xF6AE72:fontsize=40:x=(w-text_w)/2:y=h*0.73:box=1:boxcolor=white@0.92:boxborderw=18:enable='between(t,2.0,3.15)'
+drawtext=fontfile={F}:text='cloud agent':fontcolor=0xE4572E:fontsize=40:x=(w-text_w)/2:y=h*0.73:box=1:boxcolor=white@0.92:boxborderw=18:enable='between(t,2.0,3.15)'
 # Beat 2, the word descends: one drawtext with a time-driven y.
-drawtext=fontfile={F}:text='CLOUD AGENT':fontcolor=0x0C1F40:fontsize=56:x=(w-text_w)/2:y='if(lt(t,5.4),150+(t-3.3)*110,381)':enable='between(t,3.3,6.3)'
+drawtext=fontfile={F}:text='CLOUD AGENT':fontcolor=0x111111:fontsize=56:x=(w-text_w)/2:y='if(lt(t,5.4),150+(t-3.3)*110,381)':enable='between(t,3.3,6.3)'

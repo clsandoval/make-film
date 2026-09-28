@@ -172,4 +172,4 @@ Superseded along the way:
   benefit (the pill).
 - **Captions narrating the chat.** The ask is the pain; don't restate it over the thread.
 - **Static holds.** Longer holds happen inside drifting, pushing camera motion, never on a still frame.
-- **Everything small in a big navy frame.** Push until the focal card is 55–65% of the frame, and don't crop it.
+- **Everything small in a big empty frame.** Push until the focal card is 55–65% of the frame, and don't crop it.

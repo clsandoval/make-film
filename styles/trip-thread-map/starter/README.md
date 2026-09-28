@@ -10,7 +10,7 @@ It runs offline. The map and the terrain are drawn from the inline places (seede
 `geo.js`), there are no tiles, no API keys and no network requests (`qa.mjs` fails on any).
 
 ```bash
-cp -r styles/trip-thread-map/starter my-trip && cd my-trip
+cp -r <skill>/styles/trip-thread-map/starter my-trip && cd my-trip
 npm i && npx playwright install chromium
 # edit trip.json: brand, people, days, hub, places{}, roads[], intro, segments[]; photos in media/, a cleared track at music.file
 node scripts/timing.mjs            # -> timing.json; duration, camera moves/s, changes/s (and the 8-28 s preview window)

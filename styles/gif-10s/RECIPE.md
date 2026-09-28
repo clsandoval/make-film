@@ -4,12 +4,14 @@
 beats, ten seconds, text burned in. LinkedIn caps GIFs around 8 MB and plays them muted, so the format decides
 the film.
 **Do not use** for anything that needs a voiceover, more than one idea, or product UI on screen (use a
-code-rendered style), or when no video-model spend is authorized.
+code-rendered style). With no video-model spend authorized, make the same three beats as a code-rendered
+10 s film from the [short-result starter](../short-result/starter/README.md) and encode it with
+`scripts/gif_encode.sh`.
 The starter is [`starter/`](starter/README.md): a joke template and a $0 burn-in and encode example.
 
 Proven on the September 2026 "Cloud Agent" short: one text-only generation at 720p square, about $4.70, plus
-ffmpeg for the text and the GIF. Under an hour end to end. Use the video model version the profile or brief
-names; never silently fall back to an older version.
+ffmpeg for the text and the GIF. Under an hour end to end. `scripts/seedance_gen.py` targets Seedance 2.5; use the version the
+brief or profile names, and never silently fall back to an older one.
 
 ## The path
 
@@ -66,11 +68,11 @@ eyes, tuft, robe" without "round, cute, smile" produced frowning bandaged eggs.
 ```
 F=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf
 # typing: one drawtext per prefix, each enabled for ~0.1 s, last one held
-drawtext=fontfile=$F:text='claude a':fontcolor=0x0C1F40:fontsize=40:x=(w-text_w)/2:y=790:box=1:boxcolor=white@0.92:boxborderw=18:enable='between(t,1.0,1.1)'
+drawtext=fontfile=$F:text='claude a':fontcolor=0x111111:fontsize=40:x=(w-text_w)/2:y=790:box=1:boxcolor=white@0.92:boxborderw=18:enable='between(t,1.0,1.1)'
 # the correction: same box, new word, accent colour
-drawtext=fontfile=$F:text='cloud agent':fontcolor=0xF6AE72:fontsize=40:x=(w-text_w)/2:y=790:box=1:boxcolor=white@0.92:boxborderw=18:enable='between(t,2.0,3.15)'
+drawtext=fontfile=$F:text='cloud agent':fontcolor=0xE4572E:fontsize=40:x=(w-text_w)/2:y=790:box=1:boxcolor=white@0.92:boxborderw=18:enable='between(t,2.0,3.15)'
 # the word descending in the beam
-drawtext=fontfile=$F:text='CLOUD AGENT':fontcolor=0x0C1F40:fontsize=56:x=(w-text_w)/2:y='if(lt(t,5.4),150+(t-3.3)*110,381)':enable='between(t,3.3,6.3)'
+drawtext=fontfile=$F:text='CLOUD AGENT':fontcolor=0x111111:fontsize=56:x=(w-text_w)/2:y='if(lt(t,5.4),150+(t-3.3)*110,381)':enable='between(t,3.3,6.3)'
 ```
 
 Place text by extracting frames with a grid first (`scale=480:-1` and 60 px lines);

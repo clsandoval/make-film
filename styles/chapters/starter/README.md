@@ -5,7 +5,7 @@ of one canvas, a camera dive along a drawn line into each chapter, beat-locked p
 a New/Fixed panel, a map pullback and the end card. Everything on screen comes from `chapters.json`.
 
 ```bash
-cp -r ~/.claude/skills/make-film/styles/chapters/starter my-film && cd my-film
+cp -r <skill>/styles/chapters/starter my-film && cd my-film
 npm i && npx playwright install chromium
 # edit chapters.json: brand, palette, hub, chapters[], panel; put a cleared track at music.file
 node scripts/timing.mjs            # -> timing.json, prints duration and camera moves/s (target 0.55-1.0)

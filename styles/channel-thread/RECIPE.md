@@ -2,7 +2,7 @@
 
 This is **the canonical default for product, release and feature films**: 1–2 minutes, several features, no
 voiceover, for a room that knows the product's chat. It was built for the Daimon September release (Opus C,
-"The #daimon channel", 1:19, 2026-09-27). Carlos: *"i really like opus c"*. He asked for it to be the
+"The #daimon channel", 1:19, 2026-09-27). The director: *"i really like opus c"*, and asked for it to be the
 canonical form. The runnable scaffold is [`starter/`](starter/README.md). The documented alternative for a
 table-of-contents catch-up is [chapters](../chapters/RECIPE.md); the two mixed is [hybrid](../hybrid/RECIPE.md).
 
@@ -15,7 +15,7 @@ through, cards that fill themselves and hand off, reveals on the beat) with the 
 
 ```
 title words on the beats ─▶ #channel window: release post · teammate types the pain · bot answers (IN TRIAL)
-   ══ DROP ══ ring from the bot's avatar, whip out of the chat ─▶ one snake canvas, aqua line drawing under it:
+   ══ DROP ══ ring from the bot's avatar, whip out of the chat ─▶ one snake canvas, accent line drawing under it:
    chapter 1 artifact cards (hand-offs) ─whip─▶ [ask thread card] ─▶ chapter 2 cards ─▶ … ─▶ [ask] ─▶ breakdown chapter
    ══ DROP 2 ══ ─▶ volley: 4 quick thread cards (minor features) ─▶ fixes card(s) ─▶ map pullback ─▶ dot ─▶ end card
 ```
@@ -147,8 +147,8 @@ The script rule (pain → turn → product → plain benefit, see [copy](../../r
    - m2b was cleared ("framing much bigger, holds about 3 s, 18 moves in 20 s").
 4. **Full render, then an independent reviewer on frames decoded from the MP4.** Give the reviewer the
    director's words verbatim. Iterate until a round finds no new blocker; a note that reappears is a regression.
-5. **The orchestrator clears the full cut**, and only then does it go to the director. Verify the API receipt
-   and log the message_id.
+5. **The orchestrator clears the full cut**, and only then does it go to the director. Confirm it arrived
+   and log it in `DELIVERY.log`.
 
 ## QA checklist
 
@@ -169,7 +169,7 @@ The script rule (pain → turn → product → plain benefit, see [copy](../../r
 
 ## Anti-patterns
 
-- **The rejected one: Codex "Before we start" (2026-09-27).** Carlos: *"the codex gen is so fucking ass...
+- **The rejected one: Codex "Before we start" (2026-09-27).** The director: *"the codex gen is so fucking ass...
   what happened to the flowy beats etc"*.
   - It was a static document with fades: each feature was a card that faded in, sat, and faded out.
   - There was no camera travel, no hand-offs, and nothing on a beat.
@@ -178,7 +178,7 @@ The script rule (pain → turn → product → plain benefit, see [copy](../../r
   in which each answer expanded into an overlay card and folded back, on a calm 94 BPM track, with 12–20 s per
   feature. The expand/fold idea was right. Doing it inside a static window, at meeting pace, was "the static
   feel" again. **Slower means longer holds *inside* continuous motion, never a static frame.**
-- **Small cards in a big navy frame.** m1 had the focal card at about 25% of the frame, and root sent it back.
+- **Small cards in a big empty frame.** m1 had the focal card at about 25% of the frame, and root sent it back.
   Push in until the card is 55–65%.
 - **Pushes that crop the card they push on.** A push is a reframe inside the card, not a crop.
 - **Long type-ons as the only motion.** The funnel sat for 6 s while its rows typed in, and the would-post card

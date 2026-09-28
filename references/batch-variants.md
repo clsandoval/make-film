@@ -7,8 +7,8 @@ style pegs, one script rendered in N worlds so they can be compared, or a set of
 and 10 variants of one 20 s cold open for an internal research film, three of them
 a model bake-off.
 
-Everything in [Style peg](../styles/style-peg/RECIPE.md) still applies: Codex stills, code-orchestrated
-motion, Playwright capture, ffmpeg. No video model.
+A batch of style pegs follows [Style peg](../styles/style-peg/RECIPE.md): image stills, code-orchestrated
+motion, Playwright capture, ffmpeg, no video model. A batch of any other style follows that style's recipe.
 
 ## Layout: one orchestrator, one worker per variant
 

@@ -6,7 +6,7 @@ answers, and the camera whips out of the chat into that chapter's artifact cards
 map pullback shows the whole canvas, and the end card closes. Everything on screen comes from `hybrid.json`.
 
 ```bash
-cp -r <make-film>/styles/hybrid/starter my-film && cd my-film
+cp -r <skill>/styles/hybrid/starter my-film && cd my-film
 npm i && npx playwright install chromium
 # edit hybrid.json: brand, channel, people, open, hub, chapters[], map; put a cleared track at music.file
 node scripts/timing.mjs            # -> timing.json; prints duration, chapter times, moves/s and changes/s

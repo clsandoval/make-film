@@ -8,7 +8,7 @@ Everything on screen comes from `explainer.json`.
 ## Run it (free, no voice needed)
 
 ```bash
-cp -r styles/vo-explainer/starter my-film && cd my-film
+cp -r <skill>/styles/vo-explainer/starter my-film && cd my-film
 npm i && npx playwright install chromium
 node scripts/timing.mjs       # -> timing.json + captions.srt; prints duration, wpm, moves/s
 node scripts/stills.mjs 1     # -> stills/*.png + labelled stills/sheet-N.png. Iterate HERE, not on renders

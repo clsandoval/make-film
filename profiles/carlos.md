@@ -1,6 +1,7 @@
 # Profile: Carlos (PyMC Labs / Daimon)
 
-Load this file only when the director is Carlos, names this profile, or the brief says to use it.
+Load this file only when the director names this profile or the brief says to use it (Carlos's own
+briefs do).
 It overrides the neutral defaults in [SKILL.md](../SKILL.md) and the style recipes. Everything here
 is taste or house setup, not a general rule.
 

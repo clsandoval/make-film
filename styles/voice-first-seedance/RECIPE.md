@@ -14,7 +14,8 @@ version the profile or brief names; never silently fall back to an older version
 
 ## The path
 
-1. **Voice script, locked and recorded.** Unchanged from the other modes. The recorded
+1. **Voice script, locked and recorded.** Unchanged from the other modes: record it with the key-gated
+   `vo.py` in the [vo-explainer starter](../vo-explainer/starter/README.md). The recorded
    read with real timings is the spine; nothing below happens without it.
 2. **Scene brief, one page of text.** Three parts, written against the recording:
    - a *style paragraph*: medium, ground colour, fills, line, the accent colours and
@@ -94,8 +95,7 @@ prop inventory (six tiles for four, a mug for a tumbler, a reinterpreted model).
 [`scripts/seedance_gen.py`](../../scripts/seedance_gen.py) `part1 part2` reads `prompt.txt` and `spec.json` from each directory,
 submits sequentially, polls, downloads `raw.mp4`, writes a frame sheet and logs the estimated
 cost. `--dry-run` writes `payload.json` and prints the plan and estimated cost without uploading or submitting,
-but it still exits unless `FAL_KEY` is set (or `FAL_ENV_FILE` names a file with one) and `fal_client` is
-installed; see [`starter/README.md`](starter/README.md). Schema, prices, client calls and the error shape are in
+and needs no key and no `fal_client`; see [`starter/README.md`](starter/README.md). Schema, prices, client calls and the error shape are in
 [fal-seedance-25-api.md](../../references/fal-seedance-25-api.md).
 
 ## Cost and filter facts, dated 2026-09-11
@@ -119,10 +119,10 @@ generation sidesteps the image filter entirely.
 The AlphaGenome "Rooms" text-to-video rough, `rooms-t2v-full-rough.mp4` (70.17 s stitched, three parts).
 Recorded verdicts, quoted from the files:
 
-- `/home/clsandoval/cs/films/daimon-alphagenome-film/explore/round2/seedance25-ladder/REVIEW-t2v-full.md`:
+- `~/cs/films/daimon-alphagenome-film/explore/round2/seedance25-ladder/REVIEW-t2v-full.md`:
   "Best material so far. The VO-first prompt shape works across all three parts." It also lists the fix list for
   a reference pass and says "Full-speed smoothness not reviewed on any part; frame-sampled only."
-- `/home/clsandoval/cs/films/daimon-alphagenome-film/PAUSED-HANDOFF.md` (2026-09-11 resume section): the
+- `~/cs/films/daimon-alphagenome-film/PAUSED-HANDOFF.md` (2026-09-11 resume section): the
   director's rule after rung 1b, "prompt = VO line + cuts per shot".
 
 No final-film approval is recorded; the next step written there is a reference pass for palette drift.

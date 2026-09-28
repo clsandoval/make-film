@@ -102,7 +102,7 @@ so another session does not resume an old generation plan automatically.
 
 The AlphaGenome stills rough, `rooms-dense-v8.mp4` (69 s, 48 distinct editorial frames over the original VO).
 The director's verdict is recorded as progress, not approval: "Progress liked; this is not final-film approval."
-Source: `/home/clsandoval/cs/films/daimon-alphagenome-film/PAUSED-HANDOFF.md`, which also lists the rejected
+Source: `~/cs/films/daimon-alphagenome-film/PAUSED-HANDOFF.md`, which also lists the rejected
 concepts and poses not to resurrect. The rough and its build are in
 `explore/round2/rooms-dense-v8/` of that project (`SCENE-SCRIPT.md`, `manifest.json`, `build.py`, `qa.py`,
 `QA.md`). Its manifest points at assets elsewhere in the project, so copying that folder alone does not rebuild

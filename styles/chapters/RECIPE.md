@@ -3,7 +3,7 @@
 The **documented alternative** to the canonical channel-thread style ([channel-thread](../channel-thread/RECIPE.md)) for
 release films, catch-ups and feature round-ups. Use it when the director wants a table-of-contents catch-up: 1–2
 minutes, several features, no voiceover, and a room that should see the list and tick it off. It was built for the Daimon September release (Opus B, "The contents
-page", 1:04, 2026-09-27). Carlos called it "very very good" and asked for it as a core style. The runnable
+page", 1:04, 2026-09-27). The director called it "very very good" and asked for it as a core style. The runnable
 scaffold is [`starter/`](starter/README.md).
 
 It is the One-thread / One-deck motion grammar (continuous camera, a line that draws through, cards that morph,
@@ -20,8 +20,8 @@ contents page (hub) ──dive along line 1──▶ chapter 1 ──pullback─
 1. **Contents page, landing inside bar 0.** Title words land on eighth notes. The rows stagger in on eighths,
    status flags (IN TRIAL / EXPERIMENTAL) pop with their rows, and the camera settles from 1.42× to 1.18×. The
    page is complete at about 2 s. It must not type in line by line: the first cut spent 8 s doing that and was
-   rejected as "exactly the static feel Carlos hated".
-2. **The drop is the first dive.** On bar 1 the row highlights, an aqua line launches from the row's end, and
+   rejected as "exactly the static feel the director hated".
+2. **The drop is the first dive.** On bar 1 the row highlights, an accent line launches from the row's end, and
    the camera pushes into the row (to 1.75×). It then rides the line tip with motion blur (dipping to 0.85×) and
    lands on the chapter on a downbeat.
 3. **Chapter:** 3–4 bars. The header lands with the dive, then the camera punches between elements on the beat
@@ -57,7 +57,7 @@ Every chapter's end state stays composed in the world, so the map pullback shows
 - The focal element fills **55–65% of the frame width**. The scaffold's `autoShot()` computes the scale from
   the card's rect, clamped to 0.9–1.5×, and every beat can override it with `shot`. The hub sits at 1.18×.
 - Centre the camera on the focal element. Root rejected the preview with everything small at the top left and
-  a mostly empty navy frame.
+  a mostly empty frame.
 - **The focal element is never cut by the frame edge at rest.** The chapter header fades out once the camera
   moves in (at 0.3 bar), and the pain line fades before the tight punches. A header left half-visible at the top
   edge reads as broken: the reviewer flagged it in six chapters.
@@ -114,7 +114,7 @@ could be mistaken for live ("IN TRIAL · POSTING PAUSED").
 
 ## Anti-patterns
 
-**The rejected one: Codex "Before we start" (2026-09-27).** Carlos: *"the codex gen is so fucking ass... what
+**The rejected one: Codex "Before we start" (2026-09-27).** The director: *"the codex gen is so fucking ass... what
 happened to the flowy beats etc"*. It had:
 - **A static document with fades.** Each feature was a card that faded in, sat, and faded out, like an
   animated slide deck. There was no camera travel, no morph, and nothing hitting a beat.
@@ -124,9 +124,9 @@ happened to the flowy beats etc"*. It had:
 Also rejected along the way:
 - **A contents page that types itself in over 8 s**, then glides at 1–1.5 s. At 2 scene changes in 22 s, it
   was "the static feel" again.
-- **12–20 s stops per feature.** Carlos: *"they should still be fast paced, maybe only 10-20% slower than the
+- **12–20 s stops per feature.** The director: *"they should still be fast paced, maybe only 10-20% slower than the
   very first set"*. The film is longer because there is more content, not because each moment is slower.
-- **Everything small in the top-left of a navy frame.** Push in and centre.
+- **Everything small in the top-left of an empty frame.** Push in and centre.
 - **Punch-ins that crop the focal card**, or headers left half-sliced at the top edge.
 - **A chapter that is only a list.** The only list is the Everything-else panel, and even it flips and lands
   rows on beats.
