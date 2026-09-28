@@ -26,8 +26,8 @@ hub/
 
 - The orchestrator talks to the director, writes the briefs, does QA and delivery.
   It does not build films.
-- One tmux window per variant, each started in its own folder:
-  `tmux new-window -d -t 'main:' -n v1-notebook -c hub/v1-notebook 'bash -ic claude'`.
+- One agent session per variant, each started in its own folder. With tmux, for example:
+  `tmux new-window -d -n v1-notebook -c hub/v1-notebook claude`.
   Close the window when its line lands in done.log. Around 10 at once is the ceiling;
   queue the rest.
 - Generate the per-variant briefs from one script (`mktasks.py`) so they only
@@ -42,7 +42,7 @@ hub/
 
 ## done.log protocol
 
-Workers never message the director and never send to Telegram. They append one line:
+Workers never message the director and never deliver files themselves. They append one line:
 
 ```
 STILLS    <variant> <glob>     key-beat frames ready for a reaction
@@ -144,15 +144,15 @@ rewrite unless asked.
 ## Model bake-off
 
 To compare models on the same work, clone a variant's brief into a sibling folder
-(`v4b-terminal-<model>`) and start that window on the other model (e.g. MiMo via
-ClaudeX). Add a no-peek rule to its TASK-VARIANT.md: don't open, list or copy any
+(`v4b-terminal-<model>`) and start that window on the other model (any other
+model your setup offers). Add a no-peek rule to its TASK-VARIANT.md: don't open, list or copy any
 other `v*` folder; build from COMMON-BRIEF.md, `shared/` and this brief only. Log
 start times and QA bounces per arm in `BAKEOFF.md`, then send the two renders
 side by side.
 
 ## Hard rules already paid for
 
-- **No Seedance, fal or any video model for pegs, motion tests or variants.** A
+- **No video model for style pegs or motion tests** (variants of a video-model style follow its recipe). A
   Seedance peg batch was rejected and cancelled mid-run; the fix was redoing all
   ten in the previous batch's method. For a new batch, copy the last batch's brief
   and scaffold verbatim.

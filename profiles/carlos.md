@@ -29,8 +29,9 @@ is taste or house setup, not a general rule.
 > "they should still be fast paced, maybe only 10-20% slower than the very first set"
 
 A longer film (a 1 to 2 minute release or catch-up) is longer because it covers more, never because
-a moment is slower: about 103 BPM against the 120 BPM of the 34 s shorts, whips of 0.35 to 0.45 s,
-0.6 to 1.0 camera moves per second, holds of 2.5 to 3.5 s inside continuous motion. Static slides,
+a moment is slower: 95 to 110 BPM against the 120 BPM of the 34 s shorts, whips of 0.35 to 0.45 s,
+holds of 2.5 to 3.5 s inside continuous motion, and the style recipe's own motion targets (they were
+set on films he approved). Static slides,
 fades between cards, long stops per feature and ambient music were the rejected Codex "Before we
 start" film (2026-09-27): *"so fucking ass... what happened to the flowy beats"*.
 

@@ -11,6 +11,9 @@ feature arrives the way people actually meet it: a teammate asks, the bot answer
 out of the chat into its artifact**. It is the One-thread motion grammar (continuous camera, a line that draws
 through, cards that fill themselves and hand off, reveals on the beat) with the channel as its spine.
 
+If the product has no bot of its own, the answering voice is a release bot or the teammate who shipped the
+feature; the channel is still the setting.
+
 ## Structure
 
 ```
@@ -60,9 +63,9 @@ title words on the beats ─▶ #channel window: release post · teammate types 
 | Counters | count up over 0.55 s. The text counter-scales against its growing bar, or it squashes | a reviewer caught "1,055" squashed mid-grow |
 | Frame rate | 30 fps | |
 
-The pace rule, from the director who approved this style: *"they should still be fast paced, maybe only 10-20% slower than the very first set"*.
-Match the 34 s shorts' cut rhythm plus 10–20%. The film is longer because it covers more features, not because
-any moment is slow.
+Pace: a 1–2 min film keeps the numbers above. It is longer because it covers more features, not because any
+moment is slow. The approving director put it as *"they should still be fast paced, maybe only 10-20% slower
+than the very first set"* (the 34 s shorts at 120 BPM).
 
 ## Framing
 
@@ -138,16 +141,20 @@ The script rule (pain → turn → product → plain benefit, see [copy](../../r
 
 ## Gates (in this order)
 
-1. **Direction approved** (it usually is: this is the default).
+These are the universal gates in [SKILL.md](../../SKILL.md), specialised for this style.
+
+1. **Brief and script lock.** Subject, destination and palette confirmed; the channel messages, card copy
+   and figures locked as a table ([copy](../../references/copy.md)).
 2. **Stills.** A contact sheet every 1.2–1.6 s. Look at it yourself first.
 3. **The 20 s motion preview, sent to the orchestrator, never to the director.** It covers the intro's end,
    the drop, chapter 1 and the whip into chapter 2 (film 8–28 s). It is judged on framing, hold length and
    changes/s.
    - The reference's m1 was sent back ("cards fill about 25% … holds about 6 s … 0.3/s").
    - m2b was cleared ("framing much bigger, holds about 3 s, 18 moves in 20 s").
-4. **Full render, then an independent reviewer on frames decoded from the MP4.** Give the reviewer the
+4. **Orchestrator frame review** of the stills and the preview, by someone other than the author.
+5. **Full render, then an independent reviewer on frames decoded from the MP4.** Give the reviewer the
    director's words verbatim. Iterate until a round finds no new blocker; a note that reappears is a regression.
-5. **The orchestrator clears the full cut**, and only then does it go to the director. Confirm it arrived
+6. **The orchestrator clears the full cut**, and only then does it go to the director. Confirm it arrived
    and log it in `DELIVERY.log`.
 
 ## QA checklist

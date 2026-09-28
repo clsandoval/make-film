@@ -15,11 +15,11 @@ Match the director's intent, top row first. **If nothing clearly matches, use ch
 
 | The director wants | Style | Starter |
 |---|---|---|
-| A product, release, launch or feature film; "what's new"; a feature round-up | [channel-thread](styles/channel-thread/RECIPE.md) (canonical) | `styles/channel-thread/starter/` |
+| A product, release, launch or feature film; "what's new"; a feature round-up (set in the team's chat channel; the product needs no bot of its own) | [channel-thread](styles/channel-thread/RECIPE.md) (canonical) | `styles/channel-thread/starter/` |
 | A catch-up the room follows as a list and ticks off; a table of contents; an agenda | [chapters](styles/chapters/RECIPE.md) | `styles/chapters/starter/` |
 | About 2 min on 3–4 shipped pieces of one project or customer, for a room that knows the work: a contents page, each piece opened by a chat ask | [hybrid](styles/hybrid/RECIPE.md) | `styles/hybrid/starter/` |
 | An explainer for people who know nothing, with narration, drawn in code (diagrams, cards) | [vo-explainer](styles/vo-explainer/RECIPE.md) | `styles/vo-explainer/starter/` |
-| An illustrated or animated explainer (science, story, character) made with a video model | [voice-first-seedance](styles/voice-first-seedance/RECIPE.md) (paid: confirm spend first) | `styles/voice-first-seedance/starter/` |
+| An explainer (science, story, character) as generated, model-made footage, with spend authorized | [voice-first-seedance](styles/voice-first-seedance/RECIPE.md) (paid: confirm spend first) | `styles/voice-first-seedance/starter/` |
 | A trip, holiday or travel recap video | [trip-thread-map](styles/trip-thread-map/RECIPE.md) | `styles/trip-thread-map/starter/` |
 | One result, one number or one before/after in about 20 s for a feed | [short-result](styles/short-result/RECIPE.md) | `styles/short-result/starter/` |
 | A 10 s joke or GIF for LinkedIn | [gif-10s](styles/gif-10s/RECIPE.md) (paid: confirm spend first) | `styles/gif-10s/starter/` |
@@ -28,8 +28,8 @@ Match the director's intent, top row first. **If nothing clearly matches, use ch
 | Rescue or extend a film built on `film.json` with word-locked voiceover reveals | [vo-synced-legacy](styles/vo-synced-legacy/RECIPE.md) | `styles/vo-synced-legacy/starter/` |
 
 Tie-breaks:
-- Release or feature film with narration requested: still channel-thread or chapters, unless the
-  director says the audience knows nothing about the product; then vo-explainer.
+- Release or feature film with narration requested: vo-explainer. Channel-thread, chapters and
+  hybrid have no voiceover.
 - "Animated" alone does not mean a video model. An animated or illustrated explainer goes to
   voice-first-seedance only if the director wants generated footage and authorizes the spend;
   otherwise it is vo-explainer, drawn in code.
@@ -50,8 +50,8 @@ profile only when the director names one or the brief says to use it.** Otherwis
 
 The neutral default: take brand tokens (colours, fonts, logo) from the client's own site CSS and
 published brand guide, pick the voice as a casting decision with the director, and deliver however
-the director asked. Every starter ships placeholder brand values ("Beacon", "Example Co"); replace
-them before anything is shown.
+the director asked. Every starter ships placeholder brand, people and figures; replace them before anything is
+shown.
 
 ## 3. The universal gates
 
