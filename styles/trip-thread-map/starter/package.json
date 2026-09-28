@@ -1,0 +1,13 @@
+{
+  "name": "trip-thread-map-film",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync": "node scripts/sync.mjs",
+    "timing": "node scripts/timing.mjs",
+    "stills": "node scripts/stills.mjs",
+    "dive": "node scripts/dive-stills.mjs",
+    "qa": "node scripts/qa.mjs"
+  },
+  "dependencies": { "playwright": "^1.62.0" }
+}

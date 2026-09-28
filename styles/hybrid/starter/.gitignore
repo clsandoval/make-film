@@ -1,0 +1,15 @@
+node_modules/
+package-lock.json
+hybrid.js
+timing.json
+stills/
+renders/
+frames/
+qa/
+assets/mix.wav
+assets/sfx.wav
+assets/sfx-events.json
+music/*.mp3
+music/*.wav
+fonts/
+*.mp4

@@ -1,0 +1,113 @@
+{
+  "brand": {
+    "name": "Beacon",
+    "org": "Example Co",
+    "url": "beacon.example.com",
+    "font": "Inter, 'Helvetica Neue', Arial, sans-serif",
+    "head": "'Archivo Expanded', Inter, 'Helvetica Neue', Arial, sans-serif",
+    "mono": "'Fira Mono', 'JetBrains Mono', Menlo, Consolas, monospace",
+    "fonts": [],
+    "logo": null,
+    "mascot": null,
+    "palette": {
+      "ground": "#0C1F40", "deep": "#07142A", "ink": "#F7F7F7",
+      "accent": "#B4E7DD", "accent2": "#0C9E82",
+      "card": "#F7F7F7", "cardInk": "#0C1F40",
+      "flag": "#F6AE72", "peri": "#9FAAE2"
+    }
+  },
+  "music": {
+    "file": "music/track.mp3",
+    "bpm": 103,
+    "phase": 0.03,
+    "splice_to_track_bar": null,
+    "phrase_bars": 4,
+    "credit": "Music: “Track title” Artist (source) · CC BY 4.0 · edited"
+  },
+  "channel": { "server": "Example Co", "name": "beacon", "topic": "team knowledge · internal", "sidebar": ["general", "beacon", "support", "eng"] },
+  "people": {
+    "sam": { "name": "sam", "color": "var(--peri)" },
+    "lee": { "name": "lee", "color": "var(--flag)" },
+    "kai": { "name": "kai", "color": "var(--accent)" },
+    "customer": { "name": "customer", "color": "#FAD2B1" },
+    "beacon": { "name": "Beacon", "color": "#FFFFFF", "bot": true }
+  },
+  "open": {
+    "title": "Five years of team chat",
+    "counters": [
+      { "value": 12, "label": "teams" },
+      { "value": 3400, "label": "calls", "suffix": "+" },
+      { "value": 90000, "label": "messages", "suffix": "+" },
+      { "value": 6, "label": "tools" }
+    ],
+    "tile": "CALL",
+    "first_year": 2020,
+    "transcript": { "kicker": "Customer call · 42 min · transcript", "who": "customer", "quote": "why does the export stop halfway?" },
+    "line1": "Most answers got lost in the scroll.",
+    "chat": { "channel": "support", "sidebar": ["general", "support", "eng"], "who": "sam", "text": "anyone remember how we fixed this last time?", "sys": "→ kai is out until Monday", "tm": "16:20" },
+    "line2": "So Beacon reads all of it."
+  },
+  "hub": { "title": "What’s new in Beacon", "subtitle": "Four things the team asked for" },
+  "chapters": [
+    {
+      "title": "Search", "sub": "answers from old threads", "flag": "IN TRIAL", "bars": 9,
+      "benefit": "✓ Every answer links to its source",
+      "thread": {
+        "before": { "who": "kai", "text": "the new export is live", "tm": "09:12" },
+        "ask": { "who": "lee", "text": "didn’t we fix the export timeout last spring? i think it was on a call", "tm": "10:41" },
+        "reply": { "text": "Yes, in March. The call and the thread are both in the index.", "flag": "IN TRIAL" }
+      },
+      "cards": [
+        { "at": 2.0, "html": "<div class='k'>Beacon index · example workspace</div><div class='tiles'><i data-at='0' data-k='pop'></i><i data-at='.02' data-k='pop'></i><i data-at='.04' data-k='pop'></i><i data-at='.06' data-k='pop'></i><i data-at='.08' data-k='pop'></i><i data-at='.1' data-k='pop'></i><i data-at='.12' data-k='pop'></i><i data-at='.14' data-k='pop'></i><i data-at='.16' data-k='pop'></i><i data-at='.18' data-k='pop'></i><i data-at='.2' data-k='pop'></i><i data-at='.22' data-k='pop'></i></div><div style='font-size:36px;opacity:.7' data-at='.15'>calls, threads and tickets, read in full</div><div class='big' style='margin-top:34px' data-at='.3' data-k='count' data-to='3240' data-dur='.55'>0</div><div class='lab' data-at='.85'>answers, each linked to its source</div>" },
+        { "at": 3.75, "html": "<div class='k'>One of them</div><div class='quote' data-at='0'><span class='mono' style='font-size:24px;opacity:.6'>CUSTOMER · SUPPORT CALL</span><br>“why does the export stop halfway?”</div><div style='font-size:56px;margin:14px 0 6px 40px;color:var(--accent2)' data-at='.15' data-k='pop'>↓</div><div style='font-size:50px;font-weight:700;line-height:1.25' data-at='.25'>Large exports run in batches, so a slow file no longer times out.</div><div style='margin-top:30px'><span class='chip' data-at='.6' data-k='pop'>fixed in March</span><span class='chip' data-at='.725' data-k='pop'>2 sources</span><span class='chip' data-at='.85' data-k='pop'>quote kept</span></div>" },
+        { "at": 5.5, "html": "<div class='k'>Where it came from</div><div class='row' data-at='.15'><span class='ok'>✓</span>call transcript<span class='mono' style='margin-left:auto;font-size:30px;opacity:.6'>12 Mar</span></div><div class='row' data-at='.4'><span class='ok'>✓</span>#eng thread<span class='mono' style='margin-left:auto;font-size:30px;opacity:.6'>14 Mar</span></div><div class='row' data-at='.65'><span class='ok'>✓</span>support ticket, closed<span class='mono' style='margin-left:auto;font-size:30px;opacity:.6'>15 Mar</span></div><div style='margin-top:36px' data-at='.9' data-k='pop'><span class='chip'>example</span></div>" }
+      ]
+    },
+    {
+      "title": "Weekly digest", "sub": "one message on Monday", "flag": "SHIPPED", "bars": 8, "breakdown": true,
+      "benefit": "✓ One message, only what needs you",
+      "thread": {
+        "before": { "who": "lee", "text": "perfect, that was the one", "tm": "10:43" },
+        "ask": { "who": "sam", "text": "can it tell me what i missed this week?", "tm": "10:44" },
+        "reply": { "text": "Every Monday at nine. Only what needs you.", "flag": "SHIPPED" }
+      },
+      "cards": [
+        { "at": 2.0, "html": "<div class='k'>This week · 4 channels</div><div class='big' data-at='.1' data-k='count' data-to='1240' data-dur='.45'>0</div><div class='lab' data-at='.6'>messages read</div><div class='row' style='margin-top:40px' data-at='.9'><span class='ok'>→</span><b>3</b> need you</div>" },
+        { "at": 3.75, "html": "<div class='k'>#team-digest · Monday 09:00</div><div class='row' data-at='.15'><span class='ok'>✓</span>Export fix shipped to every account</div><div class='row' data-at='.4'><span class='ok'>✓</span>A customer asked about single sign-on</div><div class='row' data-at='.65'><span class='ok'>✓</span>The nightly build failed twice</div><div style='font-size:30px;opacity:.6;margin-top:22px' data-at='.9'>each line links to its thread</div>" },
+        { "at": 4.75, "push": 0.5, "html": "<div class='k'>It picks the tone</div><div class='row' data-at='.15'><span style='width:360px;font-weight:700'>Needs you</span><span>top of the message</span></div><div class='row' data-at='.35'><span style='width:360px;font-weight:700'>Good to know</span><span>one line</span></div><div class='row' data-at='.55'><span style='width:360px;font-weight:700'>Noise</span><span>left out</span></div>" }
+      ]
+    },
+    {
+      "title": "Drafts", "sub": "replies you can send", "flag": "EXPERIMENTAL", "bars": 9,
+      "benefit": "✓ Drafts arrive with their sources",
+      "thread": {
+        "before": { "who": "beacon", "text": "Every Monday at nine. Only what needs you.", "tm": "10:44" },
+        "ask": { "who": "kai", "text": "can it draft the reply to this customer?", "tm": "10:46" },
+        "reply": { "text": "Drafted from our last three fixes, then checked.", "flag": "EXPERIMENTAL" }
+      },
+      "cards": [
+        { "at": 2.0, "dark": true, "html": "<div class='k'>Tool call · beacon</div><div class='mono' style='font-size:40px;color:var(--accent)'><span data-at='.05' data-k='type' data-dur='.35'>search(\"export timeout\")</span></div><div style='margin-top:26px'><div style='display:flex;gap:18px;align-items:center;margin:12px 0' data-at='.4'><span class='mono' style='font-size:24px;width:110px;opacity:.7;color:var(--accent)'>thread</span><div class='sk' style='margin:0;width:84%'></div></div><div style='display:flex;gap:18px;align-items:center;margin:12px 0' data-at='.4625'><span class='mono' style='font-size:24px;width:110px;opacity:.7;color:var(--accent)'>thread</span><div class='sk' style='margin:0;width:70%'></div></div><div style='display:flex;gap:18px;align-items:center;margin:12px 0' data-at='.525'><span class='mono' style='font-size:24px;width:110px;opacity:.7;color:var(--accent)'>thread</span><div class='sk' style='margin:0;width:78%'></div></div><div style='display:flex;gap:18px;align-items:center;margin:12px 0' data-at='.5875'><span class='mono' style='font-size:24px;width:110px;opacity:.7;color:var(--peri)'>ticket</span><div class='sk' style='margin:0;width:62%'></div></div><div style='display:flex;gap:18px;align-items:center;margin:12px 0' data-at='.65'><span class='mono' style='font-size:24px;width:110px;opacity:.7;color:var(--peri)'>ticket</span><div class='sk' style='margin:0;width:56%'></div></div></div><div style='margin-top:26px;display:flex;gap:18px;align-items:center'><span class='pill' data-at='1.0' data-k='pop'>GROUNDED</span><span style='font-size:32px;opacity:.7' data-at='1.1'>3 threads · 2 tickets</span></div>" },
+        { "at": 3.5, "html": "<div class='k'>Before it replies</div><div style='display:flex;gap:40px;align-items:center'><div style='flex:1;background:#fff;border:2px solid rgba(12,31,64,.12);border-radius:18px;padding:24px 30px' data-at='.1'><div class='mono' style='font-size:24px;opacity:.55'>draft reply</div><div class='cardsk' style='width:92%'></div><div class='cardsk' style='width:80%'></div><div class='cardsk' style='width:86%'></div><div class='cardsk' style='width:60%'></div></div><div style='font-size:60px;color:var(--accent2)' data-at='.25' data-k='pop'>→</div><div class='mono' style='font-size:36px;font-weight:500' data-at='.35'>check_sources</div></div><div style='margin-top:44px;display:flex;align-items:center;gap:30px'><span class='pill' style='font-size:64px;padding:16px 48px' data-at='.55' data-k='pop'>PASS</span><span style='font-size:34px;opacity:.7' data-at='.7'>every claim has a source</span></div>" },
+        { "at": 5.25, "push": 0.85, "thread": { "channel": "customer-shared", "topic": "shared with a customer team", "sidebar": ["general", "beacon", "customer-shared"],
+          "messages": [
+            { "who": "customer", "text": "is this the same fix another customer got?", "at": 0.1, "tm": "14:02" },
+            { "who": "beacon", "text": "I can’t share other customers’ details. The fix itself is yours to use.", "at": 0.95, "typing": true, "tm": "14:02" }
+          ] } }
+      ]
+    },
+    {
+      "title": "Does it help", "sub": "four-week pilot", "flag": "PILOT", "bars": 8,
+      "benefit": "✓ Less digging, same team",
+      "thread": {
+        "before": { "who": "kai", "text": "sent, thanks", "tm": "10:47" },
+        "ask": { "who": "lee", "text": "ok but does it actually save time?", "tm": "10:48" },
+        "reply": { "text": "We timed it on a four-week pilot with two teams.", "flag": "PILOT" }
+      },
+      "cards": [
+        { "at": 2.0, "html": "<div class='k'>Time to first answer · median</div><div style='display:flex;align-items:center;gap:26px;margin:30px 0' data-at='.2'><span style='width:300px;font-size:38px;font-weight:600'>before</span><div class='hbar'><i style='background:var(--peri)' data-at='.2' data-k='grow' data-w='100' data-dur='.4'></i></div><span style='width:220px;text-align:right;font-weight:800;font-size:44px' data-at='.6' data-k='pop'>42 min</span></div><div style='display:flex;align-items:center;gap:26px;margin:30px 0' data-at='.45'><span style='width:300px;font-size:38px;font-weight:800'>with Beacon</span><div class='hbar'><i style='background:var(--accent2)' data-at='.45' data-k='grow' data-w='14' data-dur='.4'></i></div><span style='width:220px;text-align:right;font-weight:800;font-size:64px' data-at='.85' data-k='pop'>6 min</span></div><div style='font-size:30px;opacity:.6;margin-top:30px;line-height:1.5' data-at='1.0'>2 teams · 4 weeks<br><b>example figures:</b> replace with counted ones</div>" },
+        { "at": 4.0, "html": "<div class='k'>What changed</div><div style='display:flex;gap:30px;margin-top:10px'><div style='flex:1;border-radius:18px;background:rgba(12,31,64,.06);padding:30px' data-at='.15'><div class='mono' style='font-size:26px;opacity:.6'>BEFORE</div><div style='font-size:40px;margin-top:14px'>search old threads, then ask around</div></div><div style='flex:1;border-radius:18px;background:color-mix(in srgb,var(--accent) 50%,#fff);padding:30px' data-at='.4'><div class='mono' style='font-size:26px;opacity:.6'>WITH BEACON</div><div style='font-size:40px;margin-top:14px'>the answer and its source, in the thread</div></div></div><div style='font-size:50px;font-weight:800;margin-top:44px;text-align:center;line-height:1.3' data-at='.75'>Same team.<br>Less digging.</div>" }
+      ]
+    }
+  ],
+  "map": { "title": "Every answer, one place" }
+}

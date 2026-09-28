@@ -1,0 +1,286 @@
+<!doctype html><html><head><meta charset="utf-8"><title>trip-thread-map</title>
+<!-- Trip film: #trip thread ⇄ drawn map with the route ⇄ 3D pin dive, cut to a beat grid. 1080x1920 (9:16).
+     Everything on screen comes from trip.json (synced to trip.js). Renderer contract: window.__seek(t) returns a
+     promise that resolves once any photo/frame is decoded, window.__duration, window.__timing, window.__ready.
+     Every frame is a pure function of t. No network: the map and terrain are drawn from inline data (geo.js). -->
+<script src="trip.js"></script><script src="geo.js"></script><script src="dive/dive.js"></script>
+<style>
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:var(--ground);font-family:var(--font);color:var(--ink)}
+canvas.full{position:absolute;left:0;top:0;width:1080px;height:1920px}
+.layer{position:absolute;inset:0;pointer-events:none}
+.mono{font-family:var(--mono)}
+#title{position:absolute;left:0;right:0;top:0;text-align:center;font-weight:800;letter-spacing:.02em;line-height:1.02;transform-origin:50% 0}
+#title span{display:block;font-size:150px}
+.win{position:absolute;left:70px;width:940px;top:600px;height:720px;background:var(--card);color:var(--cardInk);border-radius:28px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.win .hd{height:84px;display:flex;align-items:center;gap:16px;padding:0 34px;border-bottom:2px solid var(--panel);font:700 32px var(--font)}
+.win .hd .tp{font:500 22px var(--mono);opacity:.55}
+.win .comp{position:absolute;left:28px;right:28px;bottom:28px;height:82px;border-radius:18px;background:var(--panel);font:400 30px var(--font);display:flex;align-items:center;padding:0 26px;color:rgba(0,0,0,.45)}
+.win .comp.on{color:var(--cardInk)}
+.row{display:flex;gap:22px;padding:22px 34px 8px}
+.av{flex:0 0 64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 30px var(--font);color:#12191C}
+.av.bot{background:var(--accent)}
+.nm{font:700 32px var(--font)} .nm i{font:500 21px var(--mono);font-style:normal;opacity:.5;margin-left:12px}
+.nm .app{font:700 17px var(--mono);background:var(--cardInk);color:var(--card);border-radius:6px;padding:2px 8px;margin-left:10px;vertical-align:4px}
+.tx{font:400 37px/1.3 var(--font);margin-top:4px}
+.flag{display:inline-block;font:700 21px var(--mono);letter-spacing:.06em;background:var(--flag);color:#12191C;border-radius:8px;padding:5px 12px;margin-left:10px;vertical-align:6px}
+.ring{position:absolute;border:4px solid var(--accent);border-radius:50%;transform:translate(-50%,-50%)}
+.card{position:absolute;left:70px;width:940px;border-radius:28px;overflow:hidden;background:#222;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.card .media{position:absolute;inset:0;transform-origin:50% 45%}
+.card .media svg,.card .media img{width:100%;height:100%;object-fit:cover;display:block}
+.card .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.72) 100%)}
+.card .cap{position:absolute;left:44px;right:44px;bottom:40px}
+.card .tag{font:700 24px var(--mono);letter-spacing:.12em;color:var(--accent)}
+.card .name{font:800 68px/1.05 var(--font);white-space:nowrap;margin-top:8px}
+.card .note{font:500 36px var(--font);opacity:.92;margin-top:10px}
+.card .cred{position:absolute;right:26px;top:22px;font:500 19px var(--mono);opacity:.75;background:rgba(0,0,0,.35);padding:4px 10px;border-radius:6px}
+.card.half .name{font-size:58px} .card.half .note{font-size:32px} .card.half .cap{bottom:30px}
+.dcard{position:absolute;left:70px;width:940px;bottom:90px;background:rgba(12,20,24,.86);border-radius:28px;padding:40px 44px 44px;box-sizing:border-box;overflow:hidden}
+.dcard .tag{font:700 24px var(--mono);letter-spacing:.12em;color:var(--accent2)}
+.dcard .name{font:800 76px/1.05 var(--font);white-space:nowrap;margin:8px 0 18px}
+.dcard .flag{margin-left:0}
+.dcard .cnt{font:800 64px var(--font);color:var(--accent);margin-top:22px} .dcard .cnt span{font:500 30px var(--font);color:var(--ink);margin-left:14px}
+.chips{margin-top:22px;display:flex;gap:14px;flex-wrap:wrap}
+.chip{font:600 28px var(--font);background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25);border-radius:40px;padding:8px 22px}
+#dhud{position:absolute;left:64px;top:110px}
+#dhud .n{font:800 92px/1 var(--font);text-shadow:0 4px 18px rgba(0,0,0,.45);white-space:nowrap}
+#dhud .c{font:500 24px var(--mono);margin-top:14px;opacity:.85;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.thr{position:absolute;left:70px;width:940px;top:640px;background:var(--card);color:var(--cardInk);border-radius:28px;padding:10px 0 30px;box-shadow:0 30px 80px rgba(0,0,0,.5);overflow:hidden}
+.thr .th{font:700 26px var(--mono);opacity:.6;padding:18px 34px 4px}
+#day{position:absolute;left:64px;top:64px;font:700 26px var(--mono);letter-spacing:.1em;background:rgba(12,20,24,.75);border:2px solid var(--accent);color:var(--accent);border-radius:10px;padding:8px 16px}
+#pull{position:absolute;left:0;right:0;top:120px;text-align:center}
+#pull .h{font:800 84px var(--font)} #pull .s{font:500 34px var(--mono);opacity:.8;margin-top:12px}
+#end{position:absolute;inset:0;background:var(--ground);text-align:center}
+#end .w{position:absolute;left:0;right:0;top:760px;font:900 190px/1 var(--font);letter-spacing:.06em}
+#end .s{position:absolute;left:0;right:0;top:990px;font:500 40px var(--font);opacity:.9}
+#end .cr{position:absolute;left:80px;right:80px;bottom:120px;font:500 22px/1.6 var(--mono);opacity:.7}
+#dot{position:absolute;width:30px;height:30px;border-radius:50%;background:var(--accent);transform:translate(-50%,-50%);box-shadow:0 0 30px var(--accent)}
+</style></head><body>
+<canvas id="map" class="full" width="1080" height="1920"></canvas>
+<canvas id="ov" class="full" width="1080" height="1920"></canvas>
+<canvas id="dive" class="full" width="1080" height="1920"></canvas>
+<div id="dhud" class="layer"><div class="n" id="dn"></div><div class="c" id="dc"></div></div>
+<div id="cards" class="layer"></div>
+<div id="intro" class="layer"><div id="title"></div><div class="win" id="win"></div></div>
+<div id="day"></div>
+<div id="pull" class="layer"><div class="h" id="ph"></div><div class="s" id="ps"></div></div>
+<div id="end" class="layer"><div class="w" id="ew"></div><div class="s" id="es"></div><div class="cr" id="ec"></div></div>
+<div id="dot"></div>
+<script>
+const F = window.FILM, G = window.GEO, P = G.P, PAL = F.brand.palette, $ = id => document.getElementById(id);
+const rs = document.documentElement.style; rs.setProperty('--font', F.brand.font); rs.setProperty('--mono', F.brand.mono);
+for (const k in PAL) if (typeof PAL[k] === 'string') rs.setProperty('--' + k, PAL[k]);
+/* ---------- time grid ---------- */
+const BEAT = 60 / F.music.bpm, BAR = 4 * BEAT, PH = F.music.phase || 0, tb = b => PH + b * BEAT;
+const lin = (t, a, b) => b <= a ? (t >= b ? 1 : 0) : Math.min(1, Math.max(0, (t - a) / (b - a)));
+const eIO = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2, eQ = k => k < .5 ? 16 * k ** 5 : 1 - Math.pow(-2 * k + 2, 5) / 2, eO = k => 1 - Math.pow(1 - k, 3);
+const R = (t, a, b, e = eO) => e(lin(t, a, b)), mix = (a, b, k) => a + (b - a) * k;
+const IB = F.intro.bars * 4; let bc = IB, day = 1, tod = 0; const SEG = [];
+F.segments.forEach(s => { const g = Object.assign({}, s);
+  if (g.kind === 'dive') { g.lead = s.lead || 2; g.dive = s.dive || 6; g.card = s.card || 4; g.beats = g.lead + g.dive + g.card; } else g.beats = s.beats || 4;
+  day = g.day = s.day || day; g.tod = s.tod ?? null; g.start = bc; bc += g.beats; g.t0 = tb(g.start); g.t1 = tb(bc); SEG.push(g); });
+const PB = Math.ceil(bc / 4) * 4, FIN = PB / 4 + 2, ENDB = FIN + 1, TOTAL = tb(ENDB * 4) + BAR * 1.5, TDROP = tb(IB);
+const DAYS = Math.max(...SEG.map(s => s.day));
+/* ---------- route legs and pin arrivals ---------- */
+const LEGS = [], ARR = {}; let cur = F.hub; const VISITED = new Set();
+SEG.forEach(s => { const tg = s.kind === 'stop' ? s.stops.map(x => x.place) : s.kind === 'dive' ? [s.place] : [];
+  const dur = s.kind === 'dive' ? s.lead * BEAT * .55 : .5;
+  tg.forEach((p, i) => { VISITED.add(p); if (p === cur) return; const a = s.t0 + i * .3; LEGS.push({ a: cur, b: p, t0: a, t1: a + dur, day: s.day }); if (ARR[p] == null) ARR[p] = a + dur; cur = p; });
+  s.focus = tg; });
+const ROUTE_KM = LEGS.reduce((m, l) => m + G.dist(l.a, l.b) * G.KM, 0);
+const REV = SEG.find(s => s.kind === 'reveal'), PIDS = Object.keys(P);
+const SHOW = {}; PIDS.forEach((k, i) => SHOW[k] = k === F.hub ? -1 : (REV ? REV.t0 + .2 + i * (REV.t1 - REV.t0 - .6) / PIDS.length : 0));
+/* ---------- time of day (0 day, 1 night), eased over 0.8 s at segment starts ---------- */
+const TODK = [[0, 0]]; SEG.forEach(s => { if (s.tod != null) TODK.push([s.t0, s.tod]); });
+function todAt(t) { let v = TODK[0][1]; for (let i = 1; i < TODK.length; i++) { const [a, b] = TODK[i]; if (t >= a) v = mix(v, b, eIO(lin(t, a, a + .8))); } return v; }
+/* ---------- camera: keyframes {t, d, x, y, s, cy, e, arc}; holds always drift ---------- */
+const bb = (ids, pad) => { const xs = ids.map(k => P[k].x), ys = ids.map(k => P[k].y); return [Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) + pad, Math.max(...ys) + pad]; };
+const fit = (b, w, h) => Math.min(w / (b[2] - b[0]), h / (b[3] - b[1]));
+const ALL = bb(PIDS, 160), SALL = fit(ALL, 1000, 1300), CX = (ALL[0] + ALL[2]) / 2, CYW = (ALL[1] + ALL[3]) / 2;
+const S_STOP = 1.25, S_DIVE = 1.5; const CAM = [], MOVES = [];
+const kf = (t, d, x, y, s, cy, e = eIO, o = {}) => { CAM.push(Object.assign({ t, d, x, y, s, cy, e }, o)); MOVES.push(t); };
+const hubP = P[F.hub]; let last = { x: hubP.x, y: hubP.y, s: .8, cy: 900 };
+kf(TDROP, .35, CX, CYW, SALL * 1.05, 1060, eQ, { whip: 1 });
+SEG.forEach(s => {
+  const f = s.focus.map(k => P[k]), fx = f.length ? f.reduce((m, p) => m + p.x, 0) / f.length : null, fy = f.length ? f.reduce((m, p) => m + p.y, 0) / f.length : null;
+  if (s.kind === 'reveal') kf(s.t0 + BEAT * 2, .4, CX, CYW, SALL * 1.18, 1060);
+  if (s.kind === 'stop') { kf(s.t0, .5, fx, fy, S_STOP, 330, eIO, { arc: .35 }); kf(s.t0 + 2 * BEAT, .4, fx, fy, S_STOP * 1.1, 330); }
+  if (s.kind === 'dive') { kf(s.t0, s.lead * BEAT * .55, fx, fy, S_DIVE, 960, eIO, { arc: .35 }); const a = s.t0 + s.lead * BEAT, dd = s.dive * BEAT; MOVES.push(a, a + dd * .4, a + dd * .75, a + dd + BEAT * s.card * .5); }
+  if (s.kind === 'thread') { const c = CAM[CAM.length - 1]; kf(s.t0, .35, c.x, c.y - 120, c.s * .75, 760, eQ, { whip: s.whip ? 1 : 0 }); kf(s.t0 + 2 * BEAT, .4, c.x, c.y - 120, c.s * .8, 760); }
+});
+kf(tb(PB), .8, CX, CYW, SALL, 1100); kf(tb(FIN * 4), 1.2, CX, CYW, SALL * .9, 1100);
+CAM.sort((a, b) => a.t - b.t);
+function drift(c, dt, i) { const k = Math.max(0, dt), dx = Math.min(k, 3) * 18 * (i % 2 ? 1 : -1), g = 1 + Math.min(.012 * k, .035);
+  return { x: c.x - dx / (c.s * g), y: c.y - Math.min(k, 3) * 8 / (c.s * g), s: c.s * g, cy: c.cy }; }
+function cam(t) { let st = last, land = 0, i = 0;
+  for (const k of CAM) { if (t < k.t) break; const fr = drift(st, k.t - land, i);
+    if (t < k.t + k.d) { const e = k.e(lin(t, k.t, k.t + k.d)); let ls = mix(Math.log(fr.s), Math.log(k.s), e);
+      if (k.arc) { const far = Math.hypot(k.x - fr.x, k.y - fr.y) * Math.min(fr.s, k.s) / 900; ls -= k.arc * Math.min(1, far) * Math.sin(Math.PI * e); }
+      return { x: mix(fr.x, k.x, e), y: mix(fr.y, k.y, e), s: Math.exp(ls), cy: mix(fr.cy, k.cy, e) }; }
+    st = k; land = k.t + k.d; i++; }
+  return drift(st, t - land, i); }
+const toS = (c, x, y) => [540 + (x - c.x) * c.s, c.cy + (y - c.y) * c.s];
+/* ---------- map plate: hillshade + contours from GEO.H, drawn once ---------- */
+const MR = .5, plate = document.createElement('canvas'); plate.width = Math.round(G.WW * MR); plate.height = Math.round(G.WH * MR);
+(function drawPlate() { const w = plate.width, h = plate.height, cx = plate.getContext('2d'), im = cx.createImageData(w, h), d = im.data;
+  const hex = c => { const n = parseInt(c.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+  const lo = hex(PAL.mapLow), hi = hex(PAL.mapHigh), sn = hex(PAL.mapSnow), wa = hex(PAL.mapWater);
+  const hg = new Float32Array((w + 2) * (h + 2)), wm = new Float32Array(w * h);
+  for (let j = -1; j <= h; j++) for (let i = -1; i <= w; i++) hg[(j + 1) * (w + 2) + i + 1] = G.H(i / MR, j / MR);
+  for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) wm[j * w + i] = G.lake(i / MR, j / MR);
+  const L = [-.5, -.5, .7], ll = Math.hypot(...L);
+  for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) { const k = (j + 1) * (w + 2) + i + 1, H0 = hg[k];
+    const gx = (hg[k + 1] - hg[k - 1]) * G.HZ * MR / 2, gy = (hg[k + w + 2] - hg[k - w - 2]) * G.HZ * MR / 2, nl = Math.hypot(gx, gy, 1);
+    const sh = Math.max(0, (-gx * L[0] - gy * L[1] + L[2]) / (nl * ll)), lum = .35 + .9 * sh;
+    const u = Math.min(1, Math.max(0, (H0 + .2) / .8)), snow = Math.min(1, Math.max(0, (H0 - G.SNOW) / .1));
+    let c = [0, 1, 2].map(q => mix(mix(lo[q], hi[q], u), sn[q], snow) * lum);
+    const ct = Math.abs(((H0 * 12.5) % 1 + 1) % 1 - .5); if (ct > .46) c = c.map(v => v * 1.22 + 6);
+    if (wm[j * w + i] > .5) { const dp = Math.min(1, (wm[j * w + i] - .5) * 3); c = [0, 1, 2].map(q => wa[q] * (1.25 - .35 * dp)); }
+    const o = (j * w + i) * 4; d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = 255; }
+  cx.putImageData(im, 0, 0); })();
+/* ---------- placeholder photo art (swap for the traveller's own photos: stop.photo or stop.seq) ---------- */
+function art(seed) { let r = 0; for (const ch of seed) r = (r * 131 + ch.charCodeAt(0)) >>> 0; const rn = () => ((r = (Math.imul(r, 1664525) + 1013904223) >>> 0) / 4294967296);
+  const hue = Math.floor(rn() * 360), sky1 = `hsl(${hue},45%,72%)`, sky2 = `hsl(${(hue + 30) % 360},55%,86%)`; let g = '';
+  for (let L = 0; L < 3; L++) { const base = 560 + L * 190, amp = 160 - L * 40, ph = rn() * 6, fr = 1.5 + rn() * 2; let pts = '0,1240 ';
+    for (let x = 0; x <= 940; x += 20) pts += `${x},${(base - amp * (.5 + .5 * Math.sin(x / 940 * fr * 3.14 + ph)) * (.7 + .3 * Math.sin(x / 71 + ph))).toFixed(0)} `;
+    g += `<polygon points="${pts}940,1240" fill="hsl(${(hue + 190) % 360},${25 + L * 8}%,${48 - L * 14}%)"/>`; }
+  return `<svg viewBox="0 0 940 1240" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g${r}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky1}"/><stop offset="1" stop-color="${sky2}"/></linearGradient></defs>` +
+    `<rect width="940" height="1240" fill="url(#g${r})"/><circle cx="${250 + rn() * 440}" cy="${220 + rn() * 160}" r="90" fill="#fff7e0" opacity=".85"/>${g}` +
+    `<text x="470" y="160" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="26" fill="rgba(0,0,0,.45)">PLACEHOLDER · add your photo</text></svg>`; }
+/* ---------- build DOM ---------- */
+const PE = F.people, BOT = Object.keys(PE).find(k => PE[k].bot);
+const av = w => `<div class="av ${PE[w].bot ? 'bot' : ''}" style="${PE[w].bot ? '' : 'background:' + PE[w].color}">${PE[w].name[0].toUpperCase()}</div>`;
+const mrow = (id, w, text, ts, flag) => `<div class="row" id="${id}">${av(w)}<div><div class="nm">${PE[w].name}${PE[w].bot ? '<span class="app">APP</span>' : ''}<i>${ts}</i></div><div class="tx">${text}${flag ? `<span class="flag">${flag}</span>` : ''}</div></div></div>`;
+const WORDS = F.intro.title.split('|').map(s => s.trim()); $('title').innerHTML = WORDS.map((w, i) => `<span id="w${i}">${w}</span>`).join('');
+const IM = F.intro.messages; $('win').innerHTML = `<div class="hd"># ${F.channel.name}<span class="tp">${F.channel.topic || ''}</span></div>` +
+  IM.map((m, i) => mrow('im' + i, m.who, m.text, `09:0${i}`)).join('') + `<div class="comp" id="comp">Message #${F.channel.name}</div><div class="ring" id="ring"></div>`;
+let ch = '';
+function mediaHTML(st) { if (st.photo) return `<img src="${st.photo}">`; if (st.seq) return `<img data-seq="1">`; return art(st.place); }
+SEG.forEach((s, i) => {
+  if (s.kind === 'stop') { const two = s.stops.length > 1, h = two ? 600 : 1240;
+    s.stops.forEach((st, j) => ch += `<div class="card ${two ? 'half' : ''}" id="sc${i}_${j}" style="top:${600 + j * 640}px;height:${h}px"><div class="media" id="sm${i}_${j}">${mediaHTML(st)}</div><div class="shade"></div>` +
+      `${st.credit ? `<div class="cred">${st.credit}</div>` : ''}<div class="cap"><div class="tag">${st.tag || ''}</div><div class="name nw">${st.name || P[st.place].name}</div><div class="note">${st.note || ''}</div></div></div>`); }
+  if (s.kind === 'dive') { const c = s.counter;
+    ch += `<div class="dcard" id="dk${i}"><div class="tag">${s.tag || ''}</div><div class="name nw">${s.name || P[s.place].name}</div>${s.stamp ? `<span class="flag">${s.stamp}</span>` : ''}` +
+      `${c ? `<div class="cnt" id="cn${i}">0<span>${c.unit}</span></div>` : ''}${s.chips ? `<div class="chips">${s.chips.map((x, k) => `<div class="chip" id="cp${i}_${k}">${x}</div>`).join('')}</div>` : ''}</div>`; }
+  if (s.kind === 'thread') ch += `<div class="thr" id="th${i}"><div class="th"># ${F.channel.name}</div>${mrow('ta' + i, s.ask.who, s.ask.text, 'now')}${mrow('tr' + i, BOT, s.reply, 'now', s.flag)}</div>`;
+});
+$('cards').innerHTML = ch;
+function autoFit(el, min) { let fs = parseFloat(getComputedStyle(el).fontSize); while (el.scrollWidth > el.clientWidth + 1 && fs > min) { fs -= 2; el.style.fontSize = fs + 'px'; } }
+const tpl = s => s.replace('{km}', ROUTE_KM.toFixed(1)).replace('{days}', DAYS).replace('{stops}', VISITED.size);
+$('ph').textContent = tpl(F.pullback.title); $('ps').textContent = tpl(F.pullback.subtitle || '');
+$('ew').textContent = F.brand.name; $('es').textContent = F.brand.sub || '';
+$('ec').innerHTML = [F.music.credit, 'Map and terrain drawn from inline data', F.brand.note].filter(Boolean).join('<br>');
+const DIVE_ON = F.features?.dive !== false && window.DIVE && DIVE.init($('dive'));
+if (!DIVE_ON) console.warn('3D dive off (features.dive false or no WebGL): dives fall back to a deep map push');
+/* ---------- frame sequences (footage as pre-extracted JPG frames; <video> is not frame-accurate) ---------- */
+let pending = [];
+function setImg(el, src) { if (el._src !== src) { el._src = src; el.src = src; pending.push(el.decode().catch(() => {})); } }
+/* ---------- overlay: roads, route, pins, labels ---------- */
+const OV = $('ov').getContext('2d'), MC = $('map').getContext('2d');
+function legPts(l) { const a = P[l.a], b = P[l.b], dx = b.x - a.x, dy = b.y - a.y, mx = (a.x + b.x) / 2 - dy * .14, my = (a.y + b.y) / 2 + dx * .14, o = [];
+  for (let i = 0; i <= 32; i++) { const u = i / 32; o.push([(1 - u) ** 2 * a.x + 2 * u * (1 - u) * mx + u * u * b.x, (1 - u) ** 2 * a.y + 2 * u * (1 - u) * my + u * u * b.y]); } return o; }
+LEGS.forEach(l => l.pts = legPts(l));
+function drawMap(t, c) {
+  const c0 = cam(t - 1 / 30), v = [(c0.x - c.x) * c.s, (c0.y - c.y) * c.s], vl = Math.hypot(...v), taps = vl > 6 ? 8 : 1, bl = Math.min(46, vl * .5);
+  MC.setTransform(1, 0, 0, 1, 0, 0); MC.fillStyle = PAL.mapLow; MC.fillRect(0, 0, 1080, 1920);
+  for (let k = 0; k < taps; k++) { const o = taps > 1 ? (k / (taps - 1) - .5) * bl / vl : 0; MC.globalAlpha = taps > 1 ? 1 / (k + 1) : 1;
+    MC.setTransform(c.s / MR, 0, 0, c.s / MR, 540 - c.x * c.s + v[0] * o, c.cy - c.y * c.s + v[1] * o); MC.drawImage(plate, 0, 0); }
+  MC.globalAlpha = 1; MC.setTransform(1, 0, 0, 1, 0, 0);
+  const td = todAt(t); if (td > 0) { MC.fillStyle = `rgba(6,10,26,${.6 * td})`; MC.fillRect(0, 0, 1080, 1920); }
+  OV.clearRect(0, 0, 1080, 1920); OV.lineCap = OV.lineJoin = 'round';
+  OV.strokeStyle = 'rgba(243,239,230,.18)'; OV.lineWidth = 3; OV.setLineDash([2, 10]);
+  F.roads.forEach(r => { OV.beginPath(); r.forEach((k, i) => { const q = toS(c, P[k].x, P[k].y); i ? OV.lineTo(...q) : OV.moveTo(...q); }); OV.stroke(); }); OV.setLineDash([]);
+  let head = null;
+  LEGS.forEach(l => { const k = lin(t, l.t0, l.t1); if (k <= 0) return; const n = Math.max(1, Math.round(eIO(k) * 32));
+    OV.strokeStyle = l.day > 1 ? PAL.accent2 : PAL.accent; OV.lineWidth = 7; OV.shadowColor = OV.strokeStyle; OV.shadowBlur = 14; OV.beginPath();
+    for (let i = 0; i <= n; i++) { const q = toS(c, ...l.pts[i]); i ? OV.lineTo(...q) : OV.moveTo(...q); } OV.stroke(); OV.shadowBlur = 0;
+    if (k < 1) head = toS(c, ...l.pts[n]); });
+  const pull = lin(t, tb(PB), tb(PB) + .8), focus = new Set(); SEG.forEach(s => { if (t >= s.t0 - .1 && t < s.t1) s.focus.forEach(k => focus.add(k)); });
+  PIDS.forEach(k => { const a = R(t, SHOW[k], SHOW[k] + .3); if (a <= 0) return; const p = P[k], [x, y] = toS(c, p.x, p.y);
+    if (x < -100 || x > 1180 || y < -100 || y > 2020) return;
+    const vis = ARR[k] != null && t >= ARR[k], r = (p.kind === 'hub' ? 16 : p.kind === 'spot' ? 10 : 14) * (.4 + .6 * a);
+    OV.globalAlpha = a; OV.fillStyle = vis ? PAL.accent : PAL.ink; OV.strokeStyle = PAL.ground; OV.lineWidth = 4; OV.beginPath();
+    if (p.kind === 'peak') { OV.moveTo(x, y - r * 1.3); OV.lineTo(x + r * 1.2, y + r * .8); OV.lineTo(x - r * 1.2, y + r * .8); OV.closePath(); } else OV.arc(x, y, r, 0, 7);
+    OV.stroke(); OV.fill();
+    if (ARR[k] != null) { const q = lin(t, ARR[k], ARR[k] + .7); if (q > 0 && q < 1) { OV.strokeStyle = PAL.accent; OV.lineWidth = 4; OV.globalAlpha = 1 - q; OV.beginPath(); OV.arc(x, y, 18 + q * 70, 0, 7); OV.stroke(); } }
+    const lab = focus.has(k) || p.kind !== 'spot' || pull > 0; if (lab) { OV.globalAlpha = a * (focus.has(k) || pull > 0 ? 1 : .75); OV.font = `700 ${focus.has(k) ? 30 : 24}px ${F.brand.mono}`;
+      OV.fillStyle = PAL.ink; OV.shadowColor = 'rgba(0,0,0,.8)'; OV.shadowBlur = 8; OV.fillText(p.name.toUpperCase(), x + 22, y + 9); OV.shadowBlur = 0; }
+    OV.globalAlpha = 1; });
+  if (head) { OV.fillStyle = PAL.ink; OV.beginPath(); OV.arc(...head, 9, 0, 7); OV.fill(); }
+}
+/* ---------- render ---------- */
+const sty = (el, o, tr) => { el.style.opacity = o; if (tr != null) el.style.transform = tr; };
+function render(t) { pending = []; const c = cam(t); drawMap(t, c);
+  // intro: title words on beats 0-3, window rises on beat 4, messages post on their beats, whip out on the drop
+  const out = R(t, TDROP - .02, TDROP + .33, eQ), up = R(t, tb(4), tb(4) + .5, eIO);
+  WORDS.forEach((w, i) => { const k = R(t, tb(i), tb(i) + .25); sty($('w' + i), k * (1 - out), `translateY(${(1 - k) * 30}px)`); });
+  $('title').style.transform = `translateY(${mix(700, 150, up)}px) scale(${mix(1, .62, up)})`;
+  const wr = R(t, tb(4), tb(4) + .45); sty($('win'), wr * (1 - out), `translateY(${(1 - wr) * 200 - out * 1700}px)`);
+  $('win').style.filter = out > 0 && out < 1 ? `blur(${(Math.sin(out * Math.PI) * 10).toFixed(1)}px)` : 'none';
+  let comp = `Message #${F.channel.name}`, on = false;
+  IM.forEach((m, i) => { const a = tb(m.at); sty($('im' + i), R(t, a, a + .25), `translateY(${(1 - R(t, a, a + .25)) * 22}px)`);
+    if (m.typed) { const d = m.text.length / 22, s0 = a - d - .2; if (t >= s0 && t < a) { comp = m.text.slice(0, Math.floor((t - s0) * 22)) + '|'; on = true; } }
+    if (PE[m.who].bot && t >= a - 1.2 * BEAT && t < a) { comp = `${PE[m.who].name} is typing…`; } });
+  $('comp').textContent = comp; $('comp').className = 'comp' + (on ? ' on' : '');
+  const lastRow = $('im' + (IM.length - 1)); const rq = lin(t, TDROP - .05, TDROP + .6), rg = $('ring');
+  rg.style.left = (34 + 32) + 'px'; rg.style.top = (lastRow.offsetTop + 22 + 32) + 'px'; rg.style.opacity = rq > 0 && rq < 1 ? 1 - rq : 0; rg.style.width = rg.style.height = (64 + rq * 260) + 'px';
+  // day chip
+  const sg = SEG.find(s => t >= s.t0 && t < s.t1); const dOn = t >= TDROP + .3 && t < tb(PB); $('day').style.opacity = dOn ? 1 : 0;
+  $('day').textContent = (F.days || [])[(sg || SEG[SEG.length - 1]).day - 1] || 'DAY ' + (sg || SEG[0]).day;
+  // dive layer
+  let dv = null; SEG.forEach((s, i) => { if (s.kind === 'dive' && t >= s.t0 + s.lead * BEAT - .05 && t < s.t1 + .35) dv = [s, i]; });
+  const dvc = $('dive'); let dhud = 0;
+  if (dv) { const [s, i] = dv, a = s.t0 + s.lead * BEAT, dd = s.dive * BEAT, o = R(t, a, a + .3) * (1 - R(t, s.t1 - .05, s.t1 + .3, eIO));
+    if (DIVE_ON) { const c0 = cam(a); DIVE.draw(s, (t - a) / dd, c0.s, c0.x, c0.y + (960 - c0.cy) / c0.s, todAt(t)); dvc.style.opacity = o; }
+    else { dvc.style.opacity = 0; }
+    dhud = R(t, a + .2, a + .5) * (1 - R(t, a + dd, a + dd + .25)); $('dn').textContent = (s.name || P[s.place].name).toUpperCase();
+    const pl = F.places[s.place]; $('dc').textContent = `${pl.lat.toFixed(4)}°N  ${pl.lng.toFixed(4)}°E`; } else dvc.style.opacity = 0;
+  sty($('dhud'), dhud);
+  // cards
+  SEG.forEach((s, i) => {
+    if (s.kind === 'stop') s.stops.forEach((st, j) => { const e = $(`sc${i}_${j}`), a = s.t0 + .25 + j * BEAT * .5, k = R(t, a, a + .3), o = R(t, s.t1 - .02, s.t1 + .28, eIO);
+      sty(e, k * (1 - o), `translateY(${(1 - k) * 36 - o * 60}px) scale(${.96 + .04 * k})`);
+      const pu = R(t, s.t0 + 2 * BEAT, s.t0 + 2 * BEAT + .4, eIO); $(`sm${i}_${j}`).style.transform = `scale(${(1 + .06 * pu + .012 * Math.max(0, t - a)).toFixed(4)})`;
+      if (st.seq && t > a - .5 && t < s.t1 + .5) { const f = Math.min(st.seq.n - 1, Math.max(0, Math.floor((t - a) * (st.seq.fps || 30)))); setImg($(`sm${i}_${j}`).firstChild, `${st.seq.dir}/f${String(f).padStart(4, '0')}.jpg`); } });
+    if (s.kind === 'dive') { const e = $('dk' + i), a = s.t0 + (s.lead + s.dive) * BEAT, k = R(t, a, a + .3), o = R(t, s.t1 - .05, s.t1 + .25);
+      sty(e, k * (1 - o), `translateY(${(1 - k) * 40}px) scale(${.96 + .04 * k})`);
+      if (s.counter) { const q = R(t, a + BEAT, a + BEAT + .55, eIO); $('cn' + i).firstChild.nodeValue = (s.counter.to * q).toFixed(s.counter.dec || 0); }
+      (s.chips || []).forEach((x, n) => { const b = a + BEAT * (1 + n * .5), q = R(t, b, b + .25); sty($(`cp${i}_${n}`), q, `translateY(${(1 - q) * 20}px)`); }); }
+    if (s.kind === 'thread') { const e = $('th' + i), k = R(t, s.t0, s.t0 + .35, eQ), o = R(t, s.t1 - .05, s.t1 + .25, eIO);
+      sty(e, Math.min(1, k * 1.5) * (1 - o), `translateY(${(1 - k) * 700 - o * 900}px)`);
+      [['ta', .5], ['tr', 1.5]].forEach(([p, b]) => { const q = R(t, s.t0 + b * BEAT, s.t0 + b * BEAT + .25); sty($(p + i), q, `translateY(${(1 - q) * 22}px)`); }); }
+  });
+  // pullback, dot, end card
+  const pb = R(t, tb(PB) + .3, tb(PB) + .8); sty($('pull'), pb * (1 - R(t, tb(FIN * 4) - .2, tb(FIN * 4) + .2)));
+  const d0 = tb(FIN * 4), dk = R(t, d0, d0 + 2 * BEAT, eIO), lp = LEGS[LEGS.length - 1], from = lp ? toS(c, ...lp.pts[32]) : [540, 960];
+  $('dot').style.opacity = t >= d0 && t < tb(ENDB * 4) + .4 ? 1 - R(t, tb(ENDB * 4), tb(ENDB * 4) + .4) : 0;
+  $('dot').style.left = mix(from[0], 540, dk) + 'px'; $('dot').style.top = mix(from[1], 860, dk) + 'px';
+  const eb = R(t, d0 + 2 * BEAT, d0 + 3 * BEAT, eIO); sty($('end'), eb);
+  const wk = R(t, tb(ENDB * 4), tb(ENDB * 4) + .5, eQ); $('ew').style.clipPath = `inset(0 ${(1 - wk) * 100}% 0 0)`;
+  sty($('es'), R(t, tb(ENDB * 4) + .4, tb(ENDB * 4) + .8)); sty($('ec'), R(t, tb(ENDB * 4) + .8, tb(ENDB * 4) + 1.2));
+  return Promise.all(pending);
+}
+/* ---------- timing export (read by scripts/timing.mjs, qa.mjs and mix.py) ---------- */
+function timing() {
+  const cues = { word: WORDS.map((w, i) => tb(i)), key: [], pop_user: [], pop_bot: [], reveal: [], whip: [], glide: [], push: [], card: [], dive: [], pins: [],
+    drop: TDROP, drop2: null, pull: tb(PB), dot: tb(FIN * 4), end: tb(ENDB * 4) };
+  IM.forEach(m => { const a = tb(m.at); (PE[m.who].bot ? cues.pop_bot : cues.pop_user).push(a);
+    if (m.typed) { const d = m.text.length / 22, s0 = a - d - .2; for (let k = 0; k < m.text.length; k++) if (m.text[k] !== ' ') cues.key.push(s0 + k / 22); } });
+  CAM.forEach(k => (k.whip ? cues.whip : k.d <= .45 ? cues.push : cues.glide).push(k.t));
+  cues.card.push(tb(4));
+  SEG.forEach(s => {
+    if (s.kind === 'reveal') { PIDS.forEach(k => { if (SHOW[k] > 0) cues.pins.push(SHOW[k]); }); cues.reveal.push(Math.min(...cues.pins)); }
+    if (s.kind === 'stop') s.stops.forEach((st, j) => cues.card.push(s.t0 + .25 + j * BEAT * .5));
+    if (s.kind === 'dive') { const a = s.t0 + (s.lead + s.dive) * BEAT; cues.dive.push(s.t0 + s.lead * BEAT); cues.card.push(a); if (s.counter) cues.reveal.push(a + BEAT);
+      (s.chips || []).forEach((x, n) => cues.reveal.push(a + BEAT * (1 + n * .5))); }
+    if (s.kind === 'thread') { cues.pop_user.push(s.t0 + .5 * BEAT); cues.pop_bot.push(s.t0 + 1.5 * BEAT); if (s.whip) cues.drop2 = s.t0; } });
+  const bd = SEG.filter(s => s.breakdown); const breakdown = bd.length ? [bd[0].t0, bd[bd.length - 1].t1] : null; if (breakdown && !cues.drop2) cues.drop2 = breakdown[1];
+  const mv = [...new Set(MOVES.map(x => +x.toFixed(3)))].sort((a, b) => a - b);
+  const ev = [...mv, ...cues.pop_user, ...cues.pop_bot, ...cues.reveal, ...cues.word, ...cues.card].sort((a, b) => a - b);
+  const changes = ev.filter((x, i) => !i || x - ev[i - 1] > .15).map(x => +x.toFixed(3));
+  return { BAR, BEAT, PH, TOTAL, DB: IB / 4, FIN, ENDB, breakdown, dive: !!DIVE_ON, route_km: +ROUTE_KM.toFixed(2), moves: mv, changes, cues,
+    segments: SEG.map(s => ({ kind: s.kind, focus: s.focus, start: +s.t0.toFixed(3), end: +s.t1.toFixed(3) })) };
+}
+window.__seek = t => render(t); window.__duration = TOTAL;
+document.fonts.ready.then(() => { document.querySelectorAll('.nw').forEach(e => autoFit(e, 34)); window.__timing = timing(); return render(0); }).then(() => { window.__ready = true; });
+</script></body></html>

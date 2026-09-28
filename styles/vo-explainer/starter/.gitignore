@@ -1,0 +1,11 @@
+node_modules/
+package-lock.json
+explainer.js
+timing.json
+captions.srt
+audio_meta.json
+stills/
+renders/
+frames/
+assets/
+.env

@@ -1,0 +1,97 @@
+{
+ "brand": {
+  "name": "VARRA",
+  "sub": "two days in the valley",
+  "note": "Example trip. Fictional people and places.",
+  "font": "Inter, 'Noto Sans', 'DejaVu Sans', sans-serif",
+  "mono": "'JetBrains Mono', 'DejaVu Sans Mono', monospace",
+  "palette": {
+   "ground": "#0C1418",
+   "ink": "#F3EFE6",
+   "accent": "#FFB547",
+   "accent2": "#7FD6C8",
+   "card": "#F3EFE6",
+   "cardInk": "#12191C",
+   "panel": "#E4DED2",
+   "flag": "#FFB547",
+   "mapLow": "#1B2B26",
+   "mapHigh": "#3C4A43",
+   "mapSnow": "#C9D2CF",
+   "mapWater": "#123447",
+   "terrain": ["#3F5B37", "#2C4630", "#77746A", "#EEF2F1"],
+   "sky": "#9FB7C4",
+   "water": "#2E6A86"
+  }
+ },
+ "music": {
+  "file": "music/track.mp3",
+  "bpm": 100,
+  "phase": 0.0,
+  "offset": 0.0,
+  "final_bar": null,
+  "phrase_bars": 4,
+  "credit": "Music: synthesized placeholder groove (replace with a cleared track and credit it here)"
+ },
+ "channel": { "name": "varra-trip", "topic": "sat + sun" },
+ "people": {
+  "atlas": { "name": "Atlas", "bot": true },
+  "ana": { "name": "ana", "color": "#F2C6A0" },
+  "ben": { "name": "ben", "color": "#CFE3F2" },
+  "cleo": { "name": "cleo", "color": "#D8CFF0" }
+ },
+ "days": ["DAY 1 · SAT", "DAY 2 · SUN"],
+ "hub": "varra-station",
+ "places": {
+  "varra-station": { "lat": 46.600, "lng": 11.880, "kind": "hub", "name": "Varra Station" },
+  "casa-lume":     { "lat": 46.6045, "lng": 11.8885, "kind": "spot", "name": "Casa Lume" },
+  "forno-pia":     { "lat": 46.5965, "lng": 11.8745, "kind": "spot", "name": "Forno Pia" },
+  "ruota-bikes":   { "lat": 46.6030, "lng": 11.8705, "kind": "spot", "name": "Ruota Bikes" },
+  "monte-seda":    { "lat": 46.6420, "lng": 11.9310, "kind": "peak", "name": "Monte Seda", "amp": 1.0 },
+  "rifugio-alba":  { "lat": 46.6300, "lng": 11.9150, "kind": "spot", "name": "Rifugio Alba" },
+  "cresta-grigia": { "lat": 46.5740, "lng": 11.9460, "kind": "peak", "name": "Cresta Grigia", "amp": 0.75 },
+  "bagni-tiepidi": { "lat": 46.5930, "lng": 11.8960, "kind": "spot", "name": "Bagni Tiepidi" },
+  "osteria-nove":  { "lat": 46.5985, "lng": 11.8860, "kind": "spot", "name": "Osteria Nove" },
+  "lago-varra":    { "lat": 46.5600, "lng": 11.8580, "kind": "lake", "name": "Lago Varra", "rx_km": 1.6, "ry_km": 0.9 },
+  "punta-sole":    { "lat": 46.5470, "lng": 11.8330, "kind": "spot", "name": "Punta Sole" }
+ },
+ "roads": [
+  ["varra-station", "casa-lume", "rifugio-alba", "monte-seda"],
+  ["ruota-bikes", "forno-pia", "varra-station", "osteria-nove", "bagni-tiepidi", "cresta-grigia"],
+  ["forno-pia", "lago-varra", "punta-sole"]
+ ],
+ "intro": {
+  "title": "TWO DAYS | IN | VARRA",
+  "bars": 4,
+  "messages": [
+   { "who": "ana", "at": 5, "text": "train gets in at 9, who's awake" },
+   { "who": "ben", "at": 9, "typed": true, "text": "ok but what are we actually doing" },
+   { "who": "atlas", "at": 13, "text": "<b>7 stops</b> in two days. here's the map." }
+  ]
+ },
+ "segments": [
+  { "kind": "reveal", "beats": 4, "day": 1 },
+  { "kind": "stop", "beats": 4, "stops": [ { "place": "casa-lume", "tag": "STAY", "note": "home · 2 nights", "credit": "photo: yours" } ] },
+  { "kind": "stop", "beats": 4, "stops": [
+    { "place": "forno-pia", "tag": "COFFEE", "note": "first coffee", "credit": "photo: yours" },
+    { "place": "ruota-bikes", "tag": "RENTAL", "note": "bikes for two days", "credit": "photo: yours" } ] },
+  { "kind": "dive", "place": "monte-seda", "lead": 2, "dive": 6, "card": 4, "heading": 10,
+    "tag": "PEAK · NORTH SIDE", "stamp": "YOU WERE HERE · DAY 1",
+    "counter": { "to": 14.2, "dec": 1, "unit": "km hiked (example figure)" },
+    "chips": ["cable car up", "Rifugio Alba below"] },
+  { "kind": "stop", "beats": 4, "stops": [ { "place": "rifugio-alba", "tag": "LUNCH", "note": "lunch with a view", "credit": "photo: yours" } ] },
+  { "kind": "thread", "beats": 4, "ask": { "who": "cleo", "text": "sunset spot?" },
+    "reply": "Cresta Grigia. 20 min from the top car park", "flag": "GOLDEN HOUR" },
+  { "kind": "dive", "place": "cresta-grigia", "lead": 2, "dive": 3, "card": 3, "heading": -30, "tod": 0.55,
+    "tag": "RIDGE", "stamp": "SUNSET · DAY 1" },
+  { "kind": "stop", "beats": 4, "breakdown": true, "tod": 0.85, "stops": [ { "place": "bagni-tiepidi", "tag": "SOAK", "note": "after the hike", "credit": "photo: yours" } ] },
+  { "kind": "stop", "beats": 4, "breakdown": true, "stops": [ { "place": "osteria-nove", "tag": "DINNER", "note": "table for three", "credit": "photo: yours" } ] },
+  { "kind": "thread", "beats": 4, "day": 2, "tod": 0, "whip": true, "ask": { "who": "ben", "text": "day 2: lake?" },
+    "reply": "Lago Varra. the bikes are ready", "flag": "DAY 2" },
+  { "kind": "dive", "place": "lago-varra", "lead": 2, "dive": 6, "card": 4, "heading": 160,
+    "tag": "LAKE", "stamp": "SWIM STOP · DAY 2", "chips": ["cold", "worth it"] },
+  { "kind": "stop", "beats": 4, "stops": [ { "place": "punta-sole", "tag": "VIEW", "note": "last swim, last photo", "credit": "photo: yours" } ] },
+  { "kind": "stop", "beats": 4, "stops": [ { "place": "varra-station", "tag": "HOME", "note": "train home", "credit": "photo: yours" } ] }
+ ],
+ "pullback": { "title": "{days} days · {stops} stops", "subtitle": "{km} km of route, straight-line" },
+ "features": { "dive": true }
+}

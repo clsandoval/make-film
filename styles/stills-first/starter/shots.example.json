@@ -1,0 +1,10 @@
+{
+  "size": [720, 1280],
+  "fps": 24,
+  "shots": [
+    {"id": "b01", "still": "b01.png", "dur": 2.5, "line": "One letter in three billion."},
+    {"id": "b02", "still": "b02.png", "dur": 2.0, "line": "Change it, and something changes."},
+    {"id": "b02-crop", "still": "b02-crop.png", "dur": 1.5, "line": "But what?"},
+    {"id": "b03", "still": "b03.png", "dur": 3.0, "line": "That is the question."}
+  ]
+}

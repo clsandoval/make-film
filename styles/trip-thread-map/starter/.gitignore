@@ -1,0 +1,9 @@
+node_modules/
+package-lock.json
+trip.js
+timing.json
+stills/
+renders/
+frames/
+assets/
+music/_synth-groove.wav

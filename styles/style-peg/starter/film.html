@@ -1,0 +1,49 @@
+<!doctype html><html><head><meta charset="utf-8">
+<!-- Style-peg motion test. Everything on screen is a still; all motion is this timeline.
+     Swap the art/ placeholders for the peg's cut pieces (art/cut/*.png) and rewrite the build() for the
+     style's signature move. Keep #stage, the lib.js contract and a fixed duration. -->
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #000; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #222; }
+  .bg { position: absolute; inset: 0; width: 1920px; height: 1080px; object-fit: cover; }
+  .pc { position: absolute; filter: drop-shadow(6px 10px 4px rgba(20,10,0,.45)); }
+  #grain { position: absolute; inset: -50px; pointer-events: none; opacity: .16; mix-blend-mode: multiply;
+           background: repeating-radial-gradient(circle at 30% 40%, #5a4020 0 1px, transparent 1px 3px); }
+  #vig { position: absolute; inset: 0; pointer-events: none;
+         background: radial-gradient(ellipse at center, transparent 55%, rgba(40,20,0,.55) 100%); }
+</style></head><body>
+<div id="stage">
+  <div id="cam" style="position:absolute;inset:0;transform-origin:50% 60%">
+    <img class="bg" src="art/plate.svg">
+    <img id="prop" class="pc" src="art/piece_prop.svg" style="left:1180px;top:460px;width:420px">
+    <div id="hero" style="position:absolute;left:620px;top:420px;width:380px;height:480px;transform-origin:50% 100%">
+      <img class="pc" src="art/piece_hero.svg" style="left:0;top:0;width:380px">
+    </div>
+  </div>
+  <div id="grain"></div><div id="vig"></div>
+</div>
+<script src="node_modules/gsap/dist/gsap.min.js"></script>
+<script src="lib.js"></script>
+<script>
+mk((tl) => {
+  const S = "steps(1)";            // hard snaps between held poses: the cut-out feel
+  gsap.set("#hero", { y: -1200 });
+  gsap.set("#prop", { y: 800 });
+  // beat 1 (0.2-1.4 s): the hero drops in and squashes on landing, camera jolts
+  tl.to("#hero", { y: 0, duration: 0.45, ease: "power2.in" }, 0.2)
+    .to("#hero", { scaleY: 0.86, scaleX: 1.08, duration: 0.08, ease: S }, 0.65)
+    .to("#hero", { scaleY: 1.04, scaleX: 0.97, duration: 0.08, ease: S }, 0.75)
+    .to("#hero", { scaleY: 1, scaleX: 1, duration: 0.08, ease: S }, 0.85)
+    .to("#cam", { y: 10, duration: 0.05, ease: S }, 0.65).to("#cam", { y: -6, duration: 0.05, ease: S }, 0.73)
+    .to("#cam", { y: 0, duration: 0.05, ease: S }, 0.81);
+  // beat 2 (1.8-3.0 s): the prop pops up through the floor
+  tl.to("#prop", { y: 0, duration: 0.3, ease: "back.out(1.6)" }, 1.8)
+    .to("#prop", { rotate: -3, duration: 0.08, ease: S }, 2.2).to("#prop", { rotate: 0, duration: 0.08, ease: S }, 2.35);
+  // beat 3 (3.2-4.6 s): the hero hops in two-frame jolts
+  [[3.2, -60], [3.4, 0], [3.7, -60], [3.9, 0], [4.3, -40], [4.5, 0]].forEach(([t, y]) =>
+    tl.to("#hero", { y, duration: 0.08, ease: S }, t));
+  // beat 4 (4.4-5.0 s): slow push-in to hold the final pose
+  tl.to("#cam", { scale: 1.06, duration: 0.6, ease: "sine.inOut" }, 4.4);
+}, 5.0, { step: 1 / 12 });   // 5 s; film time snaps to 1/12 s = animated on twos at 24 fps
+</script></body></html>

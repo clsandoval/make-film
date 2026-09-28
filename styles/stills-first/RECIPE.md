@@ -1,17 +1,19 @@
 # Stills-first filmmaking
 
-Use for choosing between aesthetic directions cheaply, for narrated rough edits when
-no video model is authorized, and for producing reference stills for a video
-reference pass. These lessons came from the September 2026 Daimon/AlphaGenome film.
-Preserve the director's chosen identity; its architectural palette is
-project-specific, not a default style for all films.
+**Use when** choosing between aesthetic directions cheaply, making a narrated rough edit when no video model is
+authorized, or producing reference stills for a video reference pass.
+**Do not use** as the default route to a generated film: try [voice-first](../voice-first-seedance/RECIPE.md)
+first, and do not build a dense stills animatic before it. For comparing looks that will be animated in code,
+use [style peg](../style-peg/RECIPE.md).
+The starter is [`starter/`](starter/README.md): a shot-list template and a $0 animatic builder.
 
-**Read [Voice-first generated video](voice-first-video.md) first.** On the same film,
-a locked voiceover plus a one-page scene brief sent straight to Seedance 2.5 beat the
-48-frame stills animatic this reference describes, at about $33 for 69 seconds. What
-the stills phase actually contributed was the direction work: the world, the palette
-rules and a picture-logic line per beat. Write that as text and skip the dense
-animatic. Keep stills for direction comparison and for references.
+These lessons came from the September 2026 AlphaGenome explainer. Preserve the director's chosen identity; its
+architectural palette is project-specific, not a default style for all films.
+
+On the same film, a locked voiceover plus a one-page scene brief sent straight to a video model beat the
+48-frame stills animatic this recipe describes, at about $33 for 69 seconds. What the stills phase actually
+contributed was the direction work: the world, the palette rules and a picture-logic line per beat. Write that
+as text and skip the dense animatic. Keep stills for direction comparison and for references.
 
 ## Work cheaply toward a film that reads
 
@@ -62,18 +64,18 @@ send each assembled new rough to the specified channel and verify its receipt.
 
 ## Image tools, video experiments and spending
 
-For Carlos's usage-only rough edits, use built-in image generation/editing and local
-assembly. Do not switch to a separately billed image API or paid video endpoint.
+When the brief allows only usage-plan tools, use built-in image generation/editing and
+local assembly. Do not switch to a separately billed image API or paid video endpoint.
 Do not promise unlimited/free images: describe the tool used and the absence of
 external API spend. Respect pauses; save artifacts and stop generating.
 
-All new Seedance work for Carlos uses **2.5 only**, unless he explicitly changes that
-requirement. Historical 2.0 output is not 2.5 evidence. Read the actual experiment
+New video generations use the model version the profile or brief names; never silently
+fall back to an older version. Output from an older version is not evidence about the named one. Read the actual experiment
 specs and reviews before planning another run; record endpoint/model, refs, prompts,
 duration, results, review limitations, delivery receipts and actual costs when known.
 Verify the live schema and quote current cost before newly authorized paid work.
 
-The four 2.5 comparisons tested first+last, first-only, prompted start+reference,
+The four Seedance 2.5 comparisons tested first+last, first-only, prompted start+reference,
 and references-only. One take per condition suggested two complete compositions
 encourage a transition even without an end-frame field. First-only better retained
 one shot's subject in sampled frames. This was not a universal winner or proof of
@@ -91,12 +93,19 @@ recheck https://fal.ai/models/bytedance/seedance-2.5/reference-to-video/api befo
 
 Save a project handoff naming the current deliverable, original VO, approved style,
 rejected concepts/poses, manifest, prompts, QA, experiment reviews and receipts.
-Record whether the user approved progress, a final film or further spending—these
+Record whether the user approved progress, a final film or further spending; these
 are different. Preserve earlier versions and rejected attempts. Keep media inside
 the project, not only in an image tool's cache. Mark a spending pause prominently
 so another session does not resume an old generation plan automatically.
 
-Case-study evidence: /home/clsandoval/cs/daimon-alphagenome-film/PAUSED-HANDOFF.md;
-experiment reviews under explore/round2/rooms-seedance25-comparison/REVIEW.md and
-explore/round2/rooms-seedance25-locked/REVIEW.md in that project. These are local
-examples, not required infrastructure for a new film.
+## Approved reference
+
+The AlphaGenome stills rough, `rooms-dense-v8.mp4` (69 s, 48 distinct editorial frames over the original VO).
+The director's verdict is recorded as progress, not approval: "Progress liked; this is not final-film approval."
+Source: `/home/clsandoval/cs/films/daimon-alphagenome-film/PAUSED-HANDOFF.md`, which also lists the rejected
+concepts and poses not to resurrect. The rough and its build are in
+`explore/round2/rooms-dense-v8/` of that project (`SCENE-SCRIPT.md`, `manifest.json`, `build.py`, `qa.py`,
+`QA.md`). Its manifest points at assets elsewhere in the project, so copying that folder alone does not rebuild
+it. Experiment reviews: `explore/round2/rooms-seedance25-comparison/REVIEW.md` and
+`explore/round2/rooms-seedance25-locked/REVIEW.md`. These are local examples, not required infrastructure for a
+new film.

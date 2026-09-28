@@ -1,0 +1,13 @@
+{
+  "name": "hybrid-film",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync": "node scripts/sync.mjs",
+    "timing": "node scripts/timing.mjs",
+    "stills": "node scripts/stills.mjs 1.5",
+    "qa": "node scripts/qa.mjs",
+    "mix": "python3 scripts/mix.py"
+  },
+  "dependencies": { "playwright": "^1.62.0" }
+}

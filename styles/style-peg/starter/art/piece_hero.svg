@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="380" height="480" viewBox="0 0 380 480">
+<path d="M190 18 C300 22 360 120 356 250 C352 380 290 462 190 464 C90 462 26 380 24 250 C22 120 80 14 190 18 Z" fill="#fff"/>
+<path d="M190 34 C290 38 340 128 338 250 C336 370 282 446 190 448 C98 446 42 370 40 250 C38 128 92 30 190 34 Z" fill="#3f6fd8"/>
+<circle cx="140" cy="210" r="34" fill="#fff"/><circle cx="240" cy="210" r="34" fill="#fff"/>
+<circle cx="146" cy="216" r="14" fill="#14224a"/><circle cx="234" cy="216" r="14" fill="#14224a"/>
+<path d="M150 300 Q190 334 230 300" stroke="#14224a" stroke-width="10" fill="none" stroke-linecap="round"/>
+<text x="190" y="410" text-anchor="middle" font-family="sans-serif" font-size="30" fill="#fff">HERO</text>
+</svg>

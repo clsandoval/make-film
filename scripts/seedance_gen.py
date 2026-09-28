@@ -50,8 +50,9 @@ def main(argv):
         print(msg, flush=True)
         log_p.open('a').write(msg + '\n')
 
-    load_key()
-    import fal_client
+    if not dry:  # a dry run only plans; it needs no key and uploads nothing
+        load_key()
+        import fal_client
     cache_p = root / 'upload-cache.json'
     cache = json.loads(cache_p.read_text()) if cache_p.exists() else {}
 

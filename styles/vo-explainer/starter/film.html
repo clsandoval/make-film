@@ -1,0 +1,223 @@
+<!doctype html>
+<!-- make-film "vo-explainer" style. Script, brand and grid live in explainer.json; line durations come from
+     audio_meta.json (or a words-per-minute estimate before the voice exists). scripts/lib.mjs writes both into explainer.js.
+     Renderer contract: window.__seek(t), window.__duration, window.__timing, window.__ready. Everything is a pure function of t. -->
+<html><head><meta charset="utf-8">
+<script src="explainer.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--deep)}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;font-family:var(--font);color:var(--ink);
+  background:radial-gradient(ellipse 120% 90% at 50% 45%, color-mix(in srgb,var(--ground) 80%,#3060a0 20%) 0%, var(--ground) 45%, var(--deep) 100%)}
+#contours{position:absolute;inset:0;width:1920px;height:1080px}
+#cam{position:absolute;inset:0;overflow:hidden}
+#world{position:absolute;left:0;top:0;width:1px;height:1px;transform-origin:0 0}
+.pan{position:absolute;width:1920px;height:1080px;display:flex;align-items:center;justify-content:center}
+.fit{overflow:hidden}
+.say{width:1520px;text-align:center;font-weight:800;font-size:92px;line-height:1.2;letter-spacing:-.02em}
+.say span{display:inline-block;margin:0 .13em}
+.card{background:var(--card);color:var(--cardInk);border-radius:24px;padding:52px 64px;width:1280px;box-shadow:0 30px 80px rgba(3,10,25,.55)}
+.k{font-family:var(--mono);font-size:28px;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin-bottom:20px}
+.card .t{font-weight:800;font-size:76px;line-height:1.12;letter-spacing:-.015em}
+.card .b{font-size:42px;line-height:1.35;margin-top:24px;opacity:.85}
+.tag{display:inline-block;font-family:var(--mono);font-size:24px;border:2px solid currentColor;border-radius:10px;padding:4px 12px;opacity:.6;margin-top:28px}
+.count{width:1280px}
+.count .n{font-weight:800;font-size:260px;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;transform-origin:0 60%}
+.count .l{font-size:64px;font-weight:700;color:var(--accent);margin-top:14px}
+.swap{display:flex;align-items:center;gap:56px}
+.swap .a,.swap .z{font-size:70px;font-weight:700;padding:30px 46px;border-radius:22px;white-space:nowrap}
+.swap .a{background:rgba(247,247,247,.08);color:color-mix(in srgb,var(--ink) 75%,transparent);border:2px solid rgba(247,247,247,.2)}
+.swap .z{background:var(--accent);color:var(--ground)}
+.swap .ar{font-size:90px;color:var(--accent);font-weight:800}
+.steps{position:relative;width:1600px;height:360px}
+.steps .rail{position:absolute;top:98px;height:6px;background:color-mix(in srgb,var(--accent) 45%,transparent);transform-origin:0 50%}
+.steps .st{position:absolute;top:40px;width:420px;margin-left:-210px;text-align:center}
+.steps .dot{width:120px;height:120px;border-radius:50%;margin:0 auto;border:5px solid rgba(247,247,247,.35);background:var(--ground);
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:46px}
+.steps .nm{font-size:56px;font-weight:700;margin-top:28px;white-space:nowrap}
+.chips{width:1400px;text-align:center}
+.chips .h{font-weight:800;font-size:76px;margin-bottom:56px;letter-spacing:-.015em}
+.chips .row{display:flex;gap:36px;justify-content:center}
+.chips .c{font-family:var(--mono);font-size:44px;color:var(--accent);border:2px solid color-mix(in srgb,var(--accent) 55%,transparent);
+  background:color-mix(in srgb,var(--accent) 12%,transparent);border-radius:16px;padding:18px 32px;white-space:nowrap}
+.bars{width:1400px}
+.bars .h{font-weight:800;font-size:66px;margin-bottom:50px}
+.bars .r{display:flex;align-items:center;gap:36px;margin:30px 0}
+.bars .lb{width:380px;font-size:48px;font-weight:700;white-space:nowrap}
+.bars .br{height:84px;border-radius:12px;background:var(--accent);transform-origin:0 50%}
+.bars .v{font-size:56px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+#hub .ti{position:absolute;left:330px;top:150px;font-weight:800;font-size:88px;letter-spacing:-.02em;white-space:nowrap}
+#hub .ti span{display:inline-block;margin-right:.25em}
+#hub .su{position:absolute;left:334px;top:262px;font-size:38px;opacity:.62;white-space:nowrap}
+#hub .ru{position:absolute;left:334px;top:336px;height:3px;width:1252px;background:color-mix(in srgb,var(--accent) 50%,transparent);transform-origin:0 50%}
+.tl{position:absolute;left:334px;height:100px;width:1252px}
+.tl .hl{position:absolute;left:-40px;right:-40px;top:-6px;bottom:-6px;border-radius:18px;background:color-mix(in srgb,var(--accent) 10%,transparent);border:2px solid color-mix(in srgb,var(--accent) 45%,transparent)}
+.tl .ring,.tl .ck{position:absolute;left:-2px;top:22px;width:56px;height:56px;border-radius:50%}
+.tl .ring{border:3px solid rgba(247,247,247,.28)}
+.tl .ck{background:var(--accent);color:var(--ground);font-weight:800;font-size:34px;display:flex;align-items:center;justify-content:center}
+.tl .row{position:absolute;left:92px;top:14px;display:flex;align-items:center;gap:26px;white-space:nowrap}
+.tl .no{font-family:var(--mono);font-size:50px;color:var(--accent);width:44px}
+.tl .tt{font-weight:700;font-size:64px;letter-spacing:-.01em}
+.tl .sb{font-size:36px;opacity:.6}
+#hdr{position:absolute;left:72px;top:52px;display:flex;align-items:center;gap:20px;white-space:nowrap;font-size:34px;font-weight:700}
+#hdr .no{font-family:var(--mono);color:var(--accent)}
+#ph{position:absolute;right:36px;bottom:26px;font-family:var(--mono);font-size:20px;opacity:.45;color:var(--warn)}
+#end{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#end .w{font-weight:800;font-size:190px;letter-spacing:-.03em;line-height:1.05}
+#end .u{font-size:56px;font-weight:500;margin-top:26px}
+#end .o{font-size:32px;font-weight:600;opacity:.5;margin-top:22px}
+</style></head>
+<body><div id="stage">
+<svg id="contours" viewBox="0 0 1920 1080"></svg>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <filter id="mb" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB"><feGaussianBlur id="mbg" stdDeviation="0 0"/></filter></defs></svg>
+<div id="cam"><div id="world"></div></div>
+<div id="hdr"><span class="no" id="hdrN"></span><span id="hdrT"></span></div>
+<div id="end"><div class="w" id="eW"></div><div class="u" id="eU"></div><div class="o" id="eO"></div></div>
+<div id="ph"></div>
+</div>
+<script>
+const F=window.FILM, V=window.VO, P=F.brand.palette, G=F.grid;
+const $=id=>document.getElementById(id);
+const rs=document.documentElement.style;
+Object.entries(P).forEach(([k,v])=>rs.setProperty('--'+k,v));rs.setProperty('--font',F.brand.font);rs.setProperty('--mono',F.brand.mono);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)), lin=(t,a,b)=>clamp((t-a)/(b-a)), mix=(a,b,k)=>a+(b-a)*k;
+const eIO=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2, eO=x=>1-Math.pow(1-x,3), eQ=x=>x<.5?16*x**5:1-Math.pow(-2*x+2,5)/2;
+const eB=x=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2);};
+const R=(t,a,b,e=eO)=>e(lin(t,a,b));
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function land(el,k,dy=36){el.style.opacity=k;el.style.transform=`translateY(${(1-k)*dy}px) scale(${.96+.04*k})`;}
+
+/* ---------- the invisible beat grid: every line starts on the grid (half beats by default), every chapter ends on a bar ---------- */
+const BEAT=60/G.bpm, BAR=4*BEAT, EIGHTH=BEAT/2, b2t=b=>b*BEAT;
+const q8=t=>Math.ceil(t/EIGHTH-1e-6)*EIGHTH;           // snap a spoken word to the next eighth note
+const CH=F.chapters, LINES=[];
+let cur=G.lead_in_beats??2, hubIntro=null;
+CH.forEach((c,ci)=>{
+  if(c.title){
+    if(hubIntro===null){cur=Math.ceil(cur/4)*4;hubIntro=cur;cur+=8;}   // the contents page lands over 2 bars
+    c._hl=cur;cur+=2;                                                  // row lights up, dive lands 2 beats later
+  }
+  c.lines.forEach((l,k)=>{const m=V.lines[l.id];if(!m)throw new Error('no timing for line '+l.id);
+    const sn=G.snap_beats??.5, need=(m.duration+(G.breath??.4)+(c.lines[k+1]?.breath??0))/BEAT;   // a line's own "breath" adds air BEFORE it
+    const slot=Math.max(G.min_beats??3,Math.ceil(need/sn-1e-6)*sn);
+    LINES.push({id:l.id,ci,k,l,m,sb:cur,start:b2t(cur),dur:m.duration,slot:b2t(slot)});cur+=slot;});
+  cur=Math.ceil(cur/4)*4;c._end=cur;                                   // chapter ends on a bar line
+  if(c.title){c._pull=cur;c._tick=cur+1;cur+=2;}
+});
+const TITLED=CH.map((c,i)=>i).filter(i=>CH[i].title);
+const GLOW=cur, ENDB=cur+4, TOTB=ENDB+8;
+const TOTAL=Math.round(b2t(TOTB)*30)/30;
+
+/* ---------- world layout: one row of panels per chapter, the contents page to the left ---------- */
+const PX=(ci,k)=>[k*2300+960,ci*1500+540];
+const HUB=[-2700+960,(CH.length-1)*750+540];
+const place=(el,c)=>{el.style.left=(c[0]-960)+'px';el.style.top=(c[1]-540)+'px';};
+
+/* ---------- build DOM ---------- */
+let h='';
+const hubTitle=F.brand.title.split(' ');
+h+=`<div class="pan" id="hub" style="display:block"><div class="ti">${hubTitle.map((w,i)=>`<span id="hw${i}">${esc(w)}</span>`).join('')}</div>
+  <div class="su" id="hs">${esc(F.brand.subtitle||'')}</div><div class="ru" id="hr"></div>
+  ${TITLED.map((ci,j)=>`<div class="tl" id="tl${ci}" style="top:${380+j*(600/Math.max(4,TITLED.length))}px"><div class="hl" id="hl${ci}"></div><div class="ring" id="rg${ci}"></div><div class="ck" id="ck${ci}">✓</div>
+    <div class="row"><span class="no">${j+1}</span><span class="tt">${esc(CH[ci].title)}</span><span class="sb">${esc(CH[ci].sub||'')}</span></div></div>`).join('')}</div>`;
+function body(L){const s=L.l.show||{type:'say'},id=L.id;
+  const tag=s.tag?`<div class="tag">${esc(s.tag)}</div>`:'';
+  switch(s.type){
+    case 'say':{const ws=(s.text||L.l.text).split(/\s+/);return `<div class="say fit" id="x_${id}">${ws.map((w,i)=>`<span id="w_${id}_${i}">${esc(w)}</span>`).join(' ')}</div>`;}
+    case 'card':return `<div class="card fit" id="x_${id}">${s.kicker?`<div class="k">${esc(s.kicker)}</div>`:''}<div class="t">${esc(s.title||L.l.text)}</div>${s.body?`<div class="b">${esc(s.body)}</div>`:''}${tag}</div>`;
+    case 'count':return `<div class="count fit" id="x_${id}"><div class="n" id="n_${id}">0</div><div class="l">${esc(s.label||'')}</div>${tag}</div>`;
+    case 'swap':return `<div class="swap" id="x_${id}"><div class="a fit" id="sa_${id}">${esc(s.from)}</div><div class="ar" id="sr_${id}">→</div><div class="z fit" id="sz_${id}">${esc(s.to)}</div></div>`;
+    case 'steps':{const n=s.items.length,xs=s.items.map((_,i)=>n===1?800:200+i*1200/(n-1));
+      return `<div class="steps" id="x_${id}"><div class="rail" id="rl_${id}" style="left:${xs[0]}px;width:${xs[n-1]-xs[0]}px"></div>${s.items.map((it,i)=>`<div class="st" id="st_${id}_${i}" style="left:${xs[i]}px"><div class="dot" id="sd_${id}_${i}">${i+1}</div><div class="nm">${esc(it)}</div></div>`).join('')}</div>`;}
+    case 'chips':return `<div class="chips" id="x_${id}"><div class="h">${esc(s.title||'')}</div><div class="row">${s.items.map((it,i)=>`<div class="c" id="c_${id}_${i}">${esc(it)}</div>`).join('')}</div></div>`;
+    case 'bars':{const mx=Math.max(...s.items.map(r=>r[1]));
+      return `<div class="bars fit" id="x_${id}"><div class="h">${esc(s.title||'')}</div>${s.items.map((r,i)=>`<div class="r" id="br_${id}_${i}"><div class="lb">${esc(r[0])}</div><div class="br" id="bb_${id}_${i}" style="width:${Math.round(760*r[1]/mx)}px"></div><div class="v" id="bv_${id}_${i}">0</div></div>`).join('')}${tag}</div>`;}
+    default:throw new Error('unknown show.type '+s.type+' on '+id);}}
+LINES.forEach(L=>{h+=`<div class="pan" id="p_${L.id}">${body(L)}</div>`;});
+$('world').innerHTML=h;place($('hub'),HUB);LINES.forEach(L=>place($('p_'+L.id),PX(L.ci,L.k)));
+$('eW').textContent=F.brand.name;$('eU').textContent=F.brand.url||'';$('eO').textContent=F.brand.org||'';
+$('ph').textContent=V.placeholder?'PLACEHOLDER VO TIMING (estimated, no voice yet)':(V.partial?'SOME LINES ESTIMATED':'');
+
+/* word landing times: spoken word times snapped to eighths when the words match the display, else one per eighth */
+LINES.forEach(L=>{const s=L.l.show||{type:'say'};if(s.type!=='say')return;const ws=(s.text||L.l.text).split(/\s+/);
+  L.wt=ws.map((w,i)=>(!s.text&&L.m.words&&L.m.words.length===ws.length)?L.start+q8(L.m.words[i].start):L.start+i*EIGHTH);});
+
+/* contours (drift with the camera) */
+(function(){let s='';for(let i=0;i<9;i++)s+=`<path id="cn${i}" fill="none" stroke="${P.ink}" stroke-width="1.6"/>`;$('contours').innerHTML=s;})();
+function contours(t,cx,cy){for(let i=0;i<9;i++){let d='';const y0=90+i*118-(cy*.035)%118,a=38+12*Math.sin(i*1.7),f=.0021+.0004*(i%3),ph=i*1.3+t*.18-cx*.00035*(1+i*.1);
+  for(let x=-40;x<=1960;x+=40){const y=y0+a*Math.sin(x*f+ph)+18*Math.sin(x*f*2.3+ph*1.7);d+=(x<0?'M':'L')+x+' '+y.toFixed(1);}
+  const p=$('cn'+i);p.setAttribute('d',d);p.setAttribute('stroke-opacity',(.045+.02*(i%2)).toFixed(3));}}
+
+/* ---------- camera: every move ENDS on a beat, so the cut lands where the voice starts ---------- */
+const MOVES=[], WHIP=.34;
+const first=LINES[0];let camStart=CH[first.ci].title?[HUB[0],HUB[1],1.1]:[...PX(first.ci,0),1];
+LINES.forEach((L,n)=>{const c=CH[L.ci],to=[...PX(L.ci,L.k),1];
+  if(L.k===0&&c.title)MOVES.push({t0:b2t(c._hl+.5),t1:L.start,to,dip:.72,e:'io',kind:'dive'});
+  else if(n>0)MOVES.push({t0:L.start-WHIP,t1:L.start,to,dip:.08,e:'q',kind:'cut'});
+  if(L.k===c.lines.length-1&&c.title)MOVES.push({t0:b2t(c._pull),t1:b2t(c._pull+1),to:[HUB[0],HUB[1],1.1],dip:.6,e:'q',kind:'pull'});});
+if(hubIntro!==null&&!CH[first.ci].title)MOVES.push({t0:b2t(hubIntro)-WHIP*2,t1:b2t(hubIntro),to:[HUB[0],HUB[1],1.1],dip:.6,e:'q',kind:'pull'});
+MOVES.sort((a,b)=>a.t0-b.t0);
+function drift(st,dt){return[st[0]+8*dt,st[1]+2.5*dt,st[2]*(1+.006*dt)];}
+function cam(t){let st=camStart,end=0;
+  for(const m of MOVES){const fr=drift(st,Math.max(0,Math.min(t,m.t0)-end));
+    if(t<m.t0)return{x:fr[0],y:fr[1],s:fr[2]};
+    if(t<m.t1){const k=lin(t,m.t0,m.t1),q=m.e==='io'?eIO(k):eQ(k);
+      return{x:mix(fr[0],m.to[0],q),y:mix(fr[1],m.to[1],q),s:mix(fr[2],m.to[2],q)*(1-m.dip*Math.sin(Math.PI*q))};}
+    st=m.to;end=m.t1;}
+  const d=drift(st,t-end);return{x:d[0],y:d[1],s:d[2]};}
+
+window.__timing={BEAT,BAR,TOTAL,placeholder:!!V.placeholder,
+  lines:LINES.map(L=>({id:L.id,chapter:CH[L.ci].id,text:L.l.text,beat:L.sb,start:+L.start.toFixed(3),dur:L.dur,slot:+L.slot.toFixed(3)})),
+  chapters:CH.map(c=>({id:c.id,title:c.title||null,end_beat:c._end,tick:c.title?+b2t(c._tick).toFixed(3):null})),
+  moves:MOVES.map(m=>+m.t0.toFixed(3)),arrivals:MOVES.map(m=>+m.t1.toFixed(3)),
+  cues:{line:LINES.map(L=>+L.start.toFixed(3)),tick:TITLED.map(i=>+b2t(CH[i]._tick).toFixed(3)),end:+b2t(ENDB).toFixed(3)}};
+
+function render(t){
+  const c=cam(t),cp=cam(t-1/30);
+  const vx=(c.x-cp.x)*c.s*30,vy=(c.y-cp.y)*c.s*30,vz=Math.abs(Math.log(c.s/cp.s))*30*900;
+  const bx=Math.min(40,Math.abs(vx)*.004+vz*.004),by=Math.min(40,Math.abs(vy)*.004+vz*.004);
+  $('world').style.transform=`translate(${960-c.x*c.s}px,${540-c.y*c.s}px) scale(${c.s})`;
+  if(bx>.6||by>.6){$('mbg').setAttribute('stdDeviation',`${bx.toFixed(2)} ${by.toFixed(2)}`);$('cam').style.filter='url(#mb)';}else $('cam').style.filter='none';
+  contours(t,c.x,c.y);
+  const endK=R(t,b2t(ENDB)-.3,b2t(ENDB)+.2,eIO);$('cam').style.opacity=1-endK;
+  /* contents page */
+  if(hubIntro!==null){const H0=b2t(hubIntro);
+    hubTitle.forEach((w,i)=>{const k=R(t,H0+i*EIGHTH,H0+i*EIGHTH+.2),e=$('hw'+i);e.style.opacity=k;e.style.filter=k<1?`blur(${(1-k)*12}px)`:'none';e.style.transform=`translateY(${(1-k)*20}px)`;});
+    $('hs').style.opacity=.62*R(t,H0+BAR*.5,H0+BAR*.5+.3);$('hr').style.transform=`scaleX(${R(t,H0+BAR*.5,H0+BAR,eIO)})`;
+    TITLED.forEach((ci,j)=>{const ch=CH[ci],t0=H0+BAR+j*EIGHTH,k=R(t,t0,t0+.22);$('tl'+ci).style.opacity=k;$('tl'+ci).style.transform=`translateX(${(1-k)*-40}px)`;
+      const tk=R(t,b2t(ch._tick),b2t(ch._tick)+.3);$('ck'+ci).style.opacity=clamp(tk*1.5);$('ck'+ci).style.transform=`scale(${.3+.7*eB(tk)})`;$('rg'+ci).style.opacity=1-tk;
+      $('hl'+ci).style.opacity=R(t,b2t(ch._hl),b2t(ch._hl)+.2)*(1-R(t,b2t(ch._hl+2)+.3,b2t(ch._hl+2)+.8));
+      const g=R(t,b2t(GLOW),b2t(GLOW)+.3)*(1-R(t,b2t(ENDB)-.5,b2t(ENDB)));$('ck'+ci).style.boxShadow=`0 0 ${g*44}px ${P.accent}`;});}
+  /* header while inside a titled chapter (screen space, never cut by the frame) */
+  let hd=null;TITLED.forEach((ci,j)=>{const ch=CH[ci];if(t>=b2t(ch._hl+2)-.1&&t<b2t(ch._pull))hd=[j+1,ch.title,ci];});
+  $('hdr').style.opacity=hd?.85:0;if(hd){$('hdrN').textContent=hd[0];$('hdrT').textContent=hd[1];}
+  /* line panels: the idea lands on the beat the voice starts, then stays in the world */
+  LINES.forEach(L=>{const s=L.l.show||{type:'say'},id=L.id,t0=L.start,x=$('x_'+id);
+    $('p_'+id).style.visibility=t>t0-1.2?'visible':'hidden';
+    switch(s.type){
+      case 'say':L.wt.forEach((wt,i)=>{const k=R(t,wt,wt+.2),e=$(`w_${id}_${i}`);e.style.opacity=k;e.style.transform=`translateY(${(1-k)*26}px)`;e.style.filter=k<1?`blur(${(1-k)*8}px)`:'none';});break;
+      case 'card':land(x,R(t,t0,t0+.3));break;
+      case 'count':{land(x,R(t,t0,t0+.25));const k=R(t,t0,t0+2*BEAT,eIO),dec=s.decimals||0;
+        $('n_'+id).textContent=(s.prefix||'')+(s.to*k).toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec})+(k>=1?(s.suffix||''):'');
+        $('n_'+id).style.transform=`scale(${1+.06*Math.sin(Math.PI*lin(t,t0+2*BEAT,t0+2*BEAT+.3))})`;break;}
+      case 'swap':{land($('sa_'+id),R(t,t0,t0+.25));const t1=t0+2*BEAT;const k=R(t,t1,t1+.25);$('sr_'+id).style.opacity=k;
+        const e=$('sz_'+id);e.style.opacity=clamp(k*1.5);e.style.transform=`scale(${.6+.4*eB(k)})`;
+        $('sa_'+id).style.textDecoration=t>=t1?'line-through':'none';break;}
+      case 'steps':{const n=s.items.length,prevSame=LINES.find(o=>o.ci===L.ci&&o.k===L.k-1&&(o.l.show||{}).type==='steps');
+        const tIn=prevSame?t0-1:t0;$('rl_'+id).style.transform=`scaleX(${R(t,tIn,tIn+BEAT,eIO)})`;
+        s.items.forEach((_,i)=>{const e=$(`st_${id}_${i}`),d=$(`sd_${id}_${i}`);const ki=prevSame?1:R(t,t0+i*EIGHTH,t0+i*EIGHTH+.22);land(e,ki,24);
+          const on=i===s.active,done=i<s.active,hk=on?R(t,t0,t0+.25):done?1:0;
+          d.style.background=on?`color-mix(in srgb,${P.accent} ${Math.round(hk*100)}%,${P.ground})`:P.ground;d.style.color=on&&hk>.5?P.ground:(done?P.accent:P.ink);
+          d.style.borderColor=(on||done)?P.accent:'rgba(247,247,247,.35)';d.style.transform=`scale(${on?1+.12*Math.sin(Math.PI*hk):1})`;e.style.opacity=(+e.style.opacity)*(on||done?1:.55);});break;}
+      case 'chips':{land(x.querySelector('.h'),R(t,t0,t0+.25));s.items.forEach((_,i)=>{const a=t0+(i+1)*BEAT*.5+BEAT*.5,k=R(t,a,a+.22),e=$(`c_${id}_${i}`);land(e,k,24);});break;}
+      case 'bars':{land(x,R(t,t0,t0+.25));const mx=Math.max(...s.items.map(r=>r[1]));s.items.forEach((r,i)=>{const a=t0+(i+1)*BEAT,k=R(t,a,a+BEAT*.9,eIO);
+        $(`bb_${id}_${i}`).style.transform=`scaleX(${k})`;$(`bv_${id}_${i}`).textContent=Math.round(r[1]*k).toLocaleString('en-US');land($(`br_${id}_${i}`),R(t,a-.1,a+.15),16);});break;}
+    }});
+  /* end card */
+  $('end').style.opacity=endK;const ek=R(t,b2t(ENDB),b2t(ENDB)+.5);$('eW').style.transform=`translateY(${(1-ek)*30}px)`;
+  $('eU').style.opacity=R(t,b2t(ENDB+1),b2t(ENDB+1)+.3);$('eO').style.opacity=.5*R(t,b2t(ENDB+2),b2t(ENDB+2)+.3);
+}
+window.__seek=t=>render(t);window.__duration=TOTAL;
+document.fonts.ready.then(()=>{render(0);window.__ready=true;});
+</script></body></html>

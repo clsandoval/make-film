@@ -1,11 +1,15 @@
 # Ten-second GIF, straight to LinkedIn
 
-Use when the deliverable is a silent looping GIF for a LinkedIn (or similar feed) post.
-LinkedIn caps GIFs around 8 MB and plays them muted, so the format decides the film:
-one joke, three beats, ten seconds, text burned in, no audio to lean on.
+**Use when** the deliverable is a silent looping GIF for a LinkedIn (or similar feed) post: one joke, three
+beats, ten seconds, text burned in. LinkedIn caps GIFs around 8 MB and plays them muted, so the format decides
+the film.
+**Do not use** for anything that needs a voiceover, more than one idea, or product UI on screen (use a
+code-rendered style), or when no video-model spend is authorized.
+The starter is [`starter/`](starter/README.md): a joke template and a $0 burn-in and encode example.
 
-Proven on the September 2026 "Cloud Agent" short: one text-only Seedance 2.5 generation
-at 720p square, about $4.70, plus ffmpeg for the text and the GIF. Under an hour end to end.
+Proven on the September 2026 "Cloud Agent" short: one text-only generation at 720p square, about $4.70, plus
+ffmpeg for the text and the GIF. Under an hour end to end. Use the video model version the profile or brief
+names; never silently fall back to an older version.
 
 ## The path
 
@@ -13,18 +17,18 @@ at 720p square, about $4.70, plus ffmpeg for the text and the GIF. Under an hour
    is padding. Example: someone dictates into a phone (3 s), the mistyped word descends
    on a tribe who take it as scripture (3 s), the tribe erupts into literal-minded
    chaos (4 s). One gag in the last beat, growing for its whole four seconds.
-2. **One generation, text only, square.** Seedance 2.5 text-to-video, `duration: 10`,
+2. **One generation, text only, square.** Text-to-video on the named model version, `duration: 10`,
    `aspect_ratio: 1:1` (square or 4:5 plays larger in the feed than 9:16), 720p, audio
    off. No reference images and no clips under 10 seconds; see the prompt shape below.
-   Submit with `scripts/seedance_gen.py <dir>` where `spec.json` is
+   Submit with [`scripts/seedance_gen.py`](../../scripts/seedance_gen.py) `<dir>` where `spec.json` is
    `{"duration": "10", "resolution": "720p", "aspect": "1:1"}`; API details in
-   [fal-seedance-25-api.md](fal-seedance-25-api.md).
+   [fal-seedance-25-api.md](../../references/fal-seedance-25-api.md).
 3. **Words in post, never in the generation.** Ask the model for blank screens and no
    lettering. Burn the words in with ffmpeg `drawtext`, where you control spelling,
    timing and the joke. Typed text is a chain of `drawtext` filters each enabled for one
    character's window; a "correction" is the same box with a new word and accent colour.
    A word arriving from the sky is one `drawtext` with a time-driven `y`.
-4. **Encode the GIF to the cap.** `scripts/gif_encode.sh in.mp4 out.gif 480 10 64` gives
+4. **Encode the GIF to the cap.** [`scripts/gif_encode.sh`](../../scripts/gif_encode.sh) `in.mp4 out.gif 480 10 64` gives
    480 px, 10 fps, 64 colours, palette-optimised. Ten seconds of flat 2D lands around
    7 MB at those settings; 540 px or 96 colours went over. Ship the MP4 alongside: it
    is a third the size and sharper, and LinkedIn accepts native video.
@@ -90,5 +94,11 @@ Drift between takes to expect: the lord came back uncoloured once (white with na
 lines) while the tribe stayed periwinkle. If that matters, a reference pass fixes it;
 for a feed GIF it did not.
 
-Case study: `~/cs/daimon-alphagenome-film/explore/tribe-test/seedance-parts/gif10b/` (v2, one gag; `gif10/` is the four-gag first take)
-(prompt, payload, raw take, overlay MP4s, GIF variants with sizes in their names).
+## Approved reference
+
+None recorded. The case study below was generated and delivered, but no approval of it by the director is
+written down in the project files.
+
+Case study: `~/cs/films/daimon-alphagenome-film/explore/tribe-test/seedance-parts/gif10b/` (v2, one gag;
+`gif10/` is the four-gag first take): `prompt.txt`, `spec.json`, `payload.json`, `raw.mp4`, `overlay-agent.mp4`
+and `cloud-agent-linkedin.gif` (5.5 MB), with the grid and overlay check frames beside them.

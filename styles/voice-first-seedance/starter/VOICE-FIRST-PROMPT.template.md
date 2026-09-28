@@ -1,4 +1,4 @@
-# Voice-first video prompt — template
+# Voice-first video prompt: template
 
 One prompt per part. Parts split at sentence ends, each at most the model's ceiling.
 Repeat the STYLE and WORLD blocks verbatim in every part. Fill only the beats.

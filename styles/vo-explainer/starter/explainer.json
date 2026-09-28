@@ -1,0 +1,62 @@
+{
+  "brand": {
+    "name": "Beacon",
+    "org": "Example Co",
+    "url": "beacon.example.com",
+    "title": "How Beacon works",
+    "subtitle": "A two-minute explainer",
+    "font": "Inter, 'Helvetica Neue', Arial, sans-serif",
+    "mono": "'JetBrains Mono', Menlo, Consolas, monospace",
+    "palette": {
+      "ground": "#0C1F40", "deep": "#07142A", "ink": "#F7F7F7",
+      "accent": "#B4E7DD", "card": "#F7F7F7", "cardInk": "#0C1F40", "warn": "#F6AE72"
+    }
+  },
+  "grid": { "bpm": 100, "snap_beats": 0.5, "lead_in_beats": 1, "breath": 0.4, "min_beats": 3, "wpm_estimate": 150 },
+  "voice": { "id": "", "model": "eleven_v3", "stability": 0.5, "similarity_boost": 0.75, "style": 0.0 },
+  "tts_respell": {},
+  "sound": { "sfx": true },
+  "chapters": [
+    {
+      "id": "open",
+      "lines": [
+        { "id": "open01", "text": "Every clinic keeps a fridge full of vaccines.", "show": { "type": "say" } },
+        { "id": "open02", "text": "Each box has a date on it.", "show": { "type": "say" } },
+        { "id": "open03", "text": "In a busy week, nobody checks.", "show": { "type": "say" } },
+        { "id": "open04", "text": "Last year, one clinic threw away twelve hundred doses.",
+          "show": { "type": "count", "to": 1200, "label": "doses thrown away", "tag": "example" } }
+      ]
+    },
+    {
+      "id": "what", "title": "What Beacon does", "sub": "a sensor and a list",
+      "lines": [
+        { "id": "what01", "text": "Beacon is a small sensor that sits in the fridge.",
+          "show": { "type": "card", "kicker": "Beacon", "title": "A small sensor in the fridge" } },
+        { "id": "what02", "text": "Every morning, it reads every box.",
+          "show": { "type": "chips", "title": "Every morning", "items": ["name", "date", "doses left"] } },
+        { "id": "what03", "breath": 0.4, "text": "A box that runs out this week goes to the top of the list.",
+          "show": { "type": "swap", "from": "Box 14 · 30 March", "to": "Use first" } }
+      ]
+    },
+    {
+      "id": "how", "title": "How it works", "sub": "three steps",
+      "lines": [
+        { "id": "how01", "text": "First, it takes a photo of each shelf.",
+          "show": { "type": "steps", "items": ["Photo", "Read", "Tell"], "active": 0 } },
+        { "id": "how02", "text": "Then it reads the date on every box.",
+          "show": { "type": "steps", "items": ["Photo", "Read", "Tell"], "active": 1 } },
+        { "id": "how03", "text": "Then it sends the nurse one short list.",
+          "show": { "type": "steps", "items": ["Photo", "Read", "Tell"], "active": 2 } }
+      ]
+    },
+    {
+      "id": "proof", "title": "Does it help", "sub": "a pilot",
+      "lines": [
+        { "id": "proof01", "text": "In a pilot, clinics threw away far fewer doses.",
+          "show": { "type": "bars", "title": "Doses thrown away", "items": [["before", 1200], ["with Beacon", 300]], "tag": "example" } },
+        { "id": "proof02", "breath": 0.5, "text": "Nurses spend less time counting boxes.", "show": { "type": "say" } },
+        { "id": "proof03", "text": "And the doses reach the people who need them.", "show": { "type": "say" } }
+      ]
+    }
+  ]
+}

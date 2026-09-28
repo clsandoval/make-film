@@ -1,0 +1,14 @@
+<!doctype html><html><head><meta charset="utf-8"><title>dive preview</title>
+<!-- Standalone look-dev page for one dive: dive.html?place=monte-seda&u=0.6&tod=0&s0=1.6
+     (run `node scripts/sync.mjs` first so ../trip.js exists; scripts/dive-stills.mjs drives it headless) -->
+<script src="../trip.js"></script><script src="../geo.js"></script><script src="dive.js"></script>
+<style>html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#000}</style></head>
+<body><canvas id="c" width="1080" height="1920"></canvas><script>
+const Q = new URLSearchParams(location.search), F = window.FILM;
+const seg = F.segments.find(s => s.kind === 'dive' && s.place === Q.get('place')) || F.segments.find(s => s.kind === 'dive');
+const p = GEO.P[seg.place];
+window.__draw = (u, tod) => DIVE.draw(seg, u, +(Q.get('s0') || 1.6), p.x, p.y, tod ?? +(Q.get('tod') || seg.tod || 0));
+window.__ok = DIVE.init(document.getElementById('c'));
+if (window.__ok) window.__draw(+(Q.get('u') || .6));
+window.__ready = true;
+</script></body></html>

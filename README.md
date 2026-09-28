@@ -1,18 +1,11 @@
 # make-film
 
-**A Claude Code skill that directs and renders a product film from code.**
+**A Claude Code skill that directs and renders short films from code.**
 
-Point it at your product and it runs the whole pipeline: direction, script,
-voiceover, word-synced reveals, deterministic frame-by-frame render, broadcast
-master, aspect cuts and captions — as HTML, CSS and GSAP, screenshotted by
-Playwright and encoded by ffmpeg.
-
-No After Effects. No stock footage. No GPU. No diffusion model. The render is
-deterministic, so the same commit produces the same file.
-
-```
-/make-film an onboarding film for <product>
-```
+Tell it what you want. It picks a style, copies that style's starter into a new folder, and runs the
+same gates every time: brief, script lock, a 20 s motion preview, a frame review by someone other than
+the author, the full render, a review of the delivered file, delivery. Frames are HTML, CSS and GSAP,
+captured by Playwright and encoded by ffmpeg, so the same commit renders the same file.
 
 ## Install
 
@@ -20,91 +13,70 @@ deterministic, so the same commit produces the same file.
 git clone https://github.com/clsandoval/make-film ~/.claude/skills/make-film
 ```
 
-Then in a fresh directory:
+Then, in Claude Code:
 
-```bash
-mkdir my-film && cd my-film
-cp -r ~/.claude/skills/make-film/scripts .
-cp ~/.claude/skills/make-film/assets/film.skeleton.html film.html
-cp ~/.claude/skills/make-film/assets/film.example.json film.json
-npm init -y && npm i gsap@^3.15 playwright@^1.62 && npx playwright install chromium
+```
+/make-film <what you want>
 ```
 
-`scripts/` must live inside the film directory — Node resolves `playwright`
-relative to the script, not the film.
+The router in `SKILL.md` maps the request to a style. When nothing clearly matches, it uses
+channel-thread.
 
-## Channel-thread style (the canonical product, release and feature film)
+| Style | For |
+|---|---|
+| [channel-thread](styles/channel-thread/RECIPE.md) | Product, release and feature films (the default) |
+| [chapters](styles/chapters/RECIPE.md) | A catch-up the room ticks off, contents-page style |
+| [hybrid](styles/hybrid/RECIPE.md) | Chapters told through chat moments |
+| [vo-explainer](styles/vo-explainer/RECIPE.md) | Narrated explainers for people new to the subject |
+| [voice-first-seedance](styles/voice-first-seedance/RECIPE.md) | Illustrated explainers made with a video model (paid) |
+| [trip-thread-map](styles/trip-thread-map/RECIPE.md) | Trip videos: chat thread, route map, terrain dive |
+| [short-result](styles/short-result/RECIPE.md) | One result in about 20 s |
+| [gif-10s](styles/gif-10s/RECIPE.md) | A 10 s joke GIF for LinkedIn (paid) |
+| [style-peg](styles/style-peg/RECIPE.md) | Short motion tests to choose a look |
+| [stills-first](styles/stills-first/RECIPE.md) | Narrated animatics from stills |
+| [vo-synced-legacy](styles/vo-synced-legacy/RECIPE.md) | The original word-locked voiceover pipeline |
 
-The default for product, release and feature films is the #channel film: a teammate asks in the product's chat,
-the bot answers, and the answer expands out of the chat onto one canvas. Start from the runnable scaffold:
+[FILMS.md](FILMS.md) catalogs every film made with it so far, with its style and verdict.
+`profiles/` holds per-director taste and is only read when a director is named.
+
+## Quick start without the router
+
+The default style's starter runs from a fresh copy with no API key and no music file:
 
 ```bash
-cp -r ~/.claude/skills/make-film/assets/channel-thread my-film && cd my-film && npm i
+cp -r ~/.claude/skills/make-film/styles/channel-thread/starter my-film && cd my-film
+npm i && npx playwright install chromium
 node scripts/timing.mjs && node scripts/stills.mjs 1.5   # edit channel.json, look at stills/sheet-*.png
+node scripts/qa.mjs
 ```
 
-See `references/style-channel-thread.md` and `assets/channel-thread/README.md`.
-
-## Chapters style (the table-of-contents alternative)
-
-When the director wants a contents-page catch-up instead, start from this scaffold:
-
-```bash
-cp -r ~/.claude/skills/make-film/assets/chapters my-film && cd my-film && npm i
-node scripts/timing.mjs && node scripts/stills.mjs 1   # edit chapters.json, look at stills/sheet-*.png
-```
-
-See `references/style-chapters.md` and `assets/chapters/README.md`.
+See [its README](styles/channel-thread/starter/README.md) for the preview, full render and master.
 
 ## Requirements
 
 | | |
 |---|---|
-| `node` ≥ 20, `ffmpeg`, `ffprobe`, `python3` | Python is stdlib-only — no pip install |
-| npm `gsap`, `playwright` | the only two dependencies |
-| `ELEVENLABS_API_KEY` | **only metered service, and only for a voiced film** |
+| `node` ≥ 20, `ffmpeg`, `ffprobe`, `python3` | Python is stdlib-only |
+| npm `playwright` (and `gsap` where a starter uses it) | installed by each starter's `npm i` |
+| `ELEVENLABS_API_KEY` | only for a voiced film |
+| a fal.ai key | only for voice-first-seedance and gif-10s |
 
-A silent film needs no API key at all. There is no image generation, no video
-generation and no licensed audio anywhere in the pipeline: every frame is drawn and
-every sound is synthesised, deterministically.
+A silent film needs no key at all. Paid calls always need the director's go-ahead, and every call is
+logged in the film folder.
 
-Set the key in the environment, `./.env`, or `~/.config/film/.env`. If it is in
-none of the three, search your other repos' `.env` files for it: exactly one hit,
-copy it to `~/.config/film/.env`; zero or several, ask which key. Never stall on
-it — one session lost hours to a missing key and spent them timing stills against
-durations that were already stale.
-
-## How it works
-
-A film is a directory. `film.json` declares the frames and their pads; `film.html` is
-the composition. Everything else is derived:
+## Repo layout
 
 ```
-film.json ──▶ gen_vo.py ──▶ audio_meta.json ──▶ build_timeline.py ──▶ timeline.json
-                                                                         │
-      film.html ◀── window.TIMELINE ◀──────────────────────────────────┘
-          │
-          ├─▶ stills.mjs      iterate here — 40 seconds a round
-          ├─▶ probe.mjs       dead windows, resolution, blanks, hit tests
-          └─▶ render-parallel.mjs ─▶ master.sh ─▶ deliverables.sh
+SKILL.md             the router: style table, universal gates, rules
+styles/<name>/       RECIPE.md + starter/ per style
+profiles/            per-director taste, loaded only when named
+references/          direction, copy, truth, motion, sound, qa, deliverables, batch-variants
+scripts/             the shared legacy pipeline, seedance_gen.py, gif_encode.sh, check_links.py
+FILMS.md             catalog of past films
+assets/              compatibility links to the old starter paths
 ```
 
-**Nothing types a duration.** Every frame's length is measured from its voiceover with
-`ffprobe`; every reveal is cued to a word start taken from the same generation that
-produced the audio. The one authored timing number per frame is its `pad` — the breath
-after its last word.
-
-## What makes it not a slideshow
-
-The skill is a discipline, not a template. `SKILL.md` carries eight human gates, nine
-laws and a table of red flags, each one a defect that cost real hours: TTS that clicks
-at a boundary, a trim that eats word-final consonants, `-t` truncating without padding
-so `-shortest` clips the end card, libass sizing captions against a 384×288 PlayRes,
-a viewport-sized screenshot producing a mislabelled aspect ratio, and a "nothing ends
-moving" rule over-applied until a quarter of the film was frozen.
-
-The gates exist because they are the difference between a film that ships and one that
-does not. The one film built without them was unusable.
+Run `python3 scripts/check_links.py` after editing markdown.
 
 ## Licence
 
