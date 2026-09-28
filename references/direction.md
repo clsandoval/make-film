@@ -1,5 +1,7 @@
 # Direction
 
+Applies to every style in [styles/](../styles/); each style's RECIPE.md says which parts it uses.
+
 Gate G1. Nothing is drawn until this is written down and one direction is chosen.
 
 The discipline in the rest of this skill is uniform by design — determinism, word-locked

@@ -1,5 +1,7 @@
 # Motion
 
+Applies to every style in [styles/](../styles/). Where this file names "the skeleton", it means the legacy rig at `styles/vo-synced-legacy/starter/film.skeleton.html`; the newer starters (channel-thread, chapters and the rest) follow the same seek contract.
+
 The renderer never advances wall-clock time. For every output frame it calls
 `window.__seek(n / FPS)`, paints once, and screenshots. Everything below follows from that.
 

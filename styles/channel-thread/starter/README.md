@@ -1,13 +1,13 @@
 # Channel-thread scaffold
 
-This is the runnable template for the **channel-thread** style (`references/style-channel-thread.md`), the canonical
+This is the runnable template for the **channel-thread** style ([RECIPE](../RECIPE.md)), the canonical
 product, release and feature film. The film opens in the product's own chat channel. A teammate asks, the bot
 answers, and on the drop the camera whips out of the chat onto one continuous canvas. An aqua line draws
 through a chain of cards: each answer's artifact, then a volley of short Q&As, then the fixes cards. A map
 pullback shows it all, and the end card closes. Everything on screen comes from `channel.json`.
 
 ```bash
-cp -r ~/.claude/skills/make-film/assets/channel-thread my-film && cd my-film
+cp -r ~/.claude/skills/make-film/styles/channel-thread/starter my-film && cd my-film
 npm i && npx playwright install chromium
 # edit channel.json: brand, channel, people, intro, chapters[], volley[], fixes[]; put a cleared track at music.file
 node scripts/timing.mjs            # -> timing.json; prints duration, camera moves/s and changes/s

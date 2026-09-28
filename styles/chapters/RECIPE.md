@@ -1,10 +1,10 @@
 # Chapters style: the contents-page film
 
-The **documented alternative** to the canonical channel-thread style (`references/style-channel-thread.md`) for
+The **documented alternative** to the canonical channel-thread style ([channel-thread](../channel-thread/RECIPE.md)) for
 release films, catch-ups and feature round-ups. Use it when the director wants a table-of-contents catch-up: 1–2
 minutes, several features, no voiceover, and a room that should see the list and tick it off. It was built for the Daimon September release (Opus B, "The contents
 page", 1:04, 2026-09-27). Carlos called it "very very good" and asked for it as a core style. The runnable
-scaffold is `assets/chapters/`.
+scaffold is [`starter/`](starter/README.md).
 
 It is the One-thread / One-deck motion grammar (continuous camera, a line that draws through, cards that morph,
 reveals on the beat) given a **contents page as its spine**. The room always knows where it is and how much is
@@ -41,7 +41,7 @@ Every chapter's end state stays composed in the world, so the map pullback shows
 
 | | value | why |
 |---|---|---|
-| Tempo | 95–120 BPM; 103 BPM in the reference (bar = 2.33 s) | 10–20% slower than the 34 s shorts at 120 BPM (Carlos's pace rule) |
+| Tempo | 95–120 BPM; 103 BPM in the reference (bar = 2.33 s) | 10–20% slower than the 34 s shorts at 120 BPM (the pace rule) |
 | Scene-change rate | **0.6–1.0 camera moves per second** (reference: 48 moves in 64 s) | Root measured One thread at 24 in 34 s. The rejected preview had 2 in 22 s |
 | Punch-in / pan | 0.34 s quintic ease, starting on a beat or eighth | a whip, not a glide |
 | Dive | 1–2 beats, following the line tip | the hub → chapter link is the signature move |
@@ -71,7 +71,7 @@ Every chapter's end state stays composed in the world, so the map pullback shows
 | **Product at work**: cards doing the thing, with real artifacts and real counted figures | the beats | 2–3 bars |
 | **Benefit**: one plain sentence in the accent colour ("It only speaks up when something matters.") | bottom centre, on the final wide shot | the last 0.75 bar |
 
-This is Carlos's script rule (pain → turn → product → plain benefit) with the turn carried by the dive. Status
+This is the script rule (pain → turn → product → plain benefit) with the turn carried by the dive. Status
 flags go wherever the feature's name appears: in the hub, the chapter header, the map labels, and any card that
 could be mistaken for live ("IN TRIAL · POSTING PAUSED").
 

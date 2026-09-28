@@ -1,0 +1,12 @@
+{
+  "name": "short-result-film",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync": "node scripts/sync.mjs",
+    "timing": "node scripts/timing.mjs",
+    "stills": "node scripts/stills.mjs",
+    "qa": "node scripts/qa.mjs"
+  },
+  "dependencies": { "playwright": "^1.62.0" }
+}

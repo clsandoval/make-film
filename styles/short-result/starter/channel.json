@@ -1,0 +1,73 @@
+{
+ "_note": "PLACEHOLDER CONTENT. Beacon, Example Co, sam and every figure below are invented. Replace them with one counted, sourced result before anything is delivered, and drop the PLACEHOLDER flags.",
+ "brand": {
+  "name": "Beacon",
+  "url": "Search rerank · one result",
+  "org": "Example Co",
+  "font": "Inter, 'Helvetica Neue', Arial, sans-serif",
+  "mono": "'JetBrains Mono', Menlo, Consolas, monospace",
+  "palette": {
+   "ground": "#14213D", "deep": "#0B1528", "ink": "#F7F7F7", "accent": "#A8E0D4", "accent2": "#12907A",
+   "card": "#F7F7F7", "cardInk": "#14213D", "panel": "#E9ECF1", "trial": "#F4B27A", "exp": "#A6AEE0",
+   "dot": "#C0662E", "app": "#5865F2"
+  }
+ },
+ "music": {
+  "file": "music/track.mp3",
+  "bpm": 105,
+  "phase": 0.0,
+  "offset": 0.0,
+  "final_bar": null,
+  "phrase_bars": 4,
+  "credit": "Music: placeholder synth groove · replace with a cleared track and credit it here"
+ },
+ "channel": {
+  "server": "Example Co",
+  "name": "search-quality",
+  "topic": "search experiments",
+  "sidebar": ["general", "search", "search-quality", "beacon"]
+ },
+ "people": {
+  "bot": {"name": "Beacon", "bot": true},
+  "sam": {"name": "sam", "color": "#FAD2B1"}
+ },
+ "intro": {
+  "title": "Beacon finds it first",
+  "bars": 3,
+  "cps": 30,
+  "messages": [
+   {"who": "sam", "at": 7, "typed": true, "text": "is the new ranking actually better?"},
+   {"who": "bot", "at": 8.5, "text": "On the test set: yes, clearly. <span class='flag trial'>NOT LIVE YET</span>"}
+  ]
+ },
+ "chapters": [
+  {
+   "title": "Search rerank",
+   "flag": {"text": "NOT LIVE YET", "kind": "trial"},
+   "cards": [
+    {
+     "w": 1560, "h": 600, "beats": 6,
+     "push": [{"at": 2.5, "focus": [0, 330, 1560, 270]}],
+     "html": "<div class='hd'><div><div class='xt'>What changed</div><div class='xs'>per search · the user sees 5 results</div></div><span class='flag exp'>PLACEHOLDER</span></div><div class='pl' data-at='0.5'><span class='rl'>TODAY</span><span class='st'>search</span><span class='ar'>→</span><span class='st'>~10 matches</span><span class='ar'>→</span><span class='st'>keyword sort</span><span class='ar'>→</span><span class='st'>5 results</span></div><div class='pl' data-at='1.5' style='margin-top:40px'><span class='rl' style='color:var(--accent2);opacity:1'>NEW</span><span class='st'>search</span><span class='ar'>→</span><span class='st' style='width:262px'><span data-until='2.5'>~10 matches</span><span class='swap' style='background:color-mix(in srgb,var(--accent) 70%,#fff);color:var(--cardInk)' data-at='2.5'><b data-count='40' data-from='10'>40</b>&nbsp;matches</span><span class='tg' data-at='2.5'>WIDER NET</span></span><span class='ar'>→</span><span class='st' style='width:262px'><span>keyword sort</span><span class='swap' data-at='3.5'>Beacon</span><span class='tg' data-at='3.5'>REPLACES THE SORT</span></span><span class='ar'>→</span><span class='st hot'>5 results</span></div>"
+    },
+    {
+     "w": 1420, "h": 760, "beats": 7,
+     "push": [{"at": 3, "focus": [0, 300, 1420, 460]}],
+     "html": "<div class='hd'><div><div class='xt'>Right answer in the top 5</div><div class='xs'>share of test searches · 60 queries</div></div><span class='flag exp'>PLACEHOLDER</span></div><div class='bars'><div data-at='0.5'><span class='bl'>Today</span><i data-grow style='width:480px'><b data-count='48' data-suf='%'>48%</b></i></div><div class='faint' data-at='1'><span class='bl'>Beacon, old pool</span><i data-grow style='width:600px'><b data-count='60' data-suf='%'>60%</b></i></div><div class='win' data-at='1.5'><span class='bl'>Top 40 + Beacon</span><i data-grow style='width:810px'><b data-count='81' data-suf='%'>81%</b></i></div></div><div class='rec' data-at='3'><b>2.1</b><span style='opacity:.4'>→</span><b class='to'>1.3</b><span>average rank of the right answer</span></div><div class='fn' data-at='4'>placeholder figures · measures ranking, not user outcomes</div>"
+    },
+    {
+     "w": 1180, "h": 560, "beats": 4,
+     "html": "<div class='hd'><div class='xs' style='margin:0;font-size:34px;opacity:.7'>Top 40 + Beacon vs today</div><span class='flag exp'>PLACEHOLDER</span></div><div class='big' data-at='0.25'><span data-count='52'>52</span><small> / 60</small></div><div class='xs' style='font-size:38px;opacity:.8;margin-top:12px' data-at='0.25'>test searches that got better</div><div class='pills'><span data-at='0.75'>$0.001 / search</span><span data-at='1.25'>+0.1 s</span></div>"
+    },
+    {
+     "w": 1160, "h": 500, "beats": 4,
+     "html": "<div class='hd'><div class='xt'>Before it ships</div><span class='flag trial'>NOT LIVE YET</span></div><div class='pills' style='flex-direction:column;align-items:flex-start;gap:22px;margin-top:10px'><span class='tr' data-at='0.25' style='font-size:40px'>1 · human spot check</span><span class='tr' data-at='0.75' style='font-size:40px'>2 · live A/B test</span></div><div class='fn' data-at='1.25'>example content · replace every figure with a counted fact</div>"
+    }
+   ]
+  }
+ ],
+ "volley": [],
+ "fixes": [],
+ "pullback": {"title": "", "subtitle": ""},
+ "outro": {"pull": 0, "dot": 1, "hit": 2, "tail": 3, "labels": false}
+}

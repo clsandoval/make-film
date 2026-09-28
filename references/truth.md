@@ -1,5 +1,7 @@
 # Truth
 
+Applies to every style in [styles/](../styles/); each style's RECIPE.md says which parts it uses.
+
 Law 1. **Every numeral on screen is on the approved-figures list, and the list is written
 before a frame is drawn.**
 

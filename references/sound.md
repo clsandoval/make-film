@@ -1,5 +1,7 @@
 # Sound
 
+Applies to every style in [styles/](../styles/); each style's RECIPE.md says which parts it uses.
+
 Law 7: **sound is arithmetic.** Every claim in this file is a number you can reproduce, and
 every claim about the mix is a measurement on the **delivered file** — never on the source.
 

@@ -3,8 +3,8 @@
 This is **the canonical default for product, release and feature films**: 1–2 minutes, several features, no
 voiceover, for a room that knows the product's chat. It was built for the Daimon September release (Opus C,
 "The #daimon channel", 1:19, 2026-09-27). Carlos: *"i really like opus c"*. He asked for it to be the
-canonical form. The runnable scaffold is `assets/channel-thread/`. The documented alternative for a
-table-of-contents catch-up is `references/style-chapters.md`.
+canonical form. The runnable scaffold is [`starter/`](starter/README.md). The documented alternative for a
+table-of-contents catch-up is [chapters](../chapters/RECIPE.md); the two mixed is [hybrid](../hybrid/RECIPE.md).
 
 **The medium is the message.** Staff meet the product in a chat channel, so the film opens in one. Every
 feature arrives the way people actually meet it: a teammate asks, the bot answers, and the answer **expands
@@ -60,7 +60,7 @@ title words on the beats ─▶ #channel window: release post · teammate types 
 | Counters | count up over 0.55 s. The text counter-scales against its growing bar, or it squashes | a reviewer caught "1,055" squashed mid-grow |
 | Frame rate | 30 fps | |
 
-Pace rule, from Carlos: *"they should still be fast paced, maybe only 10-20% slower than the very first set"*.
+The pace rule, from the director who approved this style: *"they should still be fast paced, maybe only 10-20% slower than the very first set"*.
 Match the 34 s shorts' cut rhythm plus 10–20%. The film is longer because it covers more features, not because
 any moment is slow.
 
@@ -85,7 +85,7 @@ any moment is slow.
 
 ## Copy: pain as the team's own messages
 
-Carlos's script rule (pain → turn → product → plain benefit) maps onto the channel with no captions:
+The script rule (pain → turn → product → plain benefit, see [copy](../../references/copy.md)) maps onto the channel with no captions:
 
 | moment | where | reference |
 |---|---|---|

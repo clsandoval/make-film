@@ -1,5 +1,7 @@
 # Deliverables
 
+Applies to every style in [styles/](../styles/); each style's RECIPE.md says which parts it uses.
+
 Gate G6. A film is not one file, and shipping only the master is the most common way a good
 film underperforms — it plays muted in a feed, letterboxed into a slot it was not composed
 for, with a thumbnail nobody chose.

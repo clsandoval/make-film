@@ -1,5 +1,7 @@
 # QA
 
+Applies to every style in [styles/](../styles/). Where this file names "the skeleton", it means the legacy rig at `styles/vo-synced-legacy/starter/film.skeleton.html`; the newer starters (channel-thread, chapters and the rest) follow the same seek contract.
+
 ## The friction, and what removes it
 
 Every item here cost real time on a real film. They are ordered by how much.
@@ -335,3 +337,19 @@ second?" turns an aesthetic note into a frame number. Reproduce it before fixing
 extract the frame, and if you cannot see what they saw, you do not understand the
 note yet. Say what you changed in their words, not yours. When a note is genuinely
 wrong — and sometimes it is — the answer is a measurement, not an argument.
+
+### Look at the video before you relay it
+
+A worker grades its own render generously. Before an orchestrator passes any film on as good or
+done, it extracts a contact sheet and consecutive frames around every pose swap, hit and cut, opens
+them, and says plainly what is wrong:
+
+```bash
+ffmpeg -i film.mp4 -vf "fps=2,scale=480:-1,tile=4x4" -frames:v 1 qa/sheet.png
+ffmpeg -ss 12.0 -i film.mp4 -frames:v 6 qa/around-12s-%02d.png
+```
+
+One film was relayed as "best" on the worker's word and the director called it horrendous: a rigid
+limb, no action, cropping, design pops and a generic generated background, all visible in the frames.
+For character animation, check that limbs bend and follow arcs, that each shot has one action beat,
+and that the design does not change between shots.

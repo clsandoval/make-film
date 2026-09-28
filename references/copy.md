@@ -1,5 +1,7 @@
 # Copy lock
 
+Applies to every style in [styles/](../styles/); each style's RECIPE.md says which parts it uses.
+
 Gate G2, and the cheapest gate in the pipeline. It is one table, it takes twenty minutes,
 and it is the only thing that catches the defect below.
 
@@ -339,3 +341,42 @@ employee"* — which is why the first line on this page is *one of your reps wan
 and not a number. When several of those land in a row it stops being a line note and
 becomes *"i dondont l this isn't very straightforward it needs to be more straightforward
 ... keep it stupid simple"*.
+
+## The script arc that gets approved
+
+Every script a director has approved so far has the same shape. The ones that were rejected were
+feature lists.
+
+1. Open on a pain the viewer already has, in plain words.
+2. A turn or escalation: why it got worse, or why the old fix stopped working.
+3. The product as the answer, in one short line.
+4. End on what it does for the viewer in human terms, not a spec.
+
+One idea per line, 3 to 8 words, no jargon. Never a README paraphrase (tenants, licences, infra
+names), never narrated shot descriptions, never a tagline or "Meet X".
+
+## Tells that make a script read as machine-written
+
+Phrase-level fixes do not remove them, because rewriting keeps the rhythm. Strip every one:
+
+- setup then twist ("The first job sounded simple. That turned out to be the hard part.")
+- emphasis tacked onto sentence ends ("...at all", "...and anyone can check it")
+- a closing punchline after every paragraph
+- "not X but Y" or "isn't X, it's Y" in any form, and tagline endings
+- triple fragment beats ("The fit was fine. The model was fine.") and stacks of rhetorical questions
+- signposting ("Here's what...", "Here's why...") and the word "honest"
+- chatty connectives in announcements ("there's a lot in it", "The big one is", "...too", "Give it a try").
+  One plain sentence per item is what passed.
+
+Write like someone explaining at a whiteboard and end each paragraph on a plain fact. Paste this list
+into every writing brief you hand to another agent.
+
+## A one-line fix splices, it does not regenerate
+
+When a director changes one line of an approved voiceover, generate only the new phrase and splice
+it into the approved take, shifting later cues. A full regeneration changes the delivery of every
+other line the director already approved. Back up the approved take first and keep the rest
+byte-identical.
+
+Check pronunciation of brand names in the TTS output before delivering, and respell them
+phonetically in the TTS text when the model gets them wrong.
