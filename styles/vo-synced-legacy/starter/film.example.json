@@ -1,0 +1,42 @@
+{
+  "name": "example-film",
+  "fps": 30,
+  "shards": 8,
+  "stage": { "w": 1080, "h": 1920 },
+  "ground": "0xffffff",
+  "safe_margin": 0,
+  "poster_at": 4.0,
+
+  "voice": {
+    "id": "REPLACE-WITH-YOUR-ELEVENLABS-VOICE-ID",
+    "model": "eleven_v3",
+    "stability": 0.5,
+    "similarity_boost": 0.75,
+    "style": 0.0
+  },
+
+  "caption": {
+    "font": "Inter",
+    "size": 44,
+    "colour": "&H00111111",
+    "fontsdir": "assets/fonts",
+    "max_chars": 42
+  },
+
+  "frames": [
+    { "id": "01-open", "pad": 1.0, "vo": "This is what happens when your data team lives in the thread." },
+    { "id": "02-claim", "pad": 1.15, "vo": "It answers in the thread, where your team already is." },
+    { "id": "03-close", "pad": 2.4, "vo": "That was the whole setup." }
+  ],
+
+  "sfx": [
+    { "sound": "click", "at": { "frame": "02-claim", "word": "thread", "offset": -0.12 }, "gain": 0.3, "seed": 8814 },
+    { "sound": "sub", "at": ["03-close", "whole"], "gain": 0.42 }
+  ],
+
+  "probes": {
+    "scope": "#stage",
+    "resolution_exempt": ["03-close"],
+    "hits": [{ "cursor": "cur", "target": "authorize", "at": ["02-claim", "thread"], "tip": [4, 2] }]
+  }
+}
