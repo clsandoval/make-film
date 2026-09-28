@@ -37,11 +37,11 @@ canvas.full{position:absolute;left:0;top:0;width:1080px;height:1920px}
 .dcard{position:absolute;left:70px;width:940px;bottom:90px;background:rgba(12,20,24,.86);border-radius:28px;padding:40px 44px 44px;box-sizing:border-box;overflow:hidden}
 .dcard .tag{font:700 24px var(--mono);letter-spacing:.12em;color:var(--accent2)}
 .dcard .name{font:800 76px/1.05 var(--font);white-space:nowrap;margin:8px 0 18px}
-.dcard .flag{margin-left:0}
+.dcard .flag{margin-left:0} .dcard .fact{font:500 34px var(--font);margin-top:16px;opacity:.9}
 .dcard .cnt{font:800 64px var(--font);color:var(--accent);margin-top:22px} .dcard .cnt span{font:500 30px var(--font);color:var(--ink);margin-left:14px}
 .chips{margin-top:22px;display:flex;gap:14px;flex-wrap:wrap}
 .chip{font:600 28px var(--font);background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25);border-radius:40px;padding:8px 22px}
-#dhud{position:absolute;left:64px;top:110px}
+#dhud{position:absolute;left:64px;top:150px}
 #dhud .n{font:800 92px/1 var(--font);text-shadow:0 4px 18px rgba(0,0,0,.45);white-space:nowrap}
 #dhud .c{font:500 24px var(--mono);margin-top:14px;opacity:.85;text-shadow:0 2px 8px rgba(0,0,0,.6)}
 .thr{position:absolute;left:70px;width:940px;top:640px;background:var(--card);color:var(--cardInk);border-radius:28px;padding:10px 0 30px;box-shadow:0 30px 80px rgba(0,0,0,.5);overflow:hidden}
@@ -95,7 +95,7 @@ function todAt(t) { let v = TODK[0][1]; for (let i = 1; i < TODK.length; i++) { 
 /* ---------- camera: keyframes {t, d, x, y, s, cy, e, arc}; holds always drift ---------- */
 const bb = (ids, pad) => { const xs = ids.map(k => P[k].x), ys = ids.map(k => P[k].y); return [Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) + pad, Math.max(...ys) + pad]; };
 const fit = (b, w, h) => Math.min(w / (b[2] - b[0]), h / (b[3] - b[1]));
-const ALL = bb(PIDS, 160), SALL = fit(ALL, 1000, 1300), CX = (ALL[0] + ALL[2]) / 2, CYW = (ALL[1] + ALL[3]) / 2;
+const ALL = bb(PIDS, 160), SALL = fit(ALL, 820, 1300), CX = (ALL[0] + ALL[2]) / 2, CYW = (ALL[1] + ALL[3]) / 2;
 const S_STOP = 1.25, S_DIVE = 1.5; const CAM = [], MOVES = [];
 const kf = (t, d, x, y, s, cy, e = eIO, o = {}) => { CAM.push(Object.assign({ t, d, x, y, s, cy, e }, o)); MOVES.push(t); };
 const hubP = P[F.hub]; let last = { x: hubP.x, y: hubP.y, s: .8, cy: 900 };
@@ -107,7 +107,7 @@ SEG.forEach(s => {
   if (s.kind === 'dive') { kf(s.t0, s.lead * BEAT * .55, fx, fy, S_DIVE, 960, eIO, { arc: .35 }); const a = s.t0 + s.lead * BEAT, dd = s.dive * BEAT; MOVES.push(a, a + dd * .4, a + dd * .75, a + dd + BEAT * s.card * .5); }
   if (s.kind === 'thread') { const c = CAM[CAM.length - 1]; kf(s.t0, .35, c.x, c.y - 120, c.s * .75, 760, eQ, { whip: s.whip ? 1 : 0 }); kf(s.t0 + 2 * BEAT, .4, c.x, c.y - 120, c.s * .8, 760); }
 });
-kf(tb(PB), .8, CX, CYW, SALL, 1100); kf(tb(FIN * 4), 1.2, CX, CYW, SALL * .9, 1100);
+kf(tb(PB), .8, CX + 70 / SALL, CYW, SALL, 1100); kf(tb(FIN * 4), 1.2, CX + 70 / SALL, CYW, SALL * .9, 1100);   // shifted left: labels sit right of pins
 CAM.sort((a, b) => a.t - b.t);
 function drift(c, dt, i) { const k = Math.max(0, dt), dx = Math.min(k, 3) * 18 * (i % 2 ? 1 : -1), g = 1 + Math.min(.012 * k, .035);
   return { x: c.x - dx / (c.s * g), y: c.y - Math.min(k, 3) * 8 / (c.s * g), s: c.s * g, cy: c.cy }; }
@@ -160,7 +160,7 @@ SEG.forEach((s, i) => {
     s.stops.forEach((st, j) => ch += `<div class="card ${two ? 'half' : ''}" id="sc${i}_${j}" style="top:${600 + j * 640}px;height:${h}px"><div class="media" id="sm${i}_${j}">${mediaHTML(st)}</div><div class="shade"></div>` +
       `${st.credit ? `<div class="cred">${st.credit}</div>` : ''}<div class="cap"><div class="tag">${st.tag || ''}</div><div class="name nw">${st.name || P[st.place].name}</div><div class="note">${st.note || ''}</div></div></div>`); }
   if (s.kind === 'dive') { const c = s.counter;
-    ch += `<div class="dcard" id="dk${i}"><div class="tag">${s.tag || ''}</div><div class="name nw">${s.name || P[s.place].name}</div>${s.stamp ? `<span class="flag">${s.stamp}</span>` : ''}` +
+    ch += `<div class="dcard" id="dk${i}"><div class="tag">${s.tag || ''}</div><div class="name nw">${s.name || P[s.place].name}</div>${s.stamp ? `<span class="flag">${s.stamp}</span>` : ''}${s.fact ? `<div class="fact">${s.fact}</div>` : ''}` +
       `${c ? `<div class="cnt" id="cn${i}">0<span>${c.unit}</span></div>` : ''}${s.chips ? `<div class="chips">${s.chips.map((x, k) => `<div class="chip" id="cp${i}_${k}">${x}</div>`).join('')}</div>` : ''}</div>`; }
   if (s.kind === 'thread') ch += `<div class="thr" id="th${i}"><div class="th"># ${F.channel.name}</div>${mrow('ta' + i, s.ask.who, s.ask.text, 'now')}${mrow('tr' + i, BOT, s.reply, 'now', s.flag)}</div>`;
 });
@@ -170,7 +170,10 @@ const tpl = s => s.replace('{km}', ROUTE_KM.toFixed(1)).replace('{days}', DAYS).
 $('ph').textContent = tpl(F.pullback.title); $('ps').textContent = tpl(F.pullback.subtitle || '');
 $('ew').textContent = F.brand.name; $('es').textContent = F.brand.sub || '';
 $('ec').innerHTML = [F.music.credit, 'Map and terrain drawn from inline data', F.brand.note].filter(Boolean).join('<br>');
-const DIVE_ON = F.features?.dive !== false && window.DIVE && DIVE.init($('dive'));
+// WebGL draws offscreen and is copied into a 2D canvas, so every screenshot sees the frame it seeked to
+// (a WebGL canvas in the DOM can be captured one composite late).
+const GLC = document.createElement('canvas'); GLC.width = 1080; GLC.height = 1920; const DX = $('dive').getContext('2d');
+const DIVE_ON = F.features?.dive !== false && window.DIVE && DIVE.init(GLC);
 if (!DIVE_ON) console.warn('3D dive off (features.dive false or no WebGL): dives fall back to a deep map push');
 /* ---------- frame sequences (footage as pre-extracted JPG frames; <video> is not frame-accurate) ---------- */
 let pending = [];
@@ -203,7 +206,7 @@ function drawMap(t, c) {
     if (p.kind === 'peak') { OV.moveTo(x, y - r * 1.3); OV.lineTo(x + r * 1.2, y + r * .8); OV.lineTo(x - r * 1.2, y + r * .8); OV.closePath(); } else OV.arc(x, y, r, 0, 7);
     OV.stroke(); OV.fill();
     if (ARR[k] != null) { const q = lin(t, ARR[k], ARR[k] + .7); if (q > 0 && q < 1) { OV.strokeStyle = PAL.accent; OV.lineWidth = 4; OV.globalAlpha = 1 - q; OV.beginPath(); OV.arc(x, y, 18 + q * 70, 0, 7); OV.stroke(); } }
-    const lab = focus.has(k) || p.kind !== 'spot' || pull > 0; if (lab) { OV.globalAlpha = a * (focus.has(k) || pull > 0 ? 1 : .75); OV.font = `700 ${focus.has(k) ? 30 : 24}px ${F.brand.mono}`;
+    const lab = focus.has(k) || p.kind !== 'spot'; /* spots cluster in town: only the focused one is labelled */ if (lab) { OV.globalAlpha = a * (focus.has(k) || pull > 0 ? 1 : .75); OV.font = `700 ${focus.has(k) ? 30 : 24}px ${F.brand.mono}`;
       OV.fillStyle = PAL.ink; OV.shadowColor = 'rgba(0,0,0,.8)'; OV.shadowBlur = 8; OV.fillText(p.name.toUpperCase(), x + 22, y + 9); OV.shadowBlur = 0; }
     OV.globalAlpha = 1; });
   if (head) { OV.fillStyle = PAL.ink; OV.beginPath(); OV.arc(...head, 9, 0, 7); OV.fill(); }
@@ -231,7 +234,7 @@ function render(t) { pending = []; const c = cam(t); drawMap(t, c);
   let dv = null; SEG.forEach((s, i) => { if (s.kind === 'dive' && t >= s.t0 + s.lead * BEAT - .05 && t < s.t1 + .35) dv = [s, i]; });
   const dvc = $('dive'); let dhud = 0;
   if (dv) { const [s, i] = dv, a = s.t0 + s.lead * BEAT, dd = s.dive * BEAT, o = R(t, a, a + .3) * (1 - R(t, s.t1 - .05, s.t1 + .3, eIO));
-    if (DIVE_ON) { const c0 = cam(a); DIVE.draw(s, (t - a) / dd, c0.s, c0.x, c0.y + (960 - c0.cy) / c0.s, todAt(t)); dvc.style.opacity = o; }
+    if (DIVE_ON) { const c0 = cam(a); DIVE.draw(s, (t - a) / dd, c0.s, c0.x, c0.y + (960 - c0.cy) / c0.s, todAt(t)); DX.drawImage(GLC, 0, 0); dvc.style.opacity = o; }
     else { dvc.style.opacity = 0; }
     dhud = R(t, a + .2, a + .5) * (1 - R(t, a + dd, a + dd + .25)); $('dn').textContent = (s.name || P[s.place].name).toUpperCase();
     const pl = F.places[s.place]; $('dc').textContent = `${pl.lat.toFixed(4)}°N  ${pl.lng.toFixed(4)}°E`; } else dvc.style.opacity = 0;

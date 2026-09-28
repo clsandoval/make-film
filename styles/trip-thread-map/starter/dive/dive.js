@@ -10,10 +10,10 @@
 void main(){v_p=a_p.xyz;v_n=a_n;v_w=a_p.w;gl_Position=u_m*vec4(a_p.xyz,1.0);}`;
   const FS = `precision highp float;varying vec3 v_p;varying vec3 v_n;varying float v_w;
 uniform vec3 u_eye,u_sun,u_fog,u_c0,u_c1,u_c2,u_c3,u_wat;uniform float u_hz,u_tod,u_near,u_far,u_sn;
-float tx(vec2 p){return .5+.25*sin(p.x*.37)*sin(p.y*.41)+.25*sin(p.x*.093+p.y*.071);}
+float tx(vec2 p){return .5+.25*sin(p.x*.23+p.y*.31)*sin(p.x*.29-p.y*.17)+.25*sin(p.x*.061+p.y*.047);}
 void main(){vec3 n=normalize(v_n);float h=v_p.y/u_hz;float sl=1.0-n.y;
  vec3 c=mix(u_c0,u_c1,smoothstep(-.1,.35,h));
- c*=.82+.3*tx(v_p.xz);
+ c*=.88+.2*tx(v_p.xz);
  c=mix(c,u_c2,clamp(smoothstep(.22,.45,sl)+smoothstep(.45,.62,h)*.6,0.0,1.0));
  float snow=smoothstep(u_sn,u_sn+.1,h+.06*tx(v_p.xz*.5))*(1.0-smoothstep(.5,.7,sl));
  c=mix(c,u_c3,snow);
@@ -60,11 +60,11 @@ void main(){vec3 n=normalize(v_n);float h=v_p.y/u_hz;float sl=1.0-n.y;
     const p = G.P[seg.place], e = eIO(cl(u)), tp = cl((e - .15) / .85), pe = tp * tp * (3 - 2 * tp), ex = Math.max(0, u - 1);
     const TY = p.kind === 'lake' ? G.WATER * G.HZ : Math.max(G.H(p.x, p.y), G.WATER) * G.HZ * .75;
     const hd = (lerp(0, seg.heading || 0, pe) + 10 * ex) * Math.PI / 180;
-    const D = (seg.dist || 720) * pe - 40 * ex;
+    const D = (seg.dist || 560) * pe - 40 * ex;
     const cx = p.x + (x0 - p.x) * (1 - e) - Math.sin(hd) * D, cz = p.y + (y0 - p.y) * (1 - e) + Math.cos(hd) * D;
     const A0 = 960 / (s0 * Math.tan(FOV / 2));
     const ground = Math.max(G.H(cx, cz), G.WATER) * G.HZ;
-    const A1 = Math.max(TY + (seg.alt || 300), ground + 90);
+    const A1 = Math.max(TY + (seg.alt || 240), ground + 90);
     const ey = Math.max(Math.exp(lerp(Math.log(A0), Math.log(A1), e)), ground + 60);
     const pit = -Math.atan2(ey - TY, Math.max(D, 1e-3));
     const f = [Math.sin(hd) * Math.cos(pit), Math.sin(pit), -Math.cos(hd) * Math.cos(pit)], r = [Math.cos(hd), 0, Math.sin(hd)];

@@ -48,7 +48,7 @@
   "ruota-bikes":   { "lat": 46.6030, "lng": 11.8705, "kind": "spot", "name": "Ruota Bikes" },
   "monte-seda":    { "lat": 46.6420, "lng": 11.9310, "kind": "peak", "name": "Monte Seda", "amp": 1.0 },
   "rifugio-alba":  { "lat": 46.6300, "lng": 11.9150, "kind": "spot", "name": "Rifugio Alba" },
-  "cresta-grigia": { "lat": 46.5740, "lng": 11.9460, "kind": "peak", "name": "Cresta Grigia", "amp": 0.75 },
+  "cresta-grigia": { "lat": 46.5740, "lng": 11.9460, "kind": "peak", "name": "Cresta Grigia", "amp": 0.9 },
   "bagni-tiepidi": { "lat": 46.5930, "lng": 11.8960, "kind": "spot", "name": "Bagni Tiepidi" },
   "osteria-nove":  { "lat": 46.5985, "lng": 11.8860, "kind": "spot", "name": "Osteria Nove" },
   "lago-varra":    { "lat": 46.5600, "lng": 11.8580, "kind": "lake", "name": "Lago Varra", "rx_km": 1.6, "ry_km": 0.9 },
@@ -65,7 +65,7 @@
   "messages": [
    { "who": "ana", "at": 5, "text": "train gets in at 9, who's awake" },
    { "who": "ben", "at": 9, "typed": true, "text": "ok but what are we actually doing" },
-   { "who": "atlas", "at": 13, "text": "<b>7 stops</b> in two days. here's the map." }
+   { "who": "atlas", "at": 13, "text": "<b>11 stops</b> in two days. here's the map." }
   ]
  },
  "segments": [
@@ -81,8 +81,8 @@
   { "kind": "stop", "beats": 4, "stops": [ { "place": "rifugio-alba", "tag": "LUNCH", "note": "lunch with a view", "credit": "photo: yours" } ] },
   { "kind": "thread", "beats": 4, "ask": { "who": "cleo", "text": "sunset spot?" },
     "reply": "Cresta Grigia. 20 min from the top car park", "flag": "GOLDEN HOUR" },
-  { "kind": "dive", "place": "cresta-grigia", "lead": 2, "dive": 3, "card": 3, "heading": -30, "tod": 0.55,
-    "tag": "RIDGE", "stamp": "SUNSET · DAY 1" },
+  { "kind": "dive", "place": "cresta-grigia", "lead": 2, "dive": 3, "card": 3, "heading": -30, "tod": 0.4,
+    "tag": "RIDGE", "stamp": "SUNSET · DAY 1", "fact": "20 min from the top car park" },
   { "kind": "stop", "beats": 4, "breakdown": true, "tod": 0.85, "stops": [ { "place": "bagni-tiepidi", "tag": "SOAK", "note": "after the hike", "credit": "photo: yours" } ] },
   { "kind": "stop", "beats": 4, "breakdown": true, "stops": [ { "place": "osteria-nove", "tag": "DINNER", "note": "table for three", "credit": "photo: yours" } ] },
   { "kind": "thread", "beats": 4, "day": 2, "tod": 0, "whip": true, "ask": { "who": "ben", "text": "day 2: lake?" },

@@ -5,7 +5,7 @@
   const F = window.FILM, PL = F.places, D2R = Math.PI / 180;
   let N = -1e9, S = 1e9, Wl = 1e9, E = -1e9;
   for (const k in PL) { const p = PL[k]; N = Math.max(N, p.lat); S = Math.min(S, p.lat); E = Math.max(E, p.lng); Wl = Math.min(Wl, p.lng); }
-  const pl = (N - S) * .45, pg = (E - Wl) * .45; N += pl; S -= pl; E += pg; Wl -= pg;
+  const pl = (N - S) * 1.0, pg = (E - Wl) * .7; N += pl; S -= pl; E += pg; Wl -= pg;   // extra north-south room for the 9:16 pullback
   const lat0 = (N + S) / 2, C0 = Math.cos(lat0 * D2R), WW = 2400, K = WW / ((E - Wl) * C0), WH = (N - S) * K;
   const KM = 111.32 / K;                         // km per world unit
   const HZ = 1.1 / KM;                           // world units per unit of height (h = 1 is about 1.1 km of relief)
@@ -25,7 +25,7 @@
   function H(x, y) {
     const r = fbm(x / 380, y / 380), rg = ridged(x / 170, y / 170);
     let h = (r - .48) * .7 + rg * .32 - .12;
-    for (const p of peaks) { const d = Math.hypot(x - p.x, y - p.y); h += (p.amp || .8) * Math.exp(-d / 210) * (.7 + .6 * rg); }
+    for (const p of peaks) { const d = Math.hypot(x - p.x, y - p.y); h += (p.amp || .8) * Math.exp(-d / 280) * (.7 + .6 * rg); }
     if (hub) { const d2 = (x - hub.x) ** 2 + (y - hub.y) ** 2; h -= .28 * Math.exp(-d2 / (2 * 520 * 520)); }
     const m = lake(x, y); if (m > 0) h = h * (1 - m) + (-.32) * m;
     return h;
