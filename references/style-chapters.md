@@ -1,7 +1,8 @@
 # Chapters style: the contents-page film
 
-The default for **release films, catch-ups and feature round-ups**: 1–2 minutes, several features, no
-voiceover, and a room that has to keep up. It was built for the Daimon September release (Opus B, "The contents
+The **documented alternative** to the canonical channel-thread style (`references/style-channel-thread.md`) for
+release films, catch-ups and feature round-ups. Use it when the director wants a table-of-contents catch-up: 1–2
+minutes, several features, no voiceover, and a room that should see the list and tick it off. It was built for the Daimon September release (Opus B, "The contents
 page", 1:04, 2026-09-27). Carlos called it "very very good" and asked for it as a core style. The runnable
 scaffold is `assets/chapters/`.
 

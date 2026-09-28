@@ -1,20 +1,38 @@
 ---
 name: make-film
-description: "Use when making, directing or rescuing a product film or narrated still-image animatic — a launch or demo video, onboarding film, feature announcement, teaser, explainer or sizzle — and when an existing one looks basic, reads as a slideshow, has reveals that miss the voiceover, dead screen time, a clipped or too-quiet mix, TTS that clicks or chops word endings, or a render that will not reproduce. Covers SaaS, apps, hardware, dev tools and services. Also covers voice-first generated video: a locked voiceover and a one-page scene brief sent straight to a video model (Seedance 2.5) in sentence-split parts. Keywords: release film, catch-up, feature round-up, chapters, contents page, motion design, storyboard, voiceover sync, word-locked, kinetic typography, GSAP, Playwright, deterministic render, ElevenLabs, LUFS, ffmpeg, film grain, 9:16, captions, Seedance, text-to-video, scene brief, animated explainer, style peg, motion test, batch of variants, orchestrator and worker windows."
+description: "Use when making, directing or rescuing a product film or narrated still-image animatic — a launch or demo video, onboarding film, feature announcement, teaser, explainer or sizzle — and when an existing one looks basic, reads as a slideshow, has reveals that miss the voiceover, dead screen time, a clipped or too-quiet mix, TTS that clicks or chops word endings, or a render that will not reproduce. Covers SaaS, apps, hardware, dev tools and services. Also covers voice-first generated video: a locked voiceover and a one-page scene brief sent straight to a video model (Seedance 2.5) in sentence-split parts. Keywords: release film, catch-up, feature round-up, channel thread, chat channel, Discord, Slack, chapters, contents page, motion design, storyboard, voiceover sync, word-locked, kinetic typography, GSAP, Playwright, deterministic render, ElevenLabs, LUFS, ffmpeg, film grain, 9:16, captions, Seedance, text-to-video, scene brief, animated explainer, style peg, motion test, batch of variants, orchestrator and worker windows."
 ---
 
 # make-film
 
-Choose the production mode from the director's intent. Seven modes:
+Choose the production mode from the director's intent. Eight modes:
 
 - **Code-rendered.** HTML/CSS/GSAP, deterministic Playwright capture, ffmpeg. The
   gates and renderer contract below are for this mode.
-- **Chapters (release, catch-up, feature round-up): the default for these.** A contents
-  page is the hub of one canvas. The camera dives along a drawn line into each chapter, punches between
-  morphing cards on the beat, pulls back to tick the row, and finishes with a New/Fixed panel, a map pullback
-  and the end card. No voiceover; a groove at 95-120 BPM with a drop on the first dive; about 1 camera move per
-  second. Read [Chapters style](references/style-chapters.md) and start from the runnable scaffold in
-  `assets/chapters/` (brand and content in `chapters.json`). Send a 20 s motion preview before the full render.
+- **Channel thread: THE canonical default for product, release and feature films.** The film opens in the
+  product's own chat channel. A teammate types the pain as a question, the bot answers, and on the drop the camera
+  whips out of the chat onto one continuous canvas. An aqua line draws through each answer's artifact cards
+  (they fill on the beat and hand off to each other), then a volley of quick Q&As for the minor features, a
+  fixes/reactions card, a map pullback and the end card.
+  - No voiceover. A groove at 95–120 BPM with a build, a drop and a breakdown.
+  - About 0.95 changes per second. Holds of 2.5–3.5 s, always drifting. The focal card fills 55–65% of the
+    frame.
+  - Read [Channel-thread style](references/style-channel-thread.md) and start from the runnable scaffold in
+    `assets/channel-thread/` (brand, channel, people and messages in `channel.json`). Carlos, 2026-09-28: *"i
+    really like opus c"*.
+- **Chapters: the documented alternative** when the director wants a table-of-contents catch-up, where the
+  room should see the list and tick it off. A contents page is the hub of one canvas. The camera dives along a
+  drawn line into each chapter, punches between morphing cards, pulls back to tick the row, and ends on a
+  New/Fixed panel, a map pullback and the end card. Read [Chapters style](references/style-chapters.md) and
+  start from `assets/chapters/`.
+
+  **Both styles keep two rules:**
+  - **Carlos's pace rule:** *"they should still be fast paced, maybe only 10-20% slower than the very first
+    set"*. The film is longer because it covers more content, never because a moment is slow. Slower means
+    longer holds inside continuous motion, never a static slide.
+  - **The 20 s motion-preview gate:** render film 8–28 s and send it to the orchestrator, not the director.
+    Nothing full-length renders for delivery, or reaches the director, until the orchestrator has cleared the
+    motion and then the full cut.
 - **Voice-first generated video.** Locked voiceover → one-page scene brief (style,
   world, and per beat only the narrator's line plus what the picture must make
   clear) → video model in sentence-split parts → review, mux the real voice, stitch
@@ -379,7 +397,8 @@ Load only what the current step needs.
 
 | File | What's in it |
 |---|---|
-| `references/style-chapters.md` | The chapters style: contents-page hub, dive/pullback, three text moments, beat grid, framing at 55-65%, music and audio targets, QA checklist, anti-patterns (Codex "Before we start"). Scaffold: `assets/chapters/` |
+| `references/style-channel-thread.md` | **The canonical style.** The #channel film: teammate question → bot answer → artifact cards on one canvas, volley, fixes, map pullback. Exact motion numbers (0.8–1.1 changes/s, whip/glide/push timings, drifting 2.5–3.5 s holds), framing at 55–65% with pushes that never crop, pain as the team's own messages, bar-aligned music edit, audio targets, gates, QA, anti-patterns (the Codex static film, the slow v1). Scaffold: `assets/channel-thread/` |
+| `references/style-chapters.md` | The alternative, chapters style: contents-page hub, dive/pullback, three text moments, beat grid, framing at 55-65%, music and audio targets, QA checklist, anti-patterns (Codex "Before we start"). Scaffold: `assets/chapters/` |
 | `references/stills-first.md` | Narrated image animatics, gradual frame insertion, artifact/meaning QA, cuts, Seedance experiments and spend boundaries |
 | `references/batch-variants.md` | Orchestrator + worker windows, the done.log protocol, stills before renders, one shared VO, brand sheet, direction Q&A, script tells to strip, model bake-off |
 | `references/direction.md` | Three directions, killing two, the signature move, deriving a look instead of inheriting one, the accent budget |

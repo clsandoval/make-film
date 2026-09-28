@@ -33,9 +33,21 @@ npm init -y && npm i gsap@^3.15 playwright@^1.62 && npx playwright install chrom
 `scripts/` must live inside the film directory — Node resolves `playwright`
 relative to the script, not the film.
 
-## Chapters style (release and catch-up films)
+## Channel-thread style (the canonical product, release and feature film)
 
-For a 1–2 minute release, catch-up or feature round-up, start from the runnable scaffold instead:
+The default for product, release and feature films is the #channel film: a teammate asks in the product's chat,
+the bot answers, and the answer expands out of the chat onto one canvas. Start from the runnable scaffold:
+
+```bash
+cp -r ~/.claude/skills/make-film/assets/channel-thread my-film && cd my-film && npm i
+node scripts/timing.mjs && node scripts/stills.mjs 1.5   # edit channel.json, look at stills/sheet-*.png
+```
+
+See `references/style-channel-thread.md` and `assets/channel-thread/README.md`.
+
+## Chapters style (the table-of-contents alternative)
+
+When the director wants a contents-page catch-up instead, start from this scaffold:
 
 ```bash
 cp -r ~/.claude/skills/make-film/assets/chapters my-film && cd my-film && npm i

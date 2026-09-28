@@ -1,0 +1,332 @@
+{
+ "brand": {
+  "name": "Beacon",
+  "url": "beacon.example.com",
+  "org": "Example Co",
+  "font": "Inter, 'Helvetica Neue', Arial, sans-serif",
+  "mono": "'JetBrains Mono', Menlo, Consolas, monospace",
+  "mascot": null,
+  "palette": {
+   "ground": "#0C1F40",
+   "deep": "#07142A",
+   "ink": "#F7F7F7",
+   "accent": "#B4E7DD",
+   "accent2": "#0C9E82",
+   "card": "#F7F7F7",
+   "cardInk": "#0C1F40",
+   "panel": "#E9ECF1",
+   "trial": "#F6AE72",
+   "exp": "#9FAAE2",
+   "dot": "#AD5B27",
+   "app": "#5865F2"
+  }
+ },
+ "music": {
+  "file": "music/track.mp3",
+  "bpm": 100,
+  "phase": 0.0,
+  "offset": 0.0,
+  "final_bar": null,
+  "phrase_bars": 4,
+  "credit": "Music: “Track title” Artist (source) · CC BY 4.0 · edited"
+ },
+ "channel": {
+  "server": "Example Co",
+  "name": "beacon",
+  "topic": "What’s new",
+  "sidebar": [
+   "general",
+   "beacon",
+   "launches",
+   "support"
+  ]
+ },
+ "people": {
+  "bot": {
+   "name": "Beacon",
+   "bot": true
+  },
+  "sam": {
+   "name": "sam",
+   "color": "#FAD2B1"
+  },
+  "lee": {
+   "name": "lee",
+   "color": "#CAD0EF"
+  },
+  "kai": {
+   "name": "kai",
+   "color": "#B4E7DD"
+  }
+ },
+ "intro": {
+  "title": "What’s new in Beacon",
+  "bars": 4,
+  "messages": [
+   {
+    "who": "bot",
+    "at": 7,
+    "text": "<b>A new release is live.</b> Here’s what’s new."
+   },
+   {
+    "who": "kai",
+    "at": 12,
+    "typed": true,
+    "text": "anyone keeping up with the other teams?"
+   },
+   {
+    "who": "bot",
+    "at": 15,
+    "text": "The weekly digest does now. <span class='flag trial'>IN TRIAL</span>"
+   }
+  ]
+ },
+ "chapters": [
+  {
+   "title": "Weekly digest",
+   "flag": {
+    "text": "IN TRIAL",
+    "kind": "trial"
+   },
+   "cards": [
+    {
+     "w": 1040,
+     "h": 600,
+     "beats": 6,
+     "handoff": true,
+     "html": "<div class='hd'><div><div class='xt'>Weekly digest</div><div class='xs'>reads every team channel</div></div><span class='flag trial'>IN TRIAL</span></div><div class='chips'><span data-at='0.75'>#launches</span><span data-at='1.25'>#support</span><span data-at='1.75'>#design</span><span data-at='2.25'>#infra</span><span data-at='2.75'>#sales</span><span data-at='3.25'>#research</span></div><div class='foot' data-at='4'>Every Monday, 09:00</div>",
+     "push": [
+      {
+       "at": 3,
+       "focus": [
+        0,
+        150,
+        1040,
+        450
+       ]
+      }
+     ]
+    },
+    {
+     "w": 1100,
+     "h": 600,
+     "beats": 6,
+     "handoff": true,
+     "push": [
+      {
+       "at": 4.5,
+       "focus": [
+        40,
+        430,
+        520,
+        110
+       ]
+      }
+     ],
+     "html": "<div class='hd'><div><div class='xt' style='font-size:46px'>What made the cut</div><div class='xs'>example figures: replace with counted facts</div></div></div><div class='fun'><div data-at='0.5'><i data-grow style='width:640px'><b data-count='1240'>1,240</b></i>messages read</div><div data-at='1.5'><i data-grow style='width:460px;background:var(--exp)'><b data-count='36'>36</b></i>worth a look</div><div data-at='2.5'><i data-grow style='width:260px;background:var(--accent)'><b>3</b></i>in the digest</div></div>"
+    },
+    {
+     "w": 1200,
+     "h": 560,
+     "beats": 6,
+     "push": [
+      {
+       "at": 3.5,
+       "focus": [
+        30,
+        380,
+        1140,
+        120
+       ]
+      }
+     ],
+     "html": "<div class='k'># team-digest · Monday 09:00</div><div class='post' data-at='0.5'>Three launches, one customer question and a failing nightly job.</div><div class='src' data-at='1.5'>each line links to its source</div><div class='pills'><span data-at='3'>✓ Every line has a source</span><span class='tr' data-at='3.75'>Not posted yet: in trial</span></div>"
+    }
+   ]
+  },
+  {
+   "title": "Reports",
+   "ask": {
+    "who": "sam",
+    "text": "can you start the October report from our template?"
+   },
+   "reply": "Starting from the Monthly template.",
+   "cards": [
+    {
+     "w": 1500,
+     "h": 440,
+     "beats": 7,
+     "html": "<div class='hd'><div><div class='xt'>Reports</div><div class='xs'>October, from the Monthly template</div></div></div><div class='pages'><i class='cov' data-at='0.5'>Monthly<br>template</i><i data-at='1.5'></i><i data-at='2'></i><i data-at='2.5'></i><i data-at='3'></i><i data-at='3.5'></i></div><div class='foot' data-at='4.5'>✓ Rendered &amp; checked, 5 of 5</div>",
+     "push": [
+      {
+       "at": 3.5,
+       "focus": [
+        300,
+        150,
+        1180,
+        240
+       ]
+      }
+     ]
+    },
+    {
+     "w": 1300,
+     "h": 620,
+     "beats": 7,
+     "push": [
+      {
+       "at": 3,
+       "focus": [
+        520,
+        100,
+        780,
+        480
+       ]
+      }
+     ],
+     "html": "<div class='bub' data-at='0.25' data-until='2.75'><b>sam</b> page 3: rename the chart</div><div class='page3'><div class='pt'>Page 3</div><span class='old' data-until='3'>Chart 1</span><span class='new' data-at='3.25'>Signups by week</span></div><div class='pills' style='position:absolute;left:40px;bottom:40px'><span data-at='4.5'>✓ Only page 3 changed</span></div>"
+    }
+   ]
+  },
+  {
+   "title": "Pages",
+   "flag": {
+    "text": "EXPERIMENTAL",
+    "kind": "exp"
+   },
+   "ask": {
+    "who": "lee",
+    "text": "can the customer click through this?"
+   },
+   "reply": "I turned it into a page.",
+   "cards": [
+    {
+     "w": 1300,
+     "h": 700,
+     "beats": 8,
+     "push": [
+      {
+       "at": 1.5,
+       "focus": [
+        0,
+        100,
+        760,
+        560
+       ]
+      },
+      {
+       "at": 4.5,
+       "focus": [
+        740,
+        0,
+        540,
+        560
+       ]
+      }
+     ],
+     "html": "<div class='chrome'><i></i><i></i><i></i><span>Page · signups explorer</span><span class='flag exp' style='margin-left:auto'>EXPERIMENTAL</span></div><div class='xt' style='margin-top:40px'>Signups explorer</div><div class='tog'><span data-until='2'>Weekly</span><span data-at='2'>Monthly</span></div><div class='rows'><i data-grow style='width:420px'></i><i data-grow style='width:300px'></i><i data-grow style='width:220px'></i></div><div class='share'><b>Who can open it</b><div data-until='5.5'>● Anyone with the link</div><div data-at='5.5'>● Team only</div></div>"
+    }
+   ]
+  },
+  {
+   "title": "Voice",
+   "flag": {
+    "text": "EXPERIMENTAL",
+    "kind": "exp"
+   },
+   "breakdown": true,
+   "ask": {
+    "who": "sam",
+    "text": "<span class='cmd'>/voice join</span>"
+   },
+   "reply": "Joined standup.",
+   "cards": [
+    {
+     "w": 1300,
+     "h": 720,
+     "beats": 12,
+     "dark": true,
+     "push": [
+      {
+       "at": 3.5,
+       "focus": [
+        0,
+        120,
+        780,
+        600
+       ]
+      },
+      {
+       "at": 7,
+       "focus": [
+        520,
+        120,
+        780,
+        600
+       ]
+      }
+     ],
+     "html": "<div class='hd'><div><div class='xt'>standup</div><div class='xs'>voice channel</div></div><span class='flag exp'>EXPERIMENTAL</span></div><div class='tiles'><div><span class='av u' style='background:#FAD2B1'>S</span>sam<em class='eq' data-at='1' data-until='4.5'></em></div><div><span class='av bot'></span>Beacon<em class='eq' data-at='7' data-until='11.5'></em><small data-at='5' data-until='7'>looking it up…</small></div></div><div class='cap' data-at='1' data-until='6.5'><b>sam</b> what did lee say about the launch?</div><div class='cap' data-at='7'><b>Beacon</b> It ships Thursday. Notes are in #launches.</div>"
+    }
+   ]
+  }
+ ],
+ "volley": [
+  {
+   "tag": "WATCHES",
+   "ask": {
+    "who": "lee",
+    "text": "tell me when the pricing page changes"
+   },
+   "reply": "Watching it. I’ll ping you when it does."
+  },
+  {
+   "tag": "NOTES",
+   "ask": {
+    "who": "kai",
+    "text": "put these call notes in the wiki"
+   },
+   "reply": "Done. There’s a new wiki page."
+  },
+  {
+   "tag": "KEYS",
+   "ask": {
+    "who": "sam",
+    "text": "can you use our new tool? I have a key"
+   },
+   "reply": "Don’t paste it here. Use the private form. <span class='btnx'>Add key privately</span>"
+  },
+  {
+   "tag": "STATUS",
+   "ask": {
+    "who": "lee",
+    "text": "what can you see, and how fresh is it?"
+   },
+   "reply": "Access and freshness, per source."
+  }
+ ],
+ "fixes": [
+  {
+   "title": "Also fixed in this release",
+   "items": [
+    "Search is faster",
+    "“No access” instead of a false “empty”",
+    "Reminders survive restarts",
+    "Private meetings stay private"
+   ]
+  },
+  {
+   "title": "Faster and steadier",
+   "items": [
+    "Queued messages start sooner",
+    "No duplicate replies",
+    "Files are kept between runs",
+    "Schedules run on time"
+   ]
+  }
+ ],
+ "pullback": {
+  "title": "What’s new in Beacon",
+  "subtitle": "All of it, from one channel."
+ }
+}
