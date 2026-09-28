@@ -24,8 +24,8 @@ Hard rules for every peg:
 - No voiceover, no music. Light SFX in the style is optional.
 - At most 8 image-model stills per peg (the cut-out pieces for the motion test count). Log every attempt; the
   log is the spend count.
-- Frame-check the key beats of the motion test before it goes anywhere (`scripts/peek.mjs` at each beat, a
-  contact sheet with `scripts/sheet.py`).
+- Frame-check the key beats of the motion test before it goes anywhere (`starter/scripts/peek.mjs` at each beat, a
+  contact sheet with `starter/scripts/sheet.py`).
 - **Stop at the peg.** No full film until the director picks a style.
 - Deliver each peg as soon as it is ready (pitch, then stills, then clip), one style at a time, through the
   channel the profile or brief names.

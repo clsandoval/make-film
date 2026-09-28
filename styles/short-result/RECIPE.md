@@ -105,7 +105,7 @@ Universal gate detail lives in [direction.md](../../references/direction.md) and
 - [ ] -14 LUFS (plus or minus 0.15) and at or below -1 dBTP measured on the delivered file.
 - [ ] Frames pulled from the MP4, tail included, reviewed independently. See [qa.md](../../references/qa.md).
 
-## Approved reference
+## Reference film (delivered; no director verdict recorded)
 
 **`~/cs/films/jev-rerank-20s-20260928`, "Jev picks the six", 2026-09-28, 22.3 s.** An internal retrieval
 result: widen the candidate pool and let a new reranker pick the six rules an agent gets.
