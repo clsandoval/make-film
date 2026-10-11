@@ -1,0 +1,323 @@
+<!doctype html>
+<!-- make-film "channel-thread" style (the canonical product/release film). Content and brand live in channel.json
+     (copied to channel.js by scripts/sync.mjs). Renderer contract: window.__seek(t), window.__duration, window.__ready.
+     Everything on screen is a pure function of t; the beat grid comes from music.bpm / music.phase. -->
+<html><head><meta charset="utf-8">
+<script src="channel.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--deep)}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;font-family:var(--font);color:var(--ink);
+  background:radial-gradient(ellipse 120% 90% at 50% 45%, color-mix(in srgb,var(--ground) 80%,#3060a0 20%) 0%, var(--ground) 45%, var(--deep) 100%)}
+#contours{position:absolute;inset:0;width:1920px;height:1080px}
+#cam{position:absolute;inset:0;overflow:hidden}
+#world{position:absolute;left:0;top:0;width:12000px;height:8000px;transform-origin:0 0}
+.abs{position:absolute}
+.card{position:absolute;background:var(--card);color:var(--cardInk);border-radius:24px;overflow:hidden;padding:38px 44px;
+  box-shadow:0 30px 80px rgba(3,10,25,.55),0 2px 0 rgba(255,255,255,.4) inset}
+.card.dark{background:var(--ground);color:var(--ink);border:2px solid color-mix(in srgb,var(--accent) 30%,transparent)}
+.av{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;flex:none;width:64px;height:64px;font-weight:700;font-size:28px;color:var(--cardInk);
+  background-size:170%;background-position:50% 12%;background-repeat:no-repeat}
+.av.bot{background-color:var(--accent);color:var(--ground)}
+.msg{display:flex;gap:22px;align-items:flex-start;margin-bottom:22px}
+.mname{font-weight:700;font-size:32px}
+.app{font-family:var(--mono);font-size:17px;font-weight:600;background:var(--app);color:#fff;border-radius:6px;padding:2px 8px;margin-left:12px;vertical-align:4px}
+.mtime{font-family:var(--mono);font-size:21px;opacity:.5;margin-left:12px;font-weight:400}
+.mtext{font-size:37px;line-height:1.28;margin-top:2px}
+.th{display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:27px;opacity:.6;margin-bottom:22px}
+.tag{font-family:var(--mono);font-weight:600;font-size:24px;letter-spacing:.05em;color:var(--accent2);border:1.5px solid var(--accent2);border-radius:9px;padding:5px 12px;opacity:1}
+.flag{font-family:var(--mono);font-weight:600;font-size:22px;letter-spacing:.05em;border-radius:9px;padding:5px 12px;white-space:nowrap;display:inline-block;vertical-align:middle}
+.flag.trial{color:color-mix(in srgb,var(--trial) 45%,#5a2a08);background:color-mix(in srgb,var(--trial) 30%,transparent);border:1.5px solid var(--trial)}
+.flag.exp{color:color-mix(in srgb,var(--exp) 40%,#1c2766);background:color-mix(in srgb,var(--exp) 32%,transparent);border:1.5px solid var(--exp)}
+.dark .flag.exp{color:color-mix(in srgb,var(--exp) 60%,#fff)}
+.cmd{font-family:var(--mono);font-weight:500;background:color-mix(in srgb,var(--app) 14%,transparent);color:var(--app);border-radius:8px;padding:2px 12px}
+.btnx{display:inline-block;margin-top:10px;background:var(--app);color:#fff;font-weight:600;font-size:29px;border-radius:12px;padding:8px 20px}
+/* artifact card vocabulary (use any of these in channel.json html) */
+.hd{display:flex;align-items:center;gap:24px;margin-bottom:34px}.hd .flag{margin-left:auto;font-size:26px;padding:7px 15px}
+.xt{font-weight:800;font-size:54px;letter-spacing:-0.01em;line-height:1}
+.xs{font-size:31px;opacity:.62;margin-top:8px}
+.k{font-family:var(--mono);font-size:27px;opacity:.62;margin-bottom:24px}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:20px 40px}
+.chips span{display:flex;align-items:center;gap:16px;height:78px;border-radius:16px;background:#fff;border:2px solid rgba(12,31,64,.1);padding:0 24px;font-size:33px;font-weight:600}
+.chips span::before{content:'';width:16px;height:16px;border-radius:50%;background:var(--accent2)}
+.foot{font-size:34px;font-weight:600;margin-top:30px}
+.fun div{display:flex;align-items:center;height:96px;margin-bottom:16px;font-size:40px}
+.fun i{display:flex;align-items:center;height:88px;border-radius:14px;background:color-mix(in srgb,var(--exp) 55%,#fff);padding-left:28px;margin-right:28px;transform-origin:0 50%}
+.fun b{font-weight:800;font-size:56px;display:inline-block;transform-origin:0 50%}
+.post{font-size:44px;line-height:1.3}.src{font-size:28px;opacity:.6;margin-top:14px}
+.pills{display:flex;gap:18px;margin-top:34px;flex-wrap:wrap}
+.pills span,.fx span{font-size:31px;font-weight:600;background:color-mix(in srgb,var(--accent) 35%,transparent);border:2px solid color-mix(in srgb,var(--accent2) 45%,transparent);border-radius:14px;padding:10px 20px;white-space:nowrap}
+.pills .tr{background:color-mix(in srgb,var(--trial) 25%,transparent);border-color:var(--trial)}
+.pages{display:flex;gap:26px;align-items:center}
+.pages i{display:block;width:210px;height:150px;border-radius:10px;background:#fff;border:2px solid rgba(12,31,64,.12);box-shadow:0 10px 26px rgba(12,31,64,.18)}
+.pages .cov{width:300px;height:190px;background:var(--ground);color:var(--ink);font-style:normal;font-weight:800;font-size:36px;line-height:1.1;padding:26px}
+.bub{display:inline-block;background:#fff;border-radius:18px;padding:22px 28px;font-size:38px;font-weight:600;box-shadow:0 12px 36px rgba(12,31,64,.18)}
+.page3{position:absolute;left:560px;top:120px;width:700px;height:420px;border-radius:14px;background:#fff;border:3px solid var(--accent2);box-shadow:0 20px 50px rgba(12,31,64,.25);padding:34px}
+.page3 .pt{font-family:var(--mono);font-size:26px;opacity:.55;margin-bottom:40px}
+.page3 span{position:absolute;left:34px;top:120px;font-size:64px;font-weight:800}
+.page3 .old{text-decoration:line-through;opacity:.6}.page3 .new{background:color-mix(in srgb,var(--accent) 60%,transparent);border-radius:8px;padding:0 10px}
+.chrome{display:flex;align-items:center;gap:14px;margin:-38px -44px 0;height:80px;padding:0 30px;background:var(--panel)}
+.chrome i{width:18px;height:18px;border-radius:50%;background:var(--exp)}
+.chrome span{margin-left:18px;background:#fff;border-radius:12px;padding:8px 20px;font-family:var(--mono);font-size:24px;opacity:.8}
+.chrome .flag{background:color-mix(in srgb,var(--exp) 32%,transparent);opacity:1}
+.tog{position:relative;display:inline-block;width:260px;height:62px;margin:26px 0 30px;border-radius:14px;background:var(--panel)}
+.tog span{position:absolute;left:6px;top:6px;right:6px;bottom:6px;border-radius:10px;background:#fff;font-size:31px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.rows i{display:block;height:56px;border-radius:10px;background:var(--accent2);margin-bottom:30px;transform-origin:0 50%}
+.share{position:absolute;right:44px;top:130px;width:430px;border-radius:20px;background:#fff;border:2px solid rgba(12,31,64,.1);padding:30px;font-size:30px}
+.share b{display:block;font-size:34px;margin-bottom:26px}.share div{position:absolute;left:30px;top:110px;color:var(--accent2);font-weight:700}
+.tiles{display:flex;gap:30px}.tiles>div{position:relative;flex:1;height:330px;border-radius:22px;background:color-mix(in srgb,var(--ground) 80%,#3a5a9a 20%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;font-weight:700;font-size:36px}
+.tiles .av{width:150px;height:150px;font-size:64px}
+.tiles small{position:absolute;bottom:18px;font-family:var(--mono);font-size:25px;color:var(--ground);background:var(--accent);border-radius:12px;padding:6px 16px}
+.eq{display:flex;gap:7px;height:40px;align-items:center}.eq i{display:block;width:9px;border-radius:5px;background:var(--accent)}
+.cap{position:absolute;left:44px;right:44px;bottom:40px;height:130px;border-radius:20px;background:rgba(247,247,247,.08);border:2px solid color-mix(in srgb,var(--accent) 25%,transparent);
+  display:flex;align-items:center;gap:24px;padding:0 36px;font-size:40px}.cap b{color:var(--accent)}
+.fx{display:flex;flex-direction:column;align-items:flex-start;gap:16px;margin:24px 0 0 86px}
+/* window */
+#win{position:absolute;left:300px;top:250px;width:1320px;height:760px;overflow:hidden;display:flex;padding:0}
+#side{width:290px;background:var(--panel);padding:32px 22px;flex:none}
+#side .srv{font-weight:800;font-size:30px;margin:0 10px 28px}
+#side .ch{font-size:28px;opacity:.55;padding:9px 12px;border-radius:10px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#side .ch.on{background:rgba(12,31,64,.09);opacity:1;font-weight:600}
+#wmain{flex:1;position:relative}
+#chead{height:86px;border-bottom:2px solid rgba(12,31,64,.08);display:flex;align-items:center;padding:0 36px;font-weight:700;font-size:34px}
+#chead span{font-weight:500;opacity:.55;margin-left:20px;padding-left:20px;border-left:2px solid rgba(12,31,64,.2)}
+#wmsgs .msg{position:absolute;left:36px;width:940px}
+#comp{position:absolute;left:32px;right:32px;bottom:30px;height:92px;background:var(--panel);border-radius:18px;padding:0 28px;font-size:35px;display:flex;align-items:center;white-space:nowrap}
+#caret{display:inline-block;width:3px;height:40px;background:var(--cardInk);margin-left:2px}
+#head{position:absolute;left:0;top:430px;width:1920px;text-align:center;font-weight:800;font-size:132px;line-height:1.08;letter-spacing:-0.02em;transform-origin:50% 50%}
+#head span{display:inline-block}
+#ovl{position:absolute;inset:0;pointer-events:none}
+.lbl{position:absolute;font-family:var(--mono);font-weight:500;font-size:25px;white-space:nowrap;transform:translate(-50%,-50%);
+  background:color-mix(in srgb,var(--deep) 85%,transparent);padding:6px 14px;border-radius:10px;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent)}
+.lbl b{color:var(--accent);margin-right:10px}.lbl i{font-style:normal;margin-left:10px}
+#end{position:absolute;inset:0}
+</style></head>
+<body><div id="stage">
+<svg id="contours" viewBox="0 0 1920 1080"></svg>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <filter id="mb" x="-5%" y="-10%" width="110%" height="120%" color-interpolation-filters="sRGB"><feGaussianBlur id="mbg" stdDeviation="0 0"/></filter>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+</defs></svg>
+<div id="cam"><div id="world">
+  <svg id="lsvg" class="abs" style="left:0;top:0;overflow:visible" width="12000" height="8000">
+    <path id="lineGlow" fill="none" stroke-opacity=".35" stroke-width="16" stroke-linecap="round" filter="url(#glow)"/>
+    <path id="line" fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle id="tipG" r="22" opacity=".5" filter="url(#glow)"/><circle id="tip" r="10" fill="#fff"/>
+    <circle id="r1" r="40" fill="none" stroke-width="5"/><circle id="r2" r="40" fill="none" stroke-width="3"/>
+  </svg>
+  <div id="head"></div>
+  <div id="win" class="card"><div id="side"></div><div id="wmain"><div id="chead"></div><div id="wmsgs"></div><div id="comp"><span id="ctext"></span><span id="caret"></span></div></div></div>
+  <div id="stops"></div>
+</div></div>
+<div id="ovl">
+  <div id="ph" class="abs" style="left:0;width:1920px;top:34px;text-align:center;font-weight:800;font-size:80px;letter-spacing:-0.02em"></div>
+  <div id="ps" class="abs" style="left:0;width:1920px;top:132px;text-align:center;font-size:36px;opacity:.72"></div>
+  <div id="labels"></div>
+  <svg class="abs" style="left:0;top:0;overflow:visible" width="1920" height="1080">
+    <path id="dtrail" fill="none" stroke-width="5" stroke-linecap="round"/><circle id="dglow" r="30" filter="url(#glow)"/><circle id="dcore" r="14"/></svg>
+</div>
+<div id="end">
+  <img id="emas" class="abs" style="left:210px;top:250px;width:590px;display:none">
+  <div id="edot" class="abs" style="width:63px;height:63px;border-radius:50%;background:var(--dot);left:858px;top:430px"></div>
+  <div id="ewrapW" class="abs" style="left:984px;top:340px;overflow:hidden;height:240px"><div id="ewm" style="font-weight:800;font-size:200px;letter-spacing:-0.03em;line-height:240px;white-space:nowrap"></div></div>
+  <div id="eurl" class="abs" style="left:862px;top:610px;font-weight:500;font-size:62px"></div>
+  <div id="epy" class="abs" style="left:864px;top:708px;font-weight:600;font-size:32px;opacity:.45"></div>
+  <div id="ecr" class="abs" style="left:0;width:1920px;top:1010px;text-align:center;font-size:22px;opacity:.42"></div>
+</div>
+</div>
+<script>
+const F=window.FILM, P=F.brand.palette, PE=F.people;
+const $=id=>document.getElementById(id);
+const rs=document.documentElement.style;
+Object.entries(P).forEach(([k,v])=>rs.setProperty('--'+k,v));rs.setProperty('--font',F.brand.font);rs.setProperty('--mono',F.brand.mono);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const lin=(t,a,b)=>clamp((t-a)/(b-a));
+const eIO=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eO=x=>1-Math.pow(1-x,3);
+const eQ=x=>x<.5?16*x*x*x*x*x:1-Math.pow(-2*x+2,5)/2;
+const R=(t,a,b,e=eO)=>e(lin(t,a,b));
+const mix=(a,b,k)=>a+(b-a)*k;
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+function land(el,k,dy=36){el.style.opacity=k;el.style.transform=`translateY(${(1-k)*dy}px) scale(${.96+.04*k})`;}
+function rise(el,k,dy=22){el.style.opacity=k;el.style.transform=`translateY(${(1-k)*dy}px)`;}
+
+/* ---------- beat grid: every cue sits on tb(beat) ---------- */
+const BEAT=60/F.music.bpm, BAR=4*BEAT, PH=F.music.phase||0;
+const tb=b=>PH+b*BEAT;
+const IB=F.intro.bars||4, DB=4*IB;                        // the drop: first whip into the canvas
+
+/* ---------- people, avatars, thread cards ---------- */
+const botId=Object.keys(PE).find(k=>PE[k].bot);
+const avHTML=(who,s=64)=>{const p=PE[who];if(p.bot)return F.brand.mascot?`<span class="av bot" style="width:${s}px;height:${s}px;background-image:url(${F.brand.mascot});background-color:#DDEFF6"></span>`:`<span class="av bot" style="width:${s}px;height:${s}px;font-size:${s*.45}px">${p.name[0]}</span>`;
+  return `<span class="av" style="width:${s}px;height:${s}px;font-size:${s*.43}px;background:${p.color}">${p.name[0].toUpperCase()}</span>`;};
+let clock=9*60;const stamp=()=>{const h=Math.floor(clock/60),m=clock%60;clock+=7;return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;};
+const mrow=(id,who,text,time)=>`<div class="msg" id="${id}">${avHTML(who)}<div style="min-width:0"><div class="mname">${PE[who].name}${PE[who].bot?'<span class="app">APP</span>':''}<span class="mtime">${time}</span></div><div class="mtext">${text}</div></div></div>`;
+const flagHTML=f=>f?` <span class="flag ${f.kind}">${f.text}</span>`:'';
+
+/* ---------- stops: every focal card in camera order ---------- */
+const S=[];let bcur=DB;
+F.chapters.forEach((c,ci)=>{
+  if(c.ask)S.push({kind:'thread',ch:ci,first:true,beats:4,w:960,h:420,ask:c.ask,reply:(c.reply||'')+flagHTML(c.flag)});
+  c.cards.forEach((k,j)=>S.push({kind:'card',ch:ci,first:!c.ask&&j===0,beats:k.beats||6,w:k.w,h:k.h,html:k.html,dark:k.dark,push:k.push||[],handoff:k.handoff}));});
+F.volley.forEach((v,i)=>S.push({kind:'thread',ch:-1,vol:i,first:i===0,beats:4,w:920,h:v.h||440,tag:v.tag,ask:v.ask,reply:v.reply,quick:true}));
+F.fixes.forEach((f,i)=>S.push({kind:'fix',ch:-2,first:false,beats:f.beats||6,w:1060,h:190+f.items.length*82,fix:f}));
+S.forEach(s=>{s.push=s.push||(s.kind==='fix'?[{at:2.5,focus:[0,130,s.w,s.h-130]}]:[]);s.start=bcur;bcur+=s.beats;});
+const LASTB=bcur, PB=Math.ceil(LASTB/4)*4, FIN=PB/4+2, ENDB=FIN+1;   // pullback on a bar line; dot on FIN; wordmark hit on ENDB
+const TOTAL=Math.round(tb(ENDB*4+6)*30)/30;
+
+/* ---------- snake layout: rows alternate direction; the line runs under each row ---------- */
+const XL=1900,XR=8800,ROWY=r=>540+r*1380,GAP=150;
+{let r=0,dir=1,cx=2040;S.forEach(s=>{
+  if(dir>0&&cx+s.w>XR){r++;dir=-1;cx=XR;}else if(dir<0&&cx-s.w<XL){r++;dir=1;cx=XL;}
+  s.x=dir>0?cx:cx-s.w;cx=dir>0?cx+s.w+GAP:s.x-GAP;s.row=r;s.dir=dir;s.y=ROWY(r)-s.h/2;});}
+const BASE=r=>ROWY(r)+380;
+
+/* ---------- build DOM ---------- */
+const CHN=F.channel;
+$('head').innerHTML=F.intro.title.split(' ').map((w,i)=>`<span id="hw${i}">${w}</span>`).join(' ');
+const HW=F.intro.title.split(' ').length;
+$('side').innerHTML=`<div class="srv">${CHN.server}</div>`+CHN.sidebar.map(c=>`<div class="ch${c===CHN.name?' on':''}"># ${c}</div>`).join('');
+$('chead').innerHTML=`# ${CHN.name}<span>${CHN.topic}</span>`;
+const IM=F.intro.messages;
+$('wmsgs').innerHTML=IM.map((m,i)=>mrow('im'+i,m.who,m.text,stamp()).replace('class="msg"',`class="msg" style="top:${116+i*146}px"`)).join('')+
+  `<div class="msg" id="ity" style="top:0;align-items:center">${avHTML(botId)}<div class="mname">${PE[botId].name} <span style="font-weight:400;font-style:italic;font-size:29px;opacity:.55">is typing</span> <span id="td0">•</span><span id="td1">•</span><span id="td2">•</span></div></div>`;
+let h='';
+S.forEach((s,i)=>{const st=`left:${s.x}px;top:${s.y}px;width:${s.w}px;height:${s.h}px`;
+  if(s.kind==='thread')h+=`<div class="card" id="s${i}" style="${st};padding:26px 34px"><div class="th"><span># ${CHN.name}</span>${s.tag?`<span class="tag">${s.tag}</span>`:''}</div>${mrow('s'+i+'a',s.ask.who,s.ask.text,stamp())}${mrow('s'+i+'r',botId,s.reply,stamp())}</div>`;
+  else if(s.kind==='fix')h+=`<div class="card" id="s${i}" style="${st}"><div class="msg">${avHTML(botId,70)}<div><div class="mname">${PE[botId].name}<span class="app">APP</span><span class="mtime">${stamp()}</span></div><div class="mtext"><b>${s.fix.title}</b></div></div></div><div class="fx">${s.fix.items.map((it,k)=>`<span data-at="${.75+k}">✓ ${it}</span>`).join('')}</div></div>`;
+  else h+=`<div class="card${s.dark?' dark':''}" id="s${i}" style="${st}">${s.html}</div>`;});
+$('stops').innerHTML=h;
+document.querySelectorAll('.eq').forEach(e=>e.innerHTML='<i></i>'.repeat(12));
+$('ph').textContent=F.pullback.title;$('ps').textContent=F.pullback.subtitle;
+$('ewm').textContent=F.brand.name;$('eurl').textContent=F.brand.url;$('epy').textContent=F.brand.org;$('ecr').textContent=F.music.credit||'';
+if(F.brand.mascot){$('emas').src=F.brand.mascot;$('emas').style.display='block';}
+else['edot','ewrapW','eurl','epy'].forEach(id=>{const e=$(id);e.style.left=(parseFloat(e.style.left)-320)+'px';});
+['line','lineGlow','r1','r2'].forEach(id=>$(id).setAttribute('stroke',P.accent));['tipG'].forEach(id=>$(id).setAttribute('fill',P.accent));
+
+/* ---------- reveals: [data-at]/[data-until] are beats after the stop's start ---------- */
+const REV=[];
+S.forEach((s,i)=>{const card=$('s'+i);
+  if(s.kind==='thread'){REV.push({el:$('s'+i+'a'),at:s.start+(s.quick?0:.5),kind:'user'});REV.push({el:$('s'+i+'r'),at:s.start+(s.quick?1:1.5),kind:'bot'});}
+  card.querySelectorAll('[data-at],[data-until]').forEach(el=>REV.push({el,stop:i,at:el.dataset.at!==undefined?s.start+ +el.dataset.at:null,until:el.dataset.until!==undefined?s.start+ +el.dataset.until:null,kind:'reveal'}));
+  card.querySelectorAll('[data-grow]').forEach(el=>{const a=el.closest('[data-at]');el._at=s.start+(a?+a.dataset.at:0);});});
+function offIn(el,anc){let x=0,y=0;while(el&&el!==anc){x+=el.offsetLeft;y+=el.offsetTop;el=el.offsetParent;}return[x,y];}
+
+/* ---------- camera: shots with drift in every hold; whips between chapters, glides for hand-offs ---------- */
+function autoShot(x,y,w,h,max=1.5){const s=clamp(Math.min(Math.sqrt(.6*1920*1080/(w*h)),1780/w,960/h),.9,max);return[x+w/2,y+h/2,s];}
+const SH=[[tb(DB*.34),.8,960,560,1.0,'c'],[tb(DB*.34)+2.2*BEAT,.8,955,600,1.3,'c']];
+S.forEach((s,i)=>{const prev=S[i-1];const whip=!prev||s.first||s.kind==='thread'&&!s.quick||prev.row!==s.row;
+  s.move=whip?'whip':'glide';const a=autoShot(s.x,s.y,s.w,s.h);
+  SH.push([tb(s.start),whip?.35:.5,a[0],a[1],a[2],whip?'q':'c']);
+  s.push.forEach(p=>{const f=p.focus;const a2=autoShot(s.x+f[0],s.y+f[1],f[2],f[3],1.6);
+    if(!p.tight){const fit=Math.min(1860/s.w,1050/s.h);a2[2]=Math.min(a2[2],fit);            // a push never crops its own card unless tight:true
+      const hx=960/a2[2]/1.035,hy=540/a2[2]/1.035;a2[0]=clamp(a2[0],s.x+s.w-hx+10,s.x+hx-10);a2[1]=clamp(a2[1],s.y+s.h-hy+10,s.y+hy-10);}
+    SH.push([tb(s.start+p.at),.4,a2[0],a2[1],a2[2],'c']);});});
+const bx=[Math.min(...S.map(s=>s.x),300),Math.max(...S.map(s=>s.x+s.w))],by=[Math.min(...S.map(s=>s.y),175),Math.max(...S.map(s=>s.y+s.h))];
+const MS=Math.min(1820/(bx[1]-bx[0]),780/(by[1]-by[0]));
+SH.push([tb(PB),.7,(bx[0]+bx[1])/2,by[0]+(540-250)/MS,MS,'q']);   // world top sits under the headline
+SH.sort((a,b)=>a[0]-b[0]);
+const CAM=[[0,960,540,1,'h']];
+{let px=960,py=540,ps=1;SH.forEach((sh,i)=>{const[t,d,x,y,s,e]=sh;const nt=i+1<SH.length?SH[i+1][0]:99;
+  CAM.push([t,px,py,ps,e]);const hold=nt-(t+d);const dr=s<.5?1.02:1+Math.min(.035,.012*hold);
+  CAM.push([t+d,x,y,s,'l']);px=x+(s<.5?0:18*Math.min(hold,3));py=y;ps=s*dr;});CAM.push([999,px,py,ps,'h']);}
+function cam(t){for(let i=0;i<CAM.length-1;i++){const a=CAM[i],b=CAM[i+1];if(t<=b[0]){let k=lin(t,a[0],b[0]);
+  if(a[4]==='q'){if(b[3]<.5||a[3]<.5){k=eIO(k);return{x:mix(a[1],b[1],k),y:mix(a[2],b[2],k),s:Math.exp(mix(Math.log(a[3]),Math.log(b[3]),k))};}k=eQ(k);}
+  else if(a[4]==='c')k=eIO(k);else if(a[4]==='h')k=0;
+  return{x:mix(a[1],b[1],k),y:mix(a[2],b[2],k),s:mix(a[3],b[3],k)};}}const z=CAM[CAM.length-1];return{x:z[1],y:z[2],s:z[3]};}
+const toScr=(c,x,y)=>[960+(x-c.x)*c.s,540+(y-c.y)*c.s];
+
+/* ---------- the line: drawn through every stop, under the cards ---------- */
+const SEG=[];let AV=[0,0];
+function buildLine(){const a=offIn($('im'+(IM.length-1)).querySelector('.av'),$('world'));AV=[a[0]+32,a[1]+32];
+  let px=AV[0],py=AV[1]+34;
+  S.forEach((s,i)=>{const yb=BASE(s.row),ent=s.dir>0?s.x:s.x+s.w,ex=s.dir>0?s.x+s.w:s.x;let d;
+    if(i===0)d=`M ${px} ${py} C ${px-40} ${py+300}, ${ent-500} ${yb}, ${ent} ${yb}`;
+    else if(S[i-1].row!==s.row){const o=S[i-1].dir*320;d=`C ${px+o} ${py}, ${px+o} ${yb}, ${ent} ${yb}`;}
+    else d=`L ${ent} ${yb}`;
+    SEG.push({t0:tb(s.start),t1:tb(s.start)+.4,d});SEG.push({t0:tb(s.start)+.4,t1:tb(s.start+s.beats),d:`L ${ex} ${yb}`});px=ex;py=yb;});
+  const d=SEG.map(s=>s.d).join(' ');$('line').setAttribute('d',d);$('lineGlow').setAttribute('d',d);
+  const tmp=document.createElementNS('http://www.w3.org/2000/svg','path');$('lsvg').appendChild(tmp);let acc='';
+  SEG.forEach(s=>{acc+=' '+s.d;tmp.setAttribute('d',acc);s.cum=tmp.getTotalLength();});tmp.remove();}
+function lineLen(t){let L=0;for(let i=0;i<SEG.length;i++){const s=SEG[i],a=i?SEG[i-1].cum:0;if(t>=s.t1)L=s.cum;else if(t>s.t0){const k=lin(t,s.t0,s.t1);L=a+(s.cum-a)*(s.t1-s.t0<1?eIO(k):eIO(Math.min(1,k*1.6)));break;}else break;}return L;}
+
+/* ---------- pullback labels ---------- */
+const LB=[];F.chapters.forEach((c,ci)=>{const ss=S.filter(s=>s.ch===ci);const x=(Math.min(...ss.map(s=>s.x))+Math.max(...ss.map(s=>s.x+s.w)))/2;LB.push([c.title,c.flag,x,Math.min(...ss.map(s=>s.y))-90]);});
+[[-1,F.volley.map(v=>v.tag[0]+v.tag.slice(1).toLowerCase()).join(' · ')],[-2,'Fixes']].forEach(([k,n])=>{const ss=S.filter(s=>s.ch===k);if(ss.length)LB.push([n,null,(Math.min(...ss.map(s=>s.x))+Math.max(...ss.map(s=>s.x+s.w)))/2,Math.min(...ss.map(s=>s.y))-90]);});
+$('labels').innerHTML=LB.map((l,i)=>`<div class="lbl" id="lb${i}"><b>${String(i+1).padStart(2,'0')}</b>${l[0]}${l[1]?`<i style="color:var(--${l[1].kind})">${l[1].text}</i>`:''}</div>`).join('');
+
+(function(){let s='';for(let i=0;i<9;i++)s+=`<path id="cn${i}" fill="none" stroke="${P.ink}" stroke-width="1.6"/>`;$('contours').innerHTML=s;})();
+function contours(t,cx,cy){for(let i=0;i<9;i++){let d='';const y0=90+i*118,a=38+12*Math.sin(i*1.7),f=.0021+.0004*(i%3),ph=i*1.3+t*.18-cx*.00035*(1+i*.1)-cy*.0005;
+  for(let x=-40;x<=1960;x+=40){const y=y0+a*Math.sin(x*f+ph)+18*Math.sin(x*f*2.3+ph*1.7);d+=(x<0?'M':'L')+x+' '+y.toFixed(1);}
+  const p=$('cn'+i);p.setAttribute('d',d);p.setAttribute('stroke-opacity',(.045+.02*(i%2)).toFixed(3));}}
+
+/* ---------- intro timing ---------- */
+const TW=IB>0?[...Array(HW).keys()].map(i=>tb(i*Math.min(1,4/HW))):[];
+const SHRINK=tb(DB*.34), WIN=SHRINK+.2;
+const TYPED=IM.map(m=>m.typed?m.text.replace(/<[^>]+>/g,'').replace(/&rsquo;|’/g,'’'):null);
+const imT=IM.map(m=>tb(m.at));
+
+function render(t){
+  const c=cam(t),cp=cam(t-1/30);
+  const vx=Math.abs((c.x-cp.x)*c.s),vy=Math.abs((c.y-cp.y)*c.s),vs=Math.abs(Math.log(c.s/cp.s))*900;
+  const bxx=Math.min(46,(vx+vs)*.11),byy=Math.min(46,vy*.11);
+  const W=$('world');W.style.transform=`translate(${960-c.x*c.s}px,${540-c.y*c.s}px) scale(${c.s})`;
+  if(bxx>.6||byy>.6){$('mbg').setAttribute('stdDeviation',`${bxx.toFixed(2)} ${byy.toFixed(2)}`);$('cam').style.filter='url(#mb)';}else $('cam').style.filter='none';
+  contours(t,c.x,c.y);
+  const DOT=tb(FIN*4),ENDIN=DOT+.7,HIT=tb(ENDB*4);
+  const wf=1-R(t,DOT,DOT+.5,eIO);$('cam').style.opacity=wf;
+  // intro
+  TW.forEach((x,i)=>{const k=R(t,x-.05,x+.2);const e=$('hw'+i);e.style.opacity=k;e.style.filter=k<1?`blur(${(1-k)*14}px)`:'none';e.style.transform=`translateY(${(1-k)*18}px)`;});
+  const hk=R(t,SHRINK,SHRINK+.5,eIO);$('head').style.transform=`translateY(${mix(0,-330,hk)}px) scale(${mix(1,.5,hk)})`;$('head').style.opacity=1-R(t,SHRINK+2.2*BEAT,SHRINK+2.2*BEAT+.4);
+  land($('win'),R(t,WIN,WIN+.5),70);
+  let txt=null;IM.forEach((m,i)=>{if(TYPED[i]){const d=TYPED[i].length/22,a=imT[i]-d-.2;if(t>=a&&t<imT[i])txt=TYPED[i].slice(0,Math.floor((t-a)*22));}rise($('im'+i),R(t,imT[i],imT[i]+.25));});
+  $('ctext').innerHTML=txt===null?`<span style="opacity:.4">Message #${CHN.name}</span>`:txt.replace(/&/g,'&amp;').replace(/</g,'&lt;');$('caret').style.opacity=txt===null?0:1;
+  let ty=0,tyTop=0;IM.forEach((m,i)=>{if(i&&PE[m.who].bot&&t>=imT[i]-1.2*BEAT&&t<imT[i]){ty=1;tyTop=116+i*146+12;}});$('ity').style.opacity=ty;$('ity').style.top=tyTop+'px';
+  for(let j=0;j<3;j++)$('td'+j).style.opacity=.3+.7*Math.max(0,Math.sin(t*6-j*.9));
+  const rk=lin(t,tb(DB),tb(DB)+.6);['r1','r2'].forEach((id,j)=>{const kk=clamp(rk-j*.25);const e=$(id);e.setAttribute('cx',AV[0]);e.setAttribute('cy',AV[1]);e.setAttribute('r',40+kk*170);e.setAttribute('stroke-opacity',(kk>0&&kk<1)?(1-kk)*.9:0);});
+  // line
+  const L=lineLen(t),on=L>.5;[$('line'),$('lineGlow')].forEach(p=>{p.style.strokeDasharray=`${L} 99999`;p.style.opacity=on?1:0;});
+  if(on){const pt=$('line').getPointAtLength(L);['tip','tipG'].forEach(id=>{$(id).setAttribute('cx',pt.x);$(id).setAttribute('cy',pt.y);});}
+  $('tip').style.opacity=on?1:0;$('tipG').style.opacity=on?.5:0;
+  // stops
+  S.forEach((s,i)=>{land($('s'+i),R(t,tb(s.start)+(s.move==='whip'?.2:.1),tb(s.start)+(s.move==='whip'?.5:.4)),36);});
+  REV.forEach(r=>{let k=1;if(r.at!==null)k=R(t,tb(r.at),tb(r.at)+.25);if(r.until!=null)k*=1-R(t,tb(r.until),tb(r.until)+.2);
+    let dx=0,dy=0;const s=r.stop!==undefined?S[r.stop]:null;
+    if(s&&s.handoff&&S[r.stop+1]&&r.kind==='reveal'){const n=S[r.stop+1],tn=tb(n.start);if(t>=tn&&t<tn+.9){if(!r.off)r.off=offIn(r.el,$('s'+r.stop));
+      const m=R(t,tn,tn+.5,eIO);dx=m*(n.x+60-(s.x+r.off[0]));dy=m*(n.y+200-(s.y+r.off[1]));k*=1-R(t,tn+.3,tn+.5);}}
+    r.el.style.opacity=k;r.el.style.transform=`translate(${dx}px,${dy+(r.at!==null?(1-R(t,tb(r.at),tb(r.at)+.25))*18:0)}px)`;});
+  document.querySelectorAll('[data-grow]').forEach(e=>{const g=.15+.85*R(t,tb(e._at),tb(e._at)+.5,eIO);e.style.transform=`scaleX(${g})`;const n=e.querySelector('b');if(n)n.style.transform=`scaleX(${1/g})`;});
+  document.querySelectorAll('[data-count]').forEach(e=>{const g=e.closest('[data-grow]');const a=g?g._at:0;e.textContent=fmt(+e.dataset.count*R(t,tb(a),tb(a)+.55));});
+  document.querySelectorAll('.eq').forEach(e=>{const on=+e.style.opacity||0;[...e.children].forEach((b,j)=>{b.style.height=(6+on*32*Math.abs(Math.sin(t*9.1+j*1.7)*Math.sin(t*3.3+j*.6)))+'px';});});
+  // pullback
+  const PT=tb(PB),pv=t>=PT+.5&&t<DOT+.6;
+  $('ph').style.opacity=R(t,PT+.6,PT+.95)*wf;$('ps').style.opacity=R(t,PT+.9,PT+1.25)*wf;
+  LB.forEach((l,i)=>{const e=$('lb'+i);const[sx,sy]=toScr(c,l[2],l[3]);e.style.left=sx+'px';e.style.top=sy+'px';e.style.opacity=pv?R(t,PT+1+i*.2,PT+1.2+i*.2)*wf:0;});
+  // dot travel + end card; the wordmark lands on the track's final hit (ENDB)
+  const ep=SEG.length?$('line').getPointAtLength(SEG[SEG.length-1].cum):{x:0,y:0};const[tx,ty2]=toScr(c,ep.x,ep.y);const dT=R(t,DOT,DOT+.7,eIO);
+  const ex=F.brand.mascot?889.5:569.5,ey=461.5,show=t>=DOT-.05&&t<ENDIN+.05;
+  const dx=mix(tx,ex,dT),dy=mix(ty2,ey,dT)-Math.sin(dT*Math.PI)*160;
+  ['dcore','dglow'].forEach(id=>{$(id).setAttribute('cx',dx);$(id).setAttribute('cy',dy);$(id).setAttribute('fill',dT<.5?P.accent:P.dot);$(id).style.opacity=show?(id==='dglow'?.55:1):0;});
+  $('dcore').setAttribute('r',mix(10,31.5,R(t,DOT+.45,DOT+.7)));
+  let tr='';for(let j=0;j<=20;j++){const q=clamp(dT-(20-j)*.012);tr+=(j?'L':'M')+mix(tx,ex,q).toFixed(1)+' '+(mix(ty2,ey,q)-Math.sin(q*Math.PI)*160).toFixed(1);}
+  $('dtrail').setAttribute('d',tr);$('dtrail').setAttribute('stroke',P.accent);$('dtrail').style.opacity=show?.6:0;
+  const eo=t>=ENDIN;$('end').style.opacity=eo?1:0;
+  const mk=R(t,ENDIN,ENDIN+.5);$('emas').style.opacity=mk;$('emas').style.transform=`scale(${.9+.1*mk}) translateY(${(1-mk)*20}px)`;
+  $('ewrapW').style.width=`${R(t,HIT-.6,HIT,eIO)*900}px`;
+  $('eurl').style.opacity=R(t,HIT+.3,HIT+.6);$('epy').style.opacity=R(t,HIT+.5,HIT+.8);$('ecr').style.opacity=R(t,HIT+.7,HIT+1.1);
+}
+
+/* ---------- timing export for mix.py / qa: every camera move and cue ---------- */
+function timing(){
+  const cues={word:TW,key:[],pop_user:[],pop_bot:[],reveal:[],whip:[],glide:[],push:[],card:[],drop:tb(DB),drop2:null,pull:tb(PB),dot:tb(FIN*4),end:tb(ENDB*4)};
+  IM.forEach((m,i)=>{(PE[m.who].bot?cues.pop_bot:cues.pop_user).push(imT[i]);if(TYPED[i]){const d=TYPED[i].length/22,a=imT[i]-d-.2;for(let k=0;k<TYPED[i].length;k++)if(TYPED[i][k]!==' ')cues.key.push(a+k/22);}});
+  S.forEach(s=>{(s.move==='whip'?cues.whip:cues.glide).push(tb(s.start));cues.card.push(tb(s.start)+.3);s.push.forEach(p=>cues.push.push(tb(s.start+p.at)));});
+  REV.forEach(r=>{if(r.kind==='user')cues.pop_user.push(tb(r.at));else if(r.kind==='bot')cues.pop_bot.push(tb(r.at));else if(r.at!==null)cues.reveal.push(tb(r.at));});
+  const bi=F.chapters.findIndex(c=>c.breakdown);let bd=null;
+  if(bi>=0){const ss=S.filter(s=>s.ch===bi&&s.kind==='card');const nx=S.find(s=>s.start>ss[ss.length-1].start&&s.ch!==bi);bd=[tb(ss[0].start),nx?tb(nx.start):tb(PB)];cues.drop2=bd[1];}
+  const ev=[...SH.map(s=>s[0]),...cues.pop_user,...cues.pop_bot,...cues.reveal,...cues.word].sort((a,b)=>a-b);const changes=ev.filter((x,i)=>!i||x-ev[i-1]>.15).map(x=>+x.toFixed(3));
+  return{BAR,BEAT,PH,TOTAL,DB,IB,FIN,ENDB,breakdown:bd,moves:SH.map(s=>+s[0].toFixed(3)),changes,cues,stops:S.map(s=>({kind:s.kind,start:+tb(s.start).toFixed(3),end:+tb(s.start+s.beats).toFixed(3),move:s.move}))};
+}
+window.__seek=t=>render(t);window.__duration=TOTAL;
+document.fonts.ready.then(()=>Promise.all([...document.images].map(i=>i.decode().catch(()=>{})))).then(()=>{buildLine();window.__timing=timing();render(0);window.__ready=true;});
+</script></body></html>
